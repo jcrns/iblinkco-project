@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  
+  <!-- Title -->
+  <title>Affordable Social Media Management | iBlinkco</title>
+
+  <!-- links to jquery and bootstrap externally through cdn -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+
+  <!-- telling jinja to load static files without hard coding it -->
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static 'homepage/css/bootstrap.min.css' %}" type="text/css">
+  <link rel="shortcut icon" href="{% static 'homepage/img/icon.ico' %}" type="image/x-icon">
+
+  <!-- Metadata tag to make website more responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <style>
+  nav img{
+    width: 32px;
+    height: 32px;
+  }
+  .navbar-default .navbar-toggle {
+    border-color: rgb(0,0,0);
+  }
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+  }
+  </style>
+  <!-- responsive Navigation Bar -->
+  <nav class="navbar navbar-expand-md navbar-default sticky-top" style="background:rgba(238,238,238,0.5);">
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#collapse_target" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon bg-dark"></span>
+    </button>
+    <a href="{% url 'index' %}" class="navbar-brand"><img src="../../../static/homepage/img/logo.png"><span class="font-weight-bold" style="color: #212121"> {{ user.username }}</span></a>
+    <div class="collapse navbar-collapse" id="collapse_target">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a id="about-button" class="nav-link font-weight-bold" href="{% url 'index' %}#about">About</a>
+        </li>
+        <li class="nav-item">
+          <a id="pricing-button" class="nav-link font-weight-bold" href="{% url 'index' %}#pricing">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a id="contactus-button" class="nav-link font-weight-bold" href="{% url 'index' %}#contactus">Contact Us</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated%}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" href="{% url 'dash.index' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" href="{% url 'logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold rounded" style="background-color:#FF8A00; color:#fff" href="{% url 'register' %}">Sign Up</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% block content %}
+  {% endblock %}
+
+  <script>
+
+  // Scoll Animation Using Jquery
+  $("#about-button").click(function() {
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $("#about").offset().top
+    }, 1000);
+  });
+
+  $("#pricing-button").click(function() {
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $("#pricing").offset().top
+    }, 1000);
+  });
+
+  $("#contactus-button").click(function() {
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $("#contactus").offset().top
+    }, 1000);
+  });
+  </script>
+</body>
+<footer>
+  <p class="mt-5 mb-3 text-center" style="color:#000;">iBlinkco, Copyright © 2018</p>
+</footer>
+</html>

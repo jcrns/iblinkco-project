@@ -1,0 +1,79 @@
+<div class="card" style="background-color:#dbdbdb">
+  <p class="float-center">Welcome {{ user.username }}
+    <span id="show-analytics" class="float-right px-4"><a href="#">Analytics</a></span>
+    <span id="show-dashboard-row" class="float-right px-4"><a href="#">Dashboard Row</a></span>
+  </p>
+</div>
+
+<!-- Dashboard Row -->
+<div id="dashboard-row" class="container-fluid">
+  <div class="card-group text-center" style="height:50vh;">
+
+    <!-- Instagram -->
+    <div id="dash-instagram" class="card mb-4" style="background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);">
+      <h2>Connect Instagram Account</h2>
+    </div>
+
+    <!-- Facebook -->
+    <div id="dash-facebook" class="card mb-4" style="background: #3b579d;">
+      <h2>Connect Facebook Account</h2>
+    </div>
+
+    <!-- Twiiter -->
+    <div id="dash-twitter" class="card mb-4" style="background: #28aae1;">
+      <h2>Connect Twitter Account</h2>
+      {% for c in content %}
+      <p>{{c}}</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Youtube -->
+  <div class="card" style="background:#ff0000; height: 30vh;">
+    <h2>Connect Youtube Account</h2>
+  </div>
+</div>
+
+<!-- Analytics -->
+<div id="analytics" class="container-fluid">
+  <p class="display-3">Total Followers</p>
+  <p class="display-3">Total Likes</p>
+  <p class="display-3">Total Followers</p>
+</div>
+<!-- Using Jquery to show different things on dashboard page -->
+<script>
+  $(document).ready(function(){
+    // showing dashboard row by default
+    $("#dashboard-row").show();
+    
+    // hiding analytics by default
+    $("#analytics").hide();
+
+    // hiding the dashboard row toggle by default
+    $("#show-dashboard-row").hide();
+
+    $("#show-analytics").click(function(){
+
+      $("#dashboard-row").hide();
+
+      $("#analytics").show();
+
+      $("#show-dashboard-row").show();
+
+      $("#show-analytics").hide();
+
+    })
+
+    $("#show-dashboard-row").click(function(){
+
+      $("#dashboard-row").show();
+
+      $("#analytics").hide();
+
+      $("#show-dashboard-row").hide();
+
+      $("#show-analytics").show();
+
+    })
+  })
+</script>

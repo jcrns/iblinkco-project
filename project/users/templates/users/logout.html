@@ -1,0 +1,12 @@
+<!-- Jinja file including all Registration Page content -->
+{% extends "homepage/header.html" %}
+{% block content %}
+<h2>You Logged Out!</h2>
+<div class="border-top pt-3">
+  <small class="text-muted">
+    Already have an account? <a href="{% url 'login' %}">Log back In!</a>
+    <br>
+    Or go back to the <a href="{% url 'index' %}">homepage</a>
+  </small>
+</div>
+{% endblock %}
