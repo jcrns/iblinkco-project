@@ -27,8 +27,7 @@ class TwitterClient():
         tweets = []
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
-        return tweets
-
+        return tweetsf
     def get_friend_list(self, num_friends):
         friend_list = []
         for friend in Cursor(self.twitter_client.friends, id=self.twitter_user).items(num_friends):
@@ -52,9 +51,8 @@ class TwitterAuthenticator():
 
 # # # # TWITTER STREAMER # # # #
 class TwitterStreamer():
-    """
-    Class for streaming and processing live tweets.
-    """
+    #Class for streaming and processing live tweets.
+
     def __init__(self):
         self.twitter_autenticator = TwitterAuthenticator()
 
@@ -70,9 +68,8 @@ class TwitterStreamer():
 
 # # # # TWITTER STREAM LISTENER # # # #
 class TwitterListener(StreamListener):
-    """
-    This is a basic listener that just prints received tweets to stdout.
-    """
+#This is a basic listener that just prints received tweets to stdout.
+
     def __init__(self, fetched_tweets_filename):
         self.fetched_tweets_filename = fetched_tweets_filename
 
@@ -93,9 +90,10 @@ class TwitterListener(StreamListener):
         print(status)
 
 class TweetAnalyzer():
-    """
-    Analyzing Data recieved from tweets
-    """
+    #Analyzing Data recieved from tweets
+    # def __init__(self, a):
+    #     self.a = a
+
     def clean_tweet(self, tweet):
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
 
@@ -113,32 +111,137 @@ class TweetAnalyzer():
         df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['tweets'])
 
         df['id'] = np.array([tweet.id for tweet in tweets])
-        df['len'] = np.array([len(tweet.text) for tweet in tweets])
+        df['len'] = np.array([tweet.id for tweet in tweets])
         df['date'] = np.array([tweet.created_at for tweet in tweets])
         df['source'] = np.array([tweet.source for tweet in tweets])
         df['likes'] = np.array([tweet.favorite_count for tweet in tweets])
         df['retweets'] = np.array([tweet.retweet_count for tweet in tweets])
 
         return df
+class display1():
+    # def __str__(self):
+    def test(self):
+        twitter_client = TwitterClient()
+        tweet_analyzer = TweetAnalyzer()
 
-if __name__ == '__main__':
-    twitter_client = TwitterClient()
-    tweet_analyzer = TweetAnalyzer()
+        api = twitter_client.get_twitter_client_api()
 
-    api = twitter_client.get_twitter_client_api()
+        screenName = "microsoft"
+        tweetsRecieved = 1
 
-    tweets = api.user_timeline(screen_name="cnn", count=200)
+        tweets = api.user_timeline(screen_name=screenName, count=200)
 
-    # favorite count = like
-    # print(dir(tweets[0]))
-    # print(tweets[0].retweet_count)
+        # favorite count = like
+        # print(dir(tweets[0]))
+        # print(tweets[0].retweet_count)
 
 
-    df = tweet_analyzer.tweets_to_data_frame(tweets)
-    df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+        df = tweet_analyzer.tweets_to_data_frame(tweets)
+        df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
 
-    #
-    print(df.head(10))
+
+        return screenName, df.head(tweetsRecieved), df['id'].head(tweetsRecieved), df['len'].head(tweetsRecieved), df['date'].head(tweetsRecieved), df['source'].head(tweetsRecieved), df['likes'].head(tweetsRecieved), df['retweets'].head(tweetsRecieved)
+
+
+class display2():
+    # def __str__(self):
+    def test(self):
+        twitter_client = TwitterClient()
+        tweet_analyzer = TweetAnalyzer()
+
+        api = twitter_client.get_twitter_client_api()
+
+        screenName = "iBlinkco"
+        tweetsRecieved = 1
+
+        tweets = api.user_timeline(screen_name=screenName, count=tweetsRecieved)
+
+        # favorite count = like
+        # print(dir(tweets[0]))
+        # print(tweets[0].retweet_count)
+
+
+        df = tweet_analyzer.tweets_to_data_frame(tweets)
+        df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+        #displaying the following data
+
+        return screenName, df.head(tweetsRecieved), df['id'].head(tweetsRecieved), df['len'].head(tweetsRecieved), df['date'].head(tweetsRecieved), df['source'].head(tweetsRecieved), df['likes'].head(tweetsRecieved), df['retweets'].head(tweetsRecieved)
+
+
+
+class display3():
+    # def __str__(self):
+    def test(self):
+        twitter_client = TwitterClient()
+        tweet_analyzer = TweetAnalyzer()
+
+        api = twitter_client.get_twitter_client_api()
+
+        screenName = "apple"
+        tweetsRecieved = 1
+
+        tweets = api.user_timeline(screen_name=screenName, count=200)
+
+        # favorite count = like
+        # print(dir(tweets[0]))
+        # print(tweets[0].retweet_count)
+
+
+        df = tweet_analyzer.tweets_to_data_frame(tweets)
+        df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+        #
+
+        return screenName, df.head(tweetsRecieved), df['id'].head(tweetsRecieved), df['len'].head(tweetsRecieved), df['date'].head(tweetsRecieved), df['source'].head(tweetsRecieved), df['likes'].head(tweetsRecieved), df['retweets'].head(tweetsRecieved)
+
+
+class display4():
+    # def __str__(self):
+    def test(self):
+        twitter_client = TwitterClient()
+        tweet_analyzer = TweetAnalyzer()
+
+        api = twitter_client.get_twitter_client_api()
+
+        screenName = "HiddenGeniusPro"
+        tweetsRecieved = 1
+        
+        tweets = api.user_timeline(screen_name=screenName, count=200)
+
+        # favorite count = like
+        # print(dir(tweets[0]))
+        # print(tweets[0].retweet_count)
+
+
+        df = tweet_analyzer.tweets_to_data_frame(tweets)
+        df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+        #
+
+        return screenName, df.head(tweetsRecieved), df['id'].head(tweetsRecieved), df['len'].head(tweetsRecieved), df['date'].head(tweetsRecieved), df['source'].head(tweetsRecieved), df['likes'].head(tweetsRecieved), df['retweets'].head(tweetsRecieved)
+
+
+# class TweetPrint():
+#     def print():
+# if __name__ == '__main__':
+#     twitter_client = TwitterClient()
+#     tweet_analyzer = TweetAnalyzer()
+#
+#     api = twitter_client.get_twitter_client_api()
+#
+#     tweets = api.user_timeline(screen_name="cnn", count=200)
+#
+#     # favorite count = like
+#     # print(dir(tweets[0]))
+#     # print(tweets[0].retweet_count)
+#
+#
+#     df = tweet_analyzer.tweets_to_data_frame(tweets)
+#     df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+#
+#     #
+#     print(df.head(10))
     #
     # #Get average length over all tweets
     # print(np.mean(df['len']))

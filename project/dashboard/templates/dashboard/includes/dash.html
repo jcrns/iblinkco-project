@@ -1,36 +1,85 @@
 <div class="card" style="background-color:#dbdbdb">
-  <p class="float-center">Welcome {{ user.username }}
+  <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
     <span id="show-analytics" class="float-right px-4"><a href="#">Analytics</a></span>
     <span id="show-dashboard-row" class="float-right px-4"><a href="#">Dashboard Row</a></span>
   </p>
 </div>
-
+<style media="screen">
+  .dashboard-row-item{
+    min-height: 40vh;
+  }
+</style>
 <!-- Dashboard Row -->
-<div id="dashboard-row" class="container-fluid">
-  <div class="card-group text-center" style="height:50vh;">
+<div id="dashboard-row" class="container-fluid" style="min-height:100%;">
+  <div id="sm-container" class="card-group text-center" style="height:50vh;">
 
     <!-- Instagram -->
-    <div id="dash-instagram" class="card mb-4" style="background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);">
-      <h2>Connect Instagram Account</h2>
+    <div id="dash-instagram" class="card mb-3 mt-1 dashboard-row-item" style="background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);">
+      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-instagram">
+        <h2 id="connect-header-instagram">Connect Instagram Account</h2>
+      </a>
+      <p id="content-instagram">{{ content.twitter.display3.test }}</p>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
+      </a>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-instagram">Shrink</p>
+      </a>
+      <a href="#">
+        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-instagram">Disconnect</p>
+      </a>
     </div>
 
     <!-- Facebook -->
-    <div id="dash-facebook" class="card mb-4" style="background: #3b579d;">
-      <h2>Connect Facebook Account</h2>
+    <div id="dash-facebook" class="card mb-3 mt-1 dashboard-row-item" style="background: #3b579d;">
+      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-facebook-1">
+        <h2 id="connect-header-facebook">Connect Facebook Account</h2>
+      </a>
+      <p id="content-facebook">{{ content.twitter.display2.test }}</p>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-facebook">View Full</p>
+      </a>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-facebook">Shrink</p>
+      </a>
+      <a href="#">
+        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-facebook">Disconnect</p>
+      </a>
     </div>
 
     <!-- Twiiter -->
-    <div id="dash-twitter" class="card mb-4" style="background: #28aae1;">
-      <h2>Connect Twitter Account</h2>
-      {% for c in content %}
-      <p>{{c}}</p>
-      {% endfor %}
+    <div id="dash-twitter" class="card mb-3 mt-1 dashboard-row-item" style="background: #28aae1;">
+      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-twitter-1">
+        <h2 id="connect-header-twitter">Connect Twitter Account</h2>
+      </a>
+      <p id="content-twitter">{{ content.twitter.display1.test }}</p>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-twitter">View Full</p>
+      </a>
+      <a href="#">
+        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-twitter">Shrink</p>
+      </a>
+      <a href="#">
+        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-twitter">Disconnect</p>
+      </a>
     </div>
   </div>
 
   <!-- Youtube -->
-  <div class="card" style="background:#ff0000; height: 30vh;">
-    <h2>Connect Youtube Account</h2>
+  <div id="dash-youtube" class="card my-2 dashboard-row-item" style="background:#ff0000; height: 10px; min-width:100%;">
+    <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-youtube">
+      <h2 id="connect-header-youtube">Connect Youtube Account</h2>
+    </a>
+    <p class="text-center" id="content-youtube">{{ content.twitter.display4.test }}</p>
+    <a href="#">
+      <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-youtube">View Full</p>
+    </a>
+    <a href="#">
+      <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-youtube">Shrink</p>
+    </a>
+    <a href="#">
+      <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-youtube">Disconnect</p>
+    </a>
   </div>
 </div>
 
@@ -40,40 +89,309 @@
   <p class="display-3">Total Likes</p>
   <p class="display-3">Total Followers</p>
 </div>
+
+<!-- Instagram Menu -->
+<div class="modal fade" id="connect-instagram" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connect Instagram</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Button to connect account -->
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-instagram">
+          Connect Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Facebook Menu -->
+<div class="modal fade" id="connect-facebook-1" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connect Facebook</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Button to connect account -->
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-facebook">
+          Connect Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Twitter Menu -->
+<div class="modal fade" id="connect-twitter-1" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connect Twitter</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Button to connect account -->
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-twitter">
+          Connect Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Youtube Menu -->
+<div class="modal fade" id="connect-youtube" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connect Youtube</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Button to connect account -->
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-youtube">
+          Connect Account
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 <!-- Using Jquery to show different things on dashboard page -->
 <script>
-  $(document).ready(function(){
-    // showing dashboard row by default
+  // Hidding buttons
+  $("#hidden-button-instagram").hide();
+  $("#hidden-button-facebook").hide();
+  $("#hidden-button-twitter").hide();
+  $("#hidden-button-youtube").hide();
+
+  // showing dashboard row by default
+  $("#dashboard-row").show();
+
+  // hiding analytics by default
+  $("#analytics").hide();
+
+
+  // hiding the dashboard row toggle by default
+  $("#show-dashboard-row").hide();
+
+  $("#show-analytics").click(function() {
+
+    $("#dashboard-row").hide();
+
+    $("#analytics").show();
+
+    $("#show-dashboard-row").show();
+
+    $("#show-analytics").hide();
+
+  })
+
+  $("#show-dashboard-row").click(function() {
+
     $("#dashboard-row").show();
-    
-    // hiding analytics by default
+
     $("#analytics").hide();
 
-    // hiding the dashboard row toggle by default
     $("#show-dashboard-row").hide();
 
-    $("#show-analytics").click(function(){
+    $("#show-analytics").show();
 
-      $("#dashboard-row").hide();
-
-      $("#analytics").show();
-
-      $("#show-dashboard-row").show();
-
-      $("#show-analytics").hide();
-
-    })
-
-    $("#show-dashboard-row").click(function(){
-
-      $("#dashboard-row").show();
-
-      $("#analytics").hide();
-
-      $("#show-dashboard-row").hide();
-
-      $("#show-analytics").show();
-
-    })
   })
+
+  //Full Screen functions and Animations
+
+  //Full Screen Instagram
+  $('#button-instagram').click(function() {
+    $('#dash-instagram')
+    $('#dash-facebook').hide()
+    $('#dash-twitter').hide()
+    $('#dash-youtube').hide()
+    $('#dash-instagram').animate({
+      height: '75vh',
+      width: '70vh'
+    }, 500);
+    $('#button-instagram').hide()
+    $('#hidden-button-instagram').show()
+  });
+
+  //Shrink Full Screen Instagram
+  $('#hidden-button-instagram').click(function() {
+    $('#dash-instagram')
+    $('#dash-facebook').show()
+    $('#dash-twitter').show()
+    $('#dash-youtube').show()
+    $('#dash-instagram').animate({
+      height: '47.25vh',
+      width: '60vh'
+    }, 500);
+    $('#button-instagram').show()
+    $('#hidden-button-instagram').hide()
+  });
+
+
+  //Full Screen Facebook
+  $('#button-facebook').click(function() {
+    $('#dash-instagram').hide()
+    $('#dash-facebook')
+    $('#dash-twitter').hide()
+    $('#dash-youtube').hide()
+    $('#dash-facebook').animate({
+      height: '75vh',
+      width: '60vh'
+    }, 500);
+    $('#button-facebook').hide()
+    $('#hidden-button-facebook').show()
+  });
+
+  //Shrink Full Screen Facebook
+  $('#hidden-button-facebook').click(function() {
+    $('#dash-instagram').show()
+    $('#dash-facebook')
+    $('#dash-twitter').show()
+    $('#dash-youtube').show()
+    $('#dash-facebook').animate({
+      height: '47.25vh',
+      width: '60vh'
+    }, 500);
+    $('#button-facebook').show()
+    $('#hidden-button-facebook').hide()
+  });
+
+
+  //Full Screen Twitter
+  $('#button-twitter').click(function() {
+    $('#dash-instagram').hide()
+    $('#dash-facebook').hide()
+    $('#dash-twitter')
+    $('#dash-youtube').hide()
+    $('#dash-twitter').animate({
+      height: '75vh',
+      width: '60vh'
+    }, 500);
+    $('#button-twitter').hide()
+    $('#hidden-button-twitter').show()
+  });
+
+  //Shrink Full Screen Twitter
+  $('#hidden-button-twitter').click(function() {
+    $('#dash-instagram').show()
+    $('#dash-facebook').show()
+    $('#dash-twitter')
+    $('#dash-youtube').show()
+    $('#dash-twitter').animate({
+      height: '47.25vh',
+      width: '60vh'
+    }, 500);
+    $('#button-twitter').show()
+    $('#hidden-button-twitter').hide()
+  });
+
+
+  //Full Screen Youtube
+  $('#button-youtube').click(function() {
+    $('#sm-container').hide()
+    $('#dash-facebook').hide()
+    $('#dash-twitter').hide()
+    $('#dash-youtube')
+    $('#dash-youtube').animate({
+      height: '75vh',
+      width: '60vh'
+    }, 500);
+    $('#button-youtube').hide()
+    $('#hidden-button-youtube').show()
+  });
+
+  //Shrink Full Screen Youtube
+  $('#hidden-button-youtube').click(function() {
+    $('#sm-container').show()
+    $('#dash-facebook').show()
+    $('#dash-twitter').show()
+    $('#dash-youtube')
+    $('#dash-youtube').animate({
+      height: '47.25vh',
+      width: '100vh'
+    }, 500);
+    $('#button-youtube').show()
+    $('#hidden-button-youtube').hide()
+  });
+
+  // Hiding the content
+  $("#content-instagram").hide();
+  $("#content-facebook").hide();
+  $("#content-twitter").hide();
+  $("#content-youtube").hide();
+
+    // Functions to show content through dialog popup
+    $("#show-content-instagram").click(function() {
+      $("#content-instagram").show();
+      $("#disconnect-instagram").show();
+      $("#connect-header-instagram").hide();
+    })
+    $("#show-content-facebook").click(function() {
+      $("#content-facebook").show();
+      $("#disconnect-facebook").show();
+      $("#connect-header-facebook").hide();
+    })
+    $("#show-content-twitter").click(function() {
+      $("#content-twitter").show();
+      $("#disconnect-twitter").show();
+      $("#connect-header-twitter").hide();
+    })
+    $("#show-content-youtube").click(function() {
+      $("#content-youtube").show();
+      $("#disconnect-youtube").show();
+      $("#connect-header-youtube").hide();
+    })
+
+    // Hiding Disconnect buttons
+    $("#disconnect-instagram").hide();
+    $("#disconnect-facebook").hide();
+    $("#disconnect-twitter").hide();
+    $("#disconnect-youtube").hide();
+
+    // Disconnect functions
+    $("#disconnect-instagram").click(function() {
+      $("#content-instagram").hide();
+      $("#disconnect-instagram").hide();
+      $("#connect-header-instagram").show();
+    })
+    $("#disconnect-facebook").click(function() {
+      $("#content-facebook").hide();
+      $("#disconnect-facebook").hide();
+      $("#connect-header-facebook").show();
+    })
+    $("#disconnect-twitter").click(function() {
+      $("#content-twitter").hide();
+      $("#disconnect-twitter").hide();
+      $("#connect-header-twitter").show();
+    })
+    $("#disconnect-youtube").click(function() {
+      $("#content-youtube").hide();
+      $("#disconnect-youtube").hide();
+      $("#connect-header-youtube").show();
+    })
+
 </script>
