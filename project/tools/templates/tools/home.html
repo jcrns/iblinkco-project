@@ -1,0 +1,40 @@
+<!-- Jinja file including all homepage content -->
+{% extends "homepage/header.html" %}
+
+{% block content %}
+
+<h1>iBlinkco Tools</h1>
+
+<div class="card-group">
+  <div class="card text-center" style="background-color:rgb(71, 189, 60)">
+    <h3>Post Scheduling</h3>
+    <p>Schedule post for any social media platform in the blink of an eye.</p>
+    {% if user.is_authenticated%}
+    <a href="{% url 'tools.schedule' %}" style="color:#fff">Start Now</a>
+    {% else %}
+    <a href="{% url 'register' %}" style="color:#fff">Sign Up Now</a>
+    {% endif %}
+  </div>
+
+  <div class="card text-center" style="background-color:rgb(231, 59, 59)">
+    <h3>Automatic Likes and Follows</h3>
+    <p>Like Post related to your niche to grow your Audience.</p>
+    {% if user.is_authenticated%}
+    <a href="{% url 'tools.likefollow' %}" style="color:#fff">Start Now</a>
+    {% else %}
+    <a href="{% url 'register' %}" style="color:#fff">Sign Up Now</a>
+    {% endif %}
+  </div>
+
+  <div class="card text-center" style="background-color:rgb(0, 153, 255)">
+    <h3>Find Target Audience</h3>
+    <p>Don't know what your audience is? Find them now!</p>
+    {% if user.is_authenticated%}
+    <a href="{% url 'tools.target' %}" style="color:#fff">Start Now</a>
+    {% else %}
+    <a href="{% url 'register' %}" style="color:#fff">Sign Up Now</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

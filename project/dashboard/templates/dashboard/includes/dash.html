@@ -1,7 +1,115 @@
+<script>
+  window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '346813469464085',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v3.2'
+      });
+
+
+      FB.getLoginStatus(function(response) {
+          statusChangeCallback(response);
+      });
+
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "https://connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+
+     function statusChangeCallback(response){
+      if(response.status == 'connected'){
+        //Showing Content if User is Logged In
+        $("#content-facebook").show();
+        $("#disconnect-facebook").show();
+        $("#connect-header-facebook").hide();
+
+        //Printing in console that the user is authenticated
+        console.log('logged in and authenticated');
+        setElements(true);
+        testAPI();
+
+      } else {
+        // Displaying in console that user is not authenticated
+        console.log('Not Authenticated');
+        setElements(false);
+      }
+     }
+
+    //  Get Data from facebook API
+    function testAPI(){
+        FB.api('/me?fields=name,email,birthday,location', function(response){
+          if(response && !response.error){
+            console.log(response);
+            buildProfile(response);
+            document.getElementById('profile').innerHTML = buildProfile(response);
+
+          }
+          FB.api('/me/feed', function(response){
+            if(response && !response.error){
+              buildFeed(response);
+            }
+          });
+        })
+      }
+
+    //  Displaying Data with facebookData function
+    function buildProfile(user){
+        var profile = `
+          <h3>${user.name}</h3>
+          <ul class="list-group">
+            <li class="list-group-item">User ID: ${user.id}</li>
+            <li class="list-group-item">Email: ${user.email}</li>
+            <li class="list-group-item">Birthday: ${user.birthday}</li>
+            <li class="list-group-item">User ID: ${user.location.name}</li>
+          </ul>
+        `;
+        document.getElementById('profile').innerHTML = profile;
+      }
+      function buildFeed(feed){
+        let output = '<h3>Latest Posts</h3>';
+        for(let i in feed.data){
+          if(feed.data[i].message){
+            output += `
+              <div class="well">
+                ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
+              </div>
+            `;
+          }
+        }
+        document.getElementById('feed').innerHTML = output;
+      }
+     function setElements(isLoggedIn){
+        if(isLoggedIn){
+          $("#content-facebook").show();
+          $("#disconnect-facebook").show();
+          $("#connect-header-facebook").hide();
+        } else {
+          $("#content-facebook").hide();
+          $("#disconnect-facebook").hide();
+          $("#connect-header-facebook").show();
+        }
+      }
+
+     //  Logout function
+    function logout(){
+      FB.logout(function(response) {
+        // user is now logged out
+        setElements(false);
+      });
+     }
+</script>
+
 <div class="card" style="background-color:#dbdbdb">
   <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
-    <span id="show-analytics" class="float-right px-4"><a href="#">Analytics</a></span>
-    <span id="show-dashboard-row" class="float-right px-4"><a href="#">Dashboard Row</a></span>
+    <span id="settings" class="float-right px-4"><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
+    <span id="show-analytics" class="float-right px-2"><a href="#">Analytics</a></span>
+    <span id="show-dashboard-row" class="float-right px-2"><a href="#">Dashboard Row</a></span>
   </p>
 </div>
 <style media="screen">
@@ -9,7 +117,6 @@
     min-height: 40vh;
   }
 </style>
-<!-- Dashboard Row -->
 <div id="dashboard-row" class="container-fluid" style="min-height:100%;">
   <div id="sm-container" class="card-group text-center" style="height:50vh;">
 
@@ -18,7 +125,7 @@
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-instagram">
         <h2 id="connect-header-instagram">Connect Instagram Account</h2>
       </a>
-      <p id="content-instagram">{{ content.twitter.display3.test }}</p>
+      <p id="content-instagram">{{ content.instagram.display.getUserFollowers }}</p>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
       </a>
@@ -35,7 +142,10 @@
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-facebook-1">
         <h2 id="connect-header-facebook">Connect Facebook Account</h2>
       </a>
-      <p id="content-facebook">{{ content.twitter.display2.test }}</p>
+      <p id="content-facebook">
+        <div id="profile"></div>
+        <div id="feed"></div>
+      </p>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-facebook">View Full</p>
       </a>
@@ -43,7 +153,7 @@
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-facebook">Shrink</p>
       </a>
       <a href="#">
-        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-facebook">Disconnect</p>
+        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-facebook" onclick="logout()">Disconnect</p>
       </a>
     </div>
 
@@ -102,12 +212,14 @@
       </div>
 
       <div class="modal-body">
-        <!-- Button to connect account -->
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-instagram">
-          Connect Account
-        </button>
+        <form action="" method="POST" id="instagram-form">
+          <!-- Connect Accounts -->
+          <p><input type="text" name="instagram-username" placeholder="Instagram Username" ></p>
+          <p><input type="password" name="instagram-password" placeholder="Instagram Password"></p>
+          <!-- Button to connect account -->
+          <input type="button" name="submit-instagram" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-instagram" value="Submit">
+        </form>
       </div>
-
     </div>
   </div>
 </div>
@@ -124,10 +236,15 @@
       </div>
 
       <div class="modal-body">
-        <!-- Button to connect account -->
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-facebook">
-          Connect Account
-        </button>
+        <form action="" method="post">
+          <!-- Facebook button connect account -->
+
+          <!-- <button onclick="fb_content_show()" data-dismiss="modal" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;"> -->
+          <fb:login-button id="fb-btn" data-dismiss="modal" scope="public_profile,email,user_birthday,user_location,user_posts" onlogin="checkLoginState();">
+          </fb:login-button>
+          <!-- </button> -->
+        </form>
+
       </div>
 
     </div>
@@ -146,10 +263,13 @@
       </div>
 
       <div class="modal-body">
-        <!-- Button to connect account -->
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-twitter">
-          Connect Account
-        </button>
+        <form action="index.html" method="post">
+          <!-- Connect Accounts -->
+          <p><input type="text" name="twitter-username" placeholder="Twitter Username"></p>
+          <p><input type="password" name="twitter-password" placeholder="Twitter Password"></p>
+          <!-- Button to connect account -->
+          <input type="button" name="submit-twitter" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-twitter" value="Submit">
+        </form>
       </div>
 
     </div>
@@ -168,16 +288,38 @@
       </div>
 
       <div class="modal-body">
-        <!-- Button to connect account -->
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="show-content-youtube">
-          Connect Account
-        </button>
+        <form action="index.html" method="post">
+          <!-- Connect Accounts -->
+          <p><input type="text" name="youtube-username" placeholder="Youtube Username"></p>
+          <p><input type="password" name="youtube-password" placeholder="Youtube Password"></p>
+          <!-- Button to connect account -->
+          <input type="button" name="submit-youtube" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-youtube" value="Submit">
+        </form>
       </div>
 
     </div>
   </div>
 </div>
 
+<!-- Settings Menu -->
+<div class="modal fade" id="connect-settings" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Clear cookies - No more save on page -->
+        <p id="clear-cookies"><a href="#">Cookies on Dashboard</a></p>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Using Jquery to show different things on dashboard page -->
 <script>
@@ -338,60 +480,74 @@
     $('#hidden-button-youtube').hide()
   });
 
-  // Hiding the content
+  // Hiding certain content
   $("#content-instagram").hide();
   $("#content-facebook").hide();
   $("#content-twitter").hide();
   $("#content-youtube").hide();
+  $("#content-settings").hide();
 
-    // Functions to show content through dialog popup
-    $("#show-content-instagram").click(function() {
-      $("#content-instagram").show();
-      $("#disconnect-instagram").show();
-      $("#connect-header-instagram").hide();
-    })
-    $("#show-content-facebook").click(function() {
-      $("#content-facebook").show();
-      $("#disconnect-facebook").show();
-      $("#connect-header-facebook").hide();
-    })
-    $("#show-content-twitter").click(function() {
-      $("#content-twitter").show();
-      $("#disconnect-twitter").show();
-      $("#connect-header-twitter").hide();
-    })
-    $("#show-content-youtube").click(function() {
-      $("#content-youtube").show();
-      $("#disconnect-youtube").show();
-      $("#connect-header-youtube").hide();
-    })
+  // Functions to show content through dialog popup
+  $("#show-content-instagram").click(function() {
+    $("#content-instagram").show();
+    $("#disconnect-instagram").show();
+    $("#connect-header-instagram").hide();
+  })
+  $("#fb-btn").click(function() {
+    $("#content-facebook").show();
+    $("#disconnect-facebook").show();
+    $("#connect-header-facebook").hide();
+  })
+  $("#show-content-twitter").click(function() {
+    $("#content-twitter").show();
+    $("#disconnect-twitter").show();
+    $("#connect-header-twitter").hide();
+  })
+  $("#show-content-youtube").click(function() {
+    $("#content-youtube").show();
+    $("#disconnect-youtube").show();
+    $("#connect-header-youtube").hide();
+  })
+  $("#show-content-settings").click(function() {
+    $("#content-settings").show();
+  })
 
-    // Hiding Disconnect buttons
+  // Hiding Disconnect buttons
+  $("#disconnect-instagram").hide();
+  $("#disconnect-facebook").hide();
+  $("#disconnect-twitter").hide();
+  $("#disconnect-youtube").hide();
+
+  // Disconnect functions
+  $("#disconnect-instagram").click(function() {
+    $("#content-instagram").hide();
     $("#disconnect-instagram").hide();
+    $("#connect-header-instagram").show();
+  })
+  $("#disconnect-facebook").click(function() {
+    $("#content-facebook").hide();
     $("#disconnect-facebook").hide();
+    $("#connect-header-facebook").show();
+  })
+  $("#disconnect-twitter").click(function() {
+    $("#content-twitter").hide();
     $("#disconnect-twitter").hide();
+    $("#connect-header-twitter").show();
+  })
+  $("#disconnect-youtube").click(function() {
+    $("#content-youtube").hide();
     $("#disconnect-youtube").hide();
+    $("#connect-header-youtube").show();
+  })
 
-    // Disconnect functions
-    $("#disconnect-instagram").click(function() {
-      $("#content-instagram").hide();
-      $("#disconnect-instagram").hide();
-      $("#connect-header-instagram").show();
-    })
-    $("#disconnect-facebook").click(function() {
-      $("#content-facebook").hide();
-      $("#disconnect-facebook").hide();
-      $("#connect-header-facebook").show();
-    })
-    $("#disconnect-twitter").click(function() {
-      $("#content-twitter").hide();
-      $("#disconnect-twitter").hide();
-      $("#connect-header-twitter").show();
-    })
-    $("#disconnect-youtube").click(function() {
-      $("#content-youtube").hide();
-      $("#disconnect-youtube").hide();
-      $("#connect-header-youtube").show();
-    })
+  //cookies
+  // if no cookie
+  // if (!$.cookie('content-youtube')) {
+  //     $( "#content-youtube" ).show();
+  //     $( "#connect-header-youtube" ).show();
+  // }
 
+  $("#clear-cookies").click(function() {
+    $.removeCookie("dash-cookie");
+  })
 </script>

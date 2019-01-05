@@ -206,7 +206,7 @@ class display4():
 
         screenName = "HiddenGeniusPro"
         tweetsRecieved = 1
-        
+
         tweets = api.user_timeline(screen_name=screenName, count=200)
 
         # favorite count = like

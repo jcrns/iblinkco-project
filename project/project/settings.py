@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-
+from .email_info import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'crispy_forms',
-    'dashboard',
+    'dashboard.apps.DashboardConfig',
+    'tools',
     'homepage',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    
 ]
 
 MIDDLEWARE = [
@@ -128,3 +131,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Change Login Directory
 LOGIN_REDIRECT_URL = 'dash.index'
 LOGIN_URL = 'login'
+
+#Email Settings
+
+EMAIL_HOST = EMAIL_HOST
+EMAIL_PORT = EMAIL_PORT
+EMAIL_USE_TLS = EMAIL_USE_TLS
+EMAIL_HOST_USER = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD

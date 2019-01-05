@@ -15,14 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from rest_framework.urlpatterns import format_suffix_patterns
 from django.contrib.auth import views as auth_views
 from users import views as user_views
+from dashboard import views
 
 # Main url page and includes all views files
 urlpatterns = [
+    # Regular app urls
     url(r'^admin/', admin.site.urls),
     url(r'^', include('homepage.urls')),
     url(r'^dashboard/', include('dashboard.urls')),
+    url(r'^dashboard-get/', views.InstagramList.as_view()),
+    url(r'^tools/', include('tools.urls')),
+    # Tool Urls
 
     # Login and Registration system urls
 
@@ -30,4 +36,18 @@ urlpatterns = [
     url(r'^login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
 
+    # Password Reset urls
+    url(r'^password-reset/',
+        auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'),
+        name='password_reset'),
+
+    url(r'^password-reset/done/',
+        auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
+        name='password_reset_done'),
+
+    url(r'^password-reset-confirm/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
+        name='password_reset_confirm'),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

@@ -53,6 +53,9 @@
         <li class="nav-item">
           <a id="contactus-button" class="nav-link font-weight-bold" href="{% url 'index' %}#contactus">Contact Us</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" href="{% url 'tools.index' %}">Tools</a>
+        </li>
       </ul>
       <ul class="navbar-nav ml-auto">
         {% if user.is_authenticated%}
