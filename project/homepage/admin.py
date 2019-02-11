@@ -1,3 +1,4 @@
 from django.contrib import admin
+from homepage.models import Contactus
 
-# Register your models here.
+admin.site.register(Contactus)

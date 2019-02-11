@@ -11,16 +11,26 @@ class InstagramSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Instagram
-        fields = 'instagram_username'
+        fields = '__all__'
+
+    # Validating for simular username to avoid duplicates
+    def validate_title(self, value):
+        qs = BlogPost.objects.filter(instagram_username__iexact=value) # including instance
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("This title has already been used")
+        return value
+
 
 class TwitterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Twitter
-        fields = 'twitter_username'
+        fields = '__all__'
 
 class YoutubeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Youtube
-        fields = ('youtube_username')
+        fields = '__all__'

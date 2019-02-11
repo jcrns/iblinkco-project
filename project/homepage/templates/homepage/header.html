@@ -16,13 +16,32 @@
   <!-- telling jinja to load static files without hard coding it -->
   {% load staticfiles %}
   <link rel="stylesheet" href="{% static 'homepage/css/bootstrap.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'homepage/css/jquery.timepicker.css' %}" type="text/css">
+  <script src="{% static 'homepage/js/jquery.timepicker.js' %}"></script>
+
   <link rel="shortcut icon" href="{% static 'homepage/img/icon.ico' %}" type="image/x-icon">
 
   <!-- Metadata tag to make website more responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+    window.onload = topFunction;
+  </script>
 </head>
 
 <body>
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "name": "iBlinkco",
+      "url": "https://www.iblinkco.com",
+      "logo": "https://www.iblinkco.com/img/logo.png"
+    }
+  </script>
   <style>
     nav img{
     width: 32px;

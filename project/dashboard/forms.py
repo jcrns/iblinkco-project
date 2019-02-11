@@ -1,5 +1,11 @@
-from django import forms
-
-class PostForm(forms.Form):
-    content = forms.CharField(max_length=256)
-    created_at = forms.DateTimeField()
+# from django import forms
+#
+# from dashboard.models import *
+#
+# class InstagramForm(forms.ModelForm):
+#     class Meta:
+#         model = Instagram
+#         fields = [
+#             'instagram_username',
+#             'instagram_password',
+#         ]

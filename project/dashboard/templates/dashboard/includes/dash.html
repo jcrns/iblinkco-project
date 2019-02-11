@@ -1,151 +1,337 @@
+<!-- Jinja file including all homepage content -->
+{% block content %}
 <script>
-  window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '346813469464085',
-        cookie     : true,
-        xfbml      : true,
-        version    : 'v3.2'
-      });
+  // window.fbAsyncInit = function() {
+  //       FB.init({
+  //         appId      : '346813469464085',
+  //         cookie     : true,
+  //         xfbml      : true,
+  //         version    : 'v3.2'
+  //       });
+  //
+  //
+  //       FB.getLoginStatus(function(response) {
+  //           statusChangeCallback(response);
+  //       });
+  //
+  //     };
+  //
+  //     (function(d, s, id){
+  //        var js, fjs = d.getElementsByTagName(s)[0];
+  //        if (d.getElementById(id)) {return;}
+  //        js = d.createElement(s); js.id = id;
+  //        js.src = "https://connect.facebook.net/en_US/sdk.js";
+  //        fjs.parentNode.insertBefore(js, fjs);
+  //      }(document, 'script', 'facebook-jssdk'));
+  //
+  //      function statusChangeCallback(response){
+  //       if(response.status == 'connected'){
+  //         //Showing Content if User is Logged In
+  //         $("#content-facebook").show();
+  //         $("#disconnect-facebook").show();
+  //         $("#connect-header-facebook").hide();
+  //
+  //         //Printing in console that the user is authenticated
+  //         console.log('logged in and authenticated');
+  //         setElements(true);
+  //         testAPI();
+  //
+  //       } else {
+  //         // Displaying in console that user is not authenticated
+  //         console.log('Not Authenticated');
+  //         setElements(false);
+  //       }
+  //      }
+  //
+  //     //  Get Data from facebook API
+  //     function testAPI(){
+  //         FB.api('/me?fields=name,email,birthday,location', function(response){
+  //           if(response && !response.error){
+  //             console.log(response);
+  //             buildProfile(response);
+  //             document.getElementById('profile').innerHTML = buildProfile(response);
+  //
+  //           }
+  //           FB.api('/me/feed', function(response){
+  //             if(response && !response.error){
+  //               buildFeed(response);
+  //             }
+  //           });
+  //         })
+  //       }
+  //
+  //     //  Displaying Data with facebookData function
+  //     function buildProfile(user){
+  //         var profile = `
+  //           <h3>${user.name}</h3>
+  //           <ul class="list-group">
+  //             <li class="list-group-item">User ID: ${user.id}</li>
+  //             <li class="list-group-item">Email: ${user.email}</li>
+  //             <li class="list-group-item">Birthday: ${user.birthday}</li>
+  //             <li class="list-group-item">User ID: ${user.location.name}</li>
+  //           </ul>
+  //         `;
+  //         document.getElementById('profile').innerHTML = profile;
+  //       }
+  //       function buildFeed(feed){
+  //         let output = '<h3>Latest Posts</h3>';
+  //         for(let i in feed.data){
+  //           if(feed.data[i].message){
+  //             output += `
+  //               <div class="well">
+  //                 ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
+  //               </div>
+  //             `;
+  //           }
+  //         }
+  //         document.getElementById('feed').innerHTML = output;
+  //       }
+  //      function setElements(isLoggedIn){
+  //         if(isLoggedIn){
+  //           $("#content-facebook").show();
+  //           $("#disconnect-facebook").show();
+  //           $("#connect-header-facebook").hide();
+  //         } else {
+  //           $("#content-facebook").hide();
+  //           $("#disconnect-facebook").hide();
+  //           $("#connect-header-facebook").show();
+  //         }
+  //       }
+  //
+  //      //  Logout function
+  //     function logout(){
+  //       FB.logout(function(response) {
+  //         // user is now logged out
+  //         setElements(false);
+  //       });
+  //      }
 
+  //Checking State of logged in accounts
+  function checkInstagramAccount(e){
+    var usernameVerify = "{{ user.username }}";
+    var url = '{% url 'check-out-instagram/' %}';
+    console.log("Instagram Username: " + usernameVerify)
+    $.ajax({
+      type: 'POST',
+      url: url,
+      dataType: 'text',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        'instagram_user':usernameVerify,
 
-      FB.getLoginStatus(function(response) {
-          statusChangeCallback(response);
-      });
+      },
+      success: function (content) {
+        //Showing and hidding certain information
+        $("#content-instagram").show();
+        $("#disconnect-instagram").show();
+        $("#connect-header-instagram").hide();
 
-    };
-
-    (function(d, s, id){
-       var js, fjs = d.getElementsByTagName(s)[0];
-       if (d.getElementById(id)) {return;}
-       js = d.createElement(s); js.id = id;
-       js.src = "https://connect.facebook.net/en_US/sdk.js";
-       fjs.parentNode.insertBefore(js, fjs);
-     }(document, 'script', 'facebook-jssdk'));
-
-     function statusChangeCallback(response){
-      if(response.status == 'connected'){
-        //Showing Content if User is Logged In
-        $("#content-facebook").show();
-        $("#disconnect-facebook").show();
-        $("#connect-header-facebook").hide();
-
-        //Printing in console that the user is authenticated
-        console.log('logged in and authenticated');
-        setElements(true);
-        testAPI();
-
-      } else {
-        // Displaying in console that user is not authenticated
-        console.log('Not Authenticated');
-        setElements(false);
+        $('#data-Instagram').html(content);
       }
-     }
+    });
+  }
+  checkInstagramAccount();
 
-    //  Get Data from facebook API
-    function testAPI(){
-        FB.api('/me?fields=name,email,birthday,location', function(response){
-          if(response && !response.error){
-            console.log(response);
-            buildProfile(response);
-            document.getElementById('profile').innerHTML = buildProfile(response);
+  function checkTwitterAccount(e){
+    var usernameVerify = "{{ user.username }}";
+    var url = '{% url 'check-out-twitter/' %}';
+    console.log("Twitter Username: " + usernameVerify)
+    $.ajax({
+      type: 'POST',
+      url: url,
+      dataType: 'text',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        'twitter_user':usernameVerify,
 
-          }
-          FB.api('/me/feed', function(response){
-            if(response && !response.error){
-              buildFeed(response);
-            }
-          });
-        })
+      },
+      success: function (content) {
+        //Showing and hidding certain information
+        $("#content-twitter").show();
+        $("#disconnect-twitter").show();
+        $("#connect-header-twitter").hide();
+
+        $('#content-twitter').html(content);
       }
-
-    //  Displaying Data with facebookData function
-    function buildProfile(user){
-        var profile = `
-          <h3>${user.name}</h3>
-          <ul class="list-group">
-            <li class="list-group-item">User ID: ${user.id}</li>
-            <li class="list-group-item">Email: ${user.email}</li>
-            <li class="list-group-item">Birthday: ${user.birthday}</li>
-            <li class="list-group-item">User ID: ${user.location.name}</li>
-          </ul>
-        `;
-        document.getElementById('profile').innerHTML = profile;
-      }
-      function buildFeed(feed){
-        let output = '<h3>Latest Posts</h3>';
-        for(let i in feed.data){
-          if(feed.data[i].message){
-            output += `
-              <div class="well">
-                ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
-              </div>
-            `;
-          }
-        }
-        document.getElementById('feed').innerHTML = output;
-      }
-     function setElements(isLoggedIn){
-        if(isLoggedIn){
-          $("#content-facebook").show();
-          $("#disconnect-facebook").show();
-          $("#connect-header-facebook").hide();
-        } else {
-          $("#content-facebook").hide();
-          $("#disconnect-facebook").hide();
-          $("#connect-header-facebook").show();
-        }
-      }
-
-     //  Logout function
-    function logout(){
-      FB.logout(function(response) {
-        // user is now logged out
-        setElements(false);
-      });
-     }
-</script>
-
+    });
+  }
+  checkTwitterAccount();
+  </script>
+<style>
+  #analytics{
+    display:none;
+  }
+  #stream{
+    display:none;
+  }
+</style>
 <div class="card" style="background-color:#dbdbdb">
   <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
     <span id="settings" class="float-right px-4"><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
     <span id="show-analytics" class="float-right px-2"><a href="#">Analytics</a></span>
+    <span id="show-stream" class="float-right px-2"><a href="#">Stream</a></span>
     <span id="show-dashboard-row" class="float-right px-2"><a href="#">Dashboard Row</a></span>
   </p>
 </div>
 <style media="screen">
   .dashboard-row-item{
-    min-height: 40vh;
-  }
-</style>
+      min-height: 40vh;
+    }
+  </style>
 <div id="dashboard-row" class="container-fluid" style="min-height:100%;">
   <div id="sm-container" class="card-group text-center" style="height:50vh;">
 
-    <!-- Instagram -->
+    <!-- Instagram Div -->
     <div id="dash-instagram" class="card mb-3 mt-1 dashboard-row-item" style="background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);">
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-instagram">
         <h2 id="connect-header-instagram">Connect Instagram Account</h2>
       </a>
-      <p id="content-instagram">{{ content.instagram.display.getUserFollowers }}</p>
+      <div id="content-instagram">
+        <div id="data-Instagram">
+          <!-- {{ instagram.display.getUserFollowers }}
+          {% for instagram_user in content_instagram %}
+            {{ instagram_user.instagram_username }}
+          {% endfor %}
+          {{ instagram_data }} -->
+        </div>
+      </div>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
       </a>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-instagram">Shrink</p>
       </a>
-      <a href="#">
+      <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-instagram-menu">
         <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-instagram">Disconnect</p>
       </a>
     </div>
 
-    <!-- Facebook -->
+    <!-- Instagram Menu -->
+    <div class="modal fade" id="connect-instagram" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Connect Instagram</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form method="POST" id="instagram-form">
+              {% csrf_token %}
+              <!-- Connect Accounts -->
+              <button id="hidden-cancel-instagram" class="" data-dismiss="modal" style="display: none"></button>
+              <p><input type="text" id="instagram-user" name="instagram-user" placeholder="Instagram Username" value="{{ user.username }}" style="display:none"></p>
+              <p><input type="text" id="instagram-username" name="instagram-username" placeholder="Instagram Username"></p>
+              <p><input type="password" id="instagram-password" name="instagram-password" placeholder="Instagram Password"></p>
+              <!-- Button to connect account -->
+              <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit">
+              <script>
+                //Using ajax onsubmit and running function
+                $(document).ready(function(){
+                  $('#instagram-form').submit(function(event){
+                    event.preventDefault();
+                    var instagramPostUser = "{{ user.username }}"
+                    var instagramDataArr = [$('#instagram-user').val(), $('#instagram-username').val(), $('#instagram-password').val()]
+                    var url = '{% url 'instagram-post/' %}'
+                    //using ajax to call function
+                    $.ajax({
+                      type: 'POST',
+                      url: url,
+                      dataType: 'text',
+                      data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        //Returning Information as objects
+                        'instagramPostUser':$('#instagram-user').val(),
+                        'instagramUsername':$('#instagram-username').val(),
+                        'instagramPassword':$('#instagram-password').val()
+                      },
+                      success: function (content) {
+                        //dismissing modal
+                        $('#hidden-cancel-instagram').click();
+                        $('#data-Instagram').html(content);
+
+                        //Displaying information
+                        $("#content-instagram").show();
+                        $("#disconnect-instagram").show();
+                        $("#connect-header-instagram").hide();
+
+                      }
+                    });
+                  });
+                });
+              </script>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Disconnect Menu Instagram -->
+    <div class="modal fade" id="disconnect-instagram-menu" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="float-right">&times;</span>
+            </button>
+
+          <div class="modal-body" id="disconnect-instagram-form">
+            <h6>Are You Sure You Want to Disconnect this Account from iBlinkco</h6>
+          </div>
+
+          <form method="POST">
+            <button id="hidden-cancel-instagram-disconnect" class="" data-dismiss="modal" style="display: none"></button>
+            <input type="button" value="Cancel" class="text-success" data-dismiss="modal">
+            <input type="button" id="disconnect-button-instagram" name="disconnect-button-instagram" value="Disconnect" class="text-danger">
+            <script type="text/javascript">
+              $(document).ready(function(){
+                $('#disconnect-button-instagram').click(function(event){
+                  event.preventDefault();
+                  var url = '{% url 'disconnect-instagram/' %}'
+                  var usernameVerify = "{{ user.username }}";
+                  var disconnectAccount = true;
+                  alert(disconnectAccount);
+
+                  //using ajax to call function
+                  $.ajax({
+                    type: 'POST',
+                    url: url,
+                    dataType: 'text',
+                    data: {
+                      // Token needed to return data in Python
+                      csrfmiddlewaretoken: '{{ csrf_token }}',
+                      //Returning Information as objects
+                      'instagramPostUser':usernameVerify,
+                    },
+                    success: function (content) {
+                      //dismissing modal
+                      $('#hidden-cancel-instagram-disconnect').click();
+                      $('#data-Instagram').html(content);
+
+                      //Displaying information
+                      $("#content-instagram").hide();
+                      $("#disconnect-instagram").hide();
+                      $("#connect-header-instagram").show();
+                    }
+                  });
+                });
+              });
+            </script>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facebook Div-->
     <div id="dash-facebook" class="card mb-3 mt-1 dashboard-row-item" style="background: #3b579d;">
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-facebook-1">
         <h2 id="connect-header-facebook">Connect Facebook Account</h2>
       </a>
-      <p id="content-facebook">
+      <div id="content-facebook">
         <div id="profile"></div>
         <div id="feed"></div>
-      </p>
+      </div>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-facebook">View Full</p>
       </a>
@@ -157,12 +343,39 @@
       </a>
     </div>
 
-    <!-- Twiiter -->
+    <!-- Facebook Menu -->
+    <div class="modal fade" id="connect-facebook-1" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Connect Facebook</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form action="" method="post">
+              <!-- Facebook button connect account -->
+
+              <!-- <button onclick="fb_content_show()" data-dismiss="modal" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;"> -->
+              <fb:login-button id="fb-btn" data-dismiss="modal" scope="public_profile,email,user_birthday,user_location,user_posts" onlogin="checkLoginState();">
+              </fb:login-button>
+              <!-- </button> -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Twiiter Div -->
     <div id="dash-twitter" class="card mb-3 mt-1 dashboard-row-item" style="background: #28aae1;">
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-twitter-1">
         <h2 id="connect-header-twitter">Connect Twitter Account</h2>
       </a>
-      <p id="content-twitter">{{ content.twitter.display1.test }}</p>
+      <div id="content-twitter">
+        <!-- {{ twitter.display1.test }} -->
+      </div>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-twitter">View Full</p>
       </a>
@@ -175,12 +388,126 @@
     </div>
   </div>
 
-  <!-- Youtube -->
+  <!-- Twitter Menu -->
+  <div class="modal fade" id="connect-twitter-1" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Connect Twitter</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form method="POST" id="twitter-form">
+            {% csrf_token %}
+            <!-- Connect Accounts -->
+            <button id="hidden-cancel-twitter" class="" data-dismiss="modal" style="display: none"></button>
+            <p><input type="text" id="twitter-user" name="twitter-user" placeholder="Instagram Username" value="{{ user.username }}" style="display:none"></p>
+            <p><input type="text" id="twitter-username"name="twitter-username" placeholder="Twitter Username"></p>
+            <p><input type="password" id="twitter-password" name="twitter-password" placeholder="Twitter Password"></p>
+            <!-- Button to connect account -->
+            <input type="submit" name="twitter submit" class="btn btn-success btn-primary text-right" id="show-content-twitter" value="Submit">
+            <script>
+              //Using ajax onsubmit and running function
+              $(document).ready(function(){
+                $('#twitter-form').submit(function(event){
+                  event.preventDefault();
+                  var twitterPostUser = "{{ user.username }}"
+                  var url = '{% url 'submit-twitter/' %}'
+                  //using ajax to call function
+                  $.ajax({
+                    type: 'POST',
+                    url: url,
+                    dataType: 'text',
+                    data: {
+                      csrfmiddlewaretoken: '{{ csrf_token }}',
+                      //Returning Information as objects
+                      'twitterPostUser':$('#twitter-user').val(),
+                      'twitterUsername':$('#twitter-username').val(),
+                      'twitterPassword':$('#twitter-password').val()
+                    },
+                    success: function (content) {
+                      //dismissing modal
+                      $('#hidden-cancel-twitter').click();
+                      $('#content-twitter').html(content);
+
+                      //Displaying information
+                      $("#content-twitter").show();
+                      $("#disconnect-twitter").show();
+                      $("#connect-header-twitter").hide();
+
+                    }
+                  });
+                });
+              });
+            </script>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Disconnect Menu Twitter -->
+  <div class="modal fade" id="disconnect-twitter-menu" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="float-right">&times;</span>
+          </button>
+
+        <div class="modal-body" id="disconnect-twitter-form">
+          <h6>Are You Sure You Want to Disconnect this Account from iBlinkco</h6>
+        </div>
+
+        <form method="POST">
+          <button id="hidden-cancel-twitter-disconnect" class="" data-dismiss="modal" style="display: none"></button>
+          <input type="button" value="Cancel" class="text-success" data-dismiss="modal">
+          <input type="button" id="disconnect-button-twitter" name="disconnect-button-twitter" value="Disconnect" class="text-danger">
+          <script type="text/javascript">
+            $(document).ready(function(){
+              $('#disconnect-button-twitter').click(function(event){
+                event.preventDefault();
+                var url = '{% url 'disconnect-twitter/' %}'
+                var usernameVerify = "{{ user.username }}";
+
+                //using ajax to call function
+                $.ajax({
+                  type: 'POST',
+                  url: url,
+                  dataType: 'text',
+                  data: {
+                    // Token needed to return data in Python
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    //Returning Information as objects
+                    'twitterPostUser':usernameVerify,
+                  },
+                  success: function (content) {
+                    //dismissing modal
+                    $('#hidden-cancel-twitter-disconnect').click();
+                    $('#content-twitter').html(content);
+
+                    //Displaying information
+                    $("#content-twitter").hide();
+                    $("#disconnect-twitter").hide();
+                    $("#connect-header-twitter").show();
+                  }
+                });
+              });
+            });
+          </script>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Youtube Div -->
   <div id="dash-youtube" class="card my-2 dashboard-row-item" style="background:#ff0000; height: 10px; min-width:100%;">
     <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-youtube">
       <h2 id="connect-header-youtube">Connect Youtube Account</h2>
     </a>
-    <p class="text-center" id="content-youtube">{{ content.twitter.display4.test }}</p>
+    <p class="text-center" id="content-youtube">{{ twitter.display4.test }}</p>
     <a href="#">
       <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-youtube">View Full</p>
     </a>
@@ -190,89 +517,6 @@
     <a href="#">
       <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-youtube">Disconnect</p>
     </a>
-  </div>
-</div>
-
-<!-- Analytics -->
-<div id="analytics" class="container-fluid">
-  <p class="display-3">Total Followers</p>
-  <p class="display-3">Total Likes</p>
-  <p class="display-3">Total Followers</p>
-</div>
-
-<!-- Instagram Menu -->
-<div class="modal fade" id="connect-instagram" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Connect Instagram</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <form action="" method="POST" id="instagram-form">
-          <!-- Connect Accounts -->
-          <p><input type="text" name="instagram-username" placeholder="Instagram Username" ></p>
-          <p><input type="password" name="instagram-password" placeholder="Instagram Password"></p>
-          <!-- Button to connect account -->
-          <input type="button" name="submit-instagram" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-instagram" value="Submit">
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Facebook Menu -->
-<div class="modal fade" id="connect-facebook-1" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Connect Facebook</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <form action="" method="post">
-          <!-- Facebook button connect account -->
-
-          <!-- <button onclick="fb_content_show()" data-dismiss="modal" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;"> -->
-          <fb:login-button id="fb-btn" data-dismiss="modal" scope="public_profile,email,user_birthday,user_location,user_posts" onlogin="checkLoginState();">
-          </fb:login-button>
-          <!-- </button> -->
-        </form>
-
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- Twitter Menu -->
-<div class="modal fade" id="connect-twitter-1" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Connect Twitter</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <form action="index.html" method="post">
-          <!-- Connect Accounts -->
-          <p><input type="text" name="twitter-username" placeholder="Twitter Username"></p>
-          <p><input type="password" name="twitter-password" placeholder="Twitter Password"></p>
-          <!-- Button to connect account -->
-          <input type="button" name="submit-twitter" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-twitter" value="Submit">
-        </form>
-      </div>
-
-    </div>
   </div>
 </div>
 
@@ -322,7 +566,7 @@
 </div>
 
 <!-- Using Jquery to show different things on dashboard page -->
-<script>
+<script type="text/javascript">
   // Hidding buttons
   $("#hidden-button-instagram").hide();
   $("#hidden-button-facebook").hide();
@@ -334,33 +578,43 @@
 
   // hiding analytics by default
   $("#analytics").hide();
+  $("#stream").hide();
+
+  //test
+  // $("#connect-header-instagram").hide();
+  // $("#content-instagram").show();
+  // $("#connect-header-instagram").hide();
 
 
   // hiding the dashboard row toggle by default
   $("#show-dashboard-row").hide();
 
   $("#show-analytics").click(function() {
-
     $("#dashboard-row").hide();
-
     $("#analytics").show();
-
     $("#show-dashboard-row").show();
-
     $("#show-analytics").hide();
+    $("#show-stream").show();
+    $("#stream").hide();
 
   })
 
   $("#show-dashboard-row").click(function() {
-
     $("#dashboard-row").show();
-
     $("#analytics").hide();
-
     $("#show-dashboard-row").hide();
-
     $("#show-analytics").show();
+    $("#show-stream").show();
+    $("#stream").hide();
+  })
 
+  $("#show-stream").click(function() {
+    $("#dashboard-row").hide();
+    $("#analytics").hide();
+    $("#show-dashboard-row").show();
+    $("#show-analytics").show();
+    $("#show-stream").hide();
+    $("#stream").show();
   })
 
   //Full Screen functions and Animations
@@ -488,26 +742,30 @@
   $("#content-settings").hide();
 
   // Functions to show content through dialog popup
-  $("#show-content-instagram").click(function() {
+  $('#connect-instagram').submit(function() {
     $("#content-instagram").show();
     $("#disconnect-instagram").show();
     $("#connect-header-instagram").hide();
-  })
+  });
+
   $("#fb-btn").click(function() {
     $("#content-facebook").show();
     $("#disconnect-facebook").show();
     $("#connect-header-facebook").hide();
   })
+
   $("#show-content-twitter").click(function() {
     $("#content-twitter").show();
     $("#disconnect-twitter").show();
     $("#connect-header-twitter").hide();
   })
+
   $("#show-content-youtube").click(function() {
     $("#content-youtube").show();
     $("#disconnect-youtube").show();
     $("#connect-header-youtube").hide();
   })
+
   $("#show-content-settings").click(function() {
     $("#content-settings").show();
   })
@@ -518,11 +776,28 @@
   $("#disconnect-twitter").hide();
   $("#disconnect-youtube").hide();
 
-  // Disconnect functions
-  $("#disconnect-instagram").click(function() {
-    $("#content-instagram").hide();
-    $("#disconnect-instagram").hide();
-    $("#connect-header-instagram").show();
+  // Disconnect button hide/show
+  $("#disconnect-button-instagram").click(function() {
+    var usernameVerify = "{{ user.username }}";
+    var url = '{% url 'disconnect-instagram/' %}';
+    $.ajax({
+      type: 'POST',
+      url: url,
+      dataType: 'text',
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        'instagram_user':usernameVerify,
+
+      },
+      success: function (content) {
+        //Showing and hidding certain information
+        $("#content-instagram").show();
+        $("#disconnect-instagram").show();
+        $("#connect-header-instagram").hide();
+
+        $('#data-Instagram').html(content);
+      }
+    });
   })
   $("#disconnect-facebook").click(function() {
     $("#content-facebook").hide();
@@ -550,4 +825,58 @@
   $("#clear-cookies").click(function() {
     $.removeCookie("dash-cookie");
   })
+
+  //Putting logged in user in a Variable
+  var usernameVerify = "{{ user.username }}";
+
+  // //Getting Info to verify instagram account is connected in database
+  // var getInstagramUser = "{% for instagram_user_verify in content_instagram %}{{ instagram_user_verify.user }}{% endfor %}";
+  // var instagramUsers = "{% for instagram_user_verify in content_instagram %}{{ instagram_user_verify.instagram_username }}{% endfor %}"
+  // console.log("Instagram User Model: " + getInstagramUser)
+  // console.log("Instagram Database usernames: " + instagramUsers)
+  //
+  // getInstagramUser == usernameVerify
+  // if ((getInstagramUser == usernameVerify)) {
+  //   $("#content-instagram").show();
+  //   $("#disconnect-instagram").show();
+  //   $("#connect-header-instagram").hide();
+  //   console.log("Instagram connected");
+  // } else {
+  //   console.log("Instagram Not connected")
+  // }
+  //
+  // if (getInstagramUser.includes(usernameVerify)) {
+  //   console.log("Hella True");
+  //   $("#content-instagram").show();
+  //   $("#connect-header-instagram").hide();
+  // } else {
+  //   console.log("Not True")
+  // }
+
+
+  //Getting Info to verify twitter account is connected in database
+  var getTwitterUser = "{% for twitter_user_verify in content_twitter %}{{ twitter_user_verify.user }}{% endfor %}";
+  var twitterUsers = "{% for twitter_user_verify in content_twitter %}{{ twitter_user_verify.twitter_username }}{% endfor %}"
+  console.log("Twitter User Model: " + getTwitterUser)
+  console.log("Twitter Database usernames: " + twitterUsers)
+
+  getTwitterUser == usernameVerify
+  if ((getTwitterUser == usernameVerify)) {
+    $("#content-twitter").show();
+    $("#disconnect-twitter").show();
+    $("#connect-header-twitter").hide();
+    console.log("Twitter connected");
+  } else {
+    console.log("Twitter Not connected")
+  }
+
+  if (getTwitterUser.includes(usernameVerify)) {
+    console.log("Hella True");
+    $("#content-twitter").show();
+    $("#connect-header-twitter").hide();
+  } else {
+    console.log("not true")
+  }
 </script>
+
+{% endblock %}

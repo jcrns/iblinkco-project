@@ -3,49 +3,204 @@ import sys
 # Importing login_required function from django
 from django.contrib.auth.decorators import login_required
 
-#Rest API requesting data from Database
+# Importing Http Response
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, JsonResponse
+
+# Rest API requesting data from Database
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from dashboard.serializer import *
 from dashboard.models import *
+
+# Importing forms for custom forms
+from dashboard.forms import *
+
 # importing django render
 from django.shortcuts import render
 
+# Importing Scripts to verify users
+from dashboard.instagram_script import *
 # API in View
 class InstagramList(APIView):
 
     def get(self, request):
         instagram = Instagram.objects.all()
-        serializers = InstagramSerializer(instagram)
+        serializers = InstagramSerializer(instagram, many=True)
         return Response(serializers.data)
 
     def post(self):
         pass
 
-# Importing twitter file
-sys.path.append('/users/hgpmac87/desktop/iblinkco-project/project/dashboard/api/twitter-api')
-import tweepy_streamer
+#Post Method
 
-# Importing facebook file
-sys.path.append('/users/hgpmac87/desktop/iblinkco-project/project/dashboard/api/facebook-api')
-import facebook_getdata
-
-# # Importing instagram file
-sys.path.append('/users/hgpmac87/desktop/iblinkco-project/project/dashboard/api/instagram-api')
-import instagram_getdata
-
-# # Importing youtube file
-# sys.path.append('/users/hgpmac87/desktop/iblinkco-project/project/dashboard/api/youtube-api')
-# import youtube_getdata
-
-
-# Creating Variables set to the api files
-twitter = tweepy_streamer
-instagram = instagram_getdata
+content_instagram = Instagram.objects.all()
+content_twitter = Twitter.objects.all()
+A = content_instagram
+B = content_twitter
+USERNAME = None
 
 # Requiring a login in order to accessing page
 @login_required
 def index(request):
-    return render(request, 'dashboard/home.html', {'content':{'twitter':twitter, 'instagram':instagram}})
+    # instagram_form = InstagramForm(request.POST or None)
+    # if instagram_form.is_valid():
+    #     instagram_form.save()
+    #ready to return REAL user
+    # for i in content_instagram
+    #     if content_instagram[i] == user.
+    # print(content_instagram[0].instagram_username)
+    # print(INSATGRAM_VERIFY)
+    # print(A)
+    content = {'content_instagram':content_instagram,'content_twitter':content_twitter,}
+    return render(request, 'dashboard/home.html', content)
+
+## INSTAGRAM ##
+
+@login_required
+def InstagramPost(request):
+    print("Starting Post")
+    if request.method == 'POST':
+        print("this is finally working")
+
+        print(request.POST.get('instagramPostUser'))
+        print(request.POST.get('instagramUsername'))
+        print(request.POST.get('instagramPassword'))
+
+        if request.POST.get('instagramPostUser') and request.POST.get('instagramUsername') and request.POST.get('instagramPassword'):
+
+            instagram_post = Instagram()
+            instagram_post.user = request.POST.get('instagramPostUser')
+            instagram_post.instagram_username = request.POST.get('instagramUsername')
+            instagram_post.instagram_password = request.POST.get('instagramPassword')
+
+            # Adding Instagram Script to verify user is on instagram
+            userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password)
+            userIG.login()
+
+            #Getting objects and comparing them
+            instagramObjects = Instagram.objects.all()
+            print(instagramObjects)
+
+            # Saving Form
+            instagram_post.save()
+        return HttpResponse('')
+
+# Function to check if signed in user has a instagram account
+@login_required
+def InstagramCheck(request):
+    print("Checking if user has instagram accounts")
+    if request.method == 'POST':
+
+        # Getting logged in user
+        instagram_user_verify = request.POST['instagram_user']
+        print(instagram_user_verify)
+
+        # Using a for loop to get information related to that user
+        for val in A:
+            verify_instagram_user = val.user
+            verify_instagram_username = val.instagram_username
+            verify_instagram_password = val.instagram_password
+
+            if instagram_user_verify in verify_instagram_user:
+                print("true")
+                print(verify_instagram_user)
+                value = [verify_instagram_user, verify_instagram_username]
+                break
+                print(value)
+        return HttpResponse(value)
+
+# Function to disconnect instagram
+@login_required
+def InstagramDisconnect(request):
+    print("disconnecting user")
+    instagram_user_verify = request.POST.get('instagramPostUser')
+    for val in A:
+        verify_instagram_user = val.user
+        verify_instagram_user_final = str(verify_instagram_user)
+        verify_instagram_user_final2 = str(instagram_user_verify)
+        print(verify_instagram_user_final)
+        print(verify_instagram_user_final2)
+
+        print(verify_instagram_user_final2 == verify_instagram_user_final)
+        if instagram_user_verify == verify_instagram_user:
+            val.delete()
+            print("Deleted" + instagram_user_verify + "user")
+            break
+
+    value3 = 'disconnect'
+    return HttpResponse(value3)
+
+## TWITTER ##
+
+# twitter post function
+@login_required
+def TwitterPost(request):
+    print("Starting Post Twitter")
+    if request.method == 'POST':
+        print("this is finally working")
+
+        print(request.POST.get('twitterPostUser'))
+        print(request.POST.get('twitterUsername'))
+        print(request.POST.get('twitterPassword'))
+
+        if request.POST.get('twitterPostUser') and request.POST.get('twitterUsername') and request.POST.get('twitterPassword'):
+
+            twitter_post = Twitter()
+            twitter_post.user = request.POST.get('twitterPostUser')
+            twitter_post.twitter_username = request.POST.get('twitterUsername')
+            twitter_post.twitter_password = request.POST.get('twitterPassword')
+
+            #Getting objects and comparing them
+            twitterObjects = Twitter.objects.all()
+            print(twitterObjects)
+
+            # Saving Form
+            twitter_post.save()
+        return HttpResponse('')
+
+# Function to check if signed in user has a twitter account
+@login_required
+def TwitterCheck(request):
+    print("Checking if user has twitter accounts")
+    if request.method == 'POST':
+
+        # Getting logged in user
+        twitter_user_verify = request.POST['twitter_user']
+        print(twitter_user_verify)
+
+        # Using a for loop to get information related to that user
+        for val in B:
+            verify_twitter_user = val.user
+            verify_twitter_username = val.twitter_username
+            verify_twitter_password = val.twitter_password
+
+            if twitter_user_verify in verify_twitter_user:
+                print("true")
+                print(verify_twitter_user)
+                value = [verify_twitter_user, verify_twitter_username]
+                break
+        print(value)
+        return HttpResponse(value)
+
+# Function to disconnect Twitter from database
+@login_required
+def TwitterDisconnect(request):
+    print("disconnecting user")
+    twitter_user_verify = request.POST.get('twitterPostUser')
+    for val in B:
+        verify_twitter_user = val.user
+        verify_twitter_user_final = str(verify_twitter_user)
+        verify_twitter_user_final2 = str(twitter_user_verify)
+        print(verify_twitter_user_final)
+        print(verify_twitter_user_final2)
+
+        print(verify_twitter_user_final2 == verify_twitter_user_final)
+        if twitter_user_verify == verify_twitter_user:
+            val.delete()
+            print("Deleted" + instagram_user_verify + "user")
+            break
+
+    value3 = 'disconnect'
+    return HttpResponse(value3)

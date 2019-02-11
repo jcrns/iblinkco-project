@@ -19,6 +19,7 @@
   <div class="card text-center" style="background-color:rgb(231, 59, 59)">
     <h3>Automatic Likes and Follows</h3>
     <p>Like Post related to your niche to grow your Audience.</p>
+    <br>
     {% if user.is_authenticated%}
     <a href="{% url 'tools.likefollow' %}" style="color:#fff">Start Now</a>
     {% else %}

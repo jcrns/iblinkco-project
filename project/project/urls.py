@@ -22,16 +22,18 @@ from dashboard import views
 
 # Main url page and includes all views files
 urlpatterns = [
+
     # Regular app urls
     url(r'^admin/', admin.site.urls),
     url(r'^', include('homepage.urls')),
     url(r'^dashboard/', include('dashboard.urls')),
     url(r'^dashboard-get/', views.InstagramList.as_view()),
     url(r'^tools/', include('tools.urls')),
-    # Tool Urls
+
+    # Rest API URL
+    url(r'^api/posting/', include('dashboard.rest-api.urls')),
 
     # Login and Registration system urls
-
     url(r'^register/', user_views.register, name='register'),
     url(r'^login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
