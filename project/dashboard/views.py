@@ -37,28 +37,18 @@ class InstagramList(APIView):
 
 content_instagram = Instagram.objects.all()
 content_twitter = Twitter.objects.all()
-A = content_instagram
+INSTAGRAM = content_instagram
 B = content_twitter
 USERNAME = None
 
 # Requiring a login in order to accessing page
 @login_required
 def index(request):
-    # instagram_form = InstagramForm(request.POST or None)
-    # if instagram_form.is_valid():
-    #     instagram_form.save()
-    #ready to return REAL user
-    # for i in content_instagram
-    #     if content_instagram[i] == user.
-    # print(content_instagram[0].instagram_username)
-    # print(INSATGRAM_VERIFY)
-    # print(A)
     content = {'content_instagram':content_instagram,'content_twitter':content_twitter,}
     return render(request, 'dashboard/home.html', content)
 
 ## INSTAGRAM ##
 
-@login_required
 def InstagramPost(request):
     print("Starting Post")
     if request.method == 'POST':
@@ -75,6 +65,9 @@ def InstagramPost(request):
             instagram_post.instagram_username = request.POST.get('instagramUsername')
             instagram_post.instagram_password = request.POST.get('instagramPassword')
 
+            # Success Variable
+            value = True
+
             # Adding Instagram Script to verify user is on instagram
             userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password)
             userIG.login()
@@ -85,20 +78,20 @@ def InstagramPost(request):
 
             # Saving Form
             instagram_post.save()
-        return HttpResponse('')
+
+        return HttpResponse(value)
 
 # Function to check if signed in user has a instagram account
-@login_required
 def InstagramCheck(request):
     print("Checking if user has instagram accounts")
     if request.method == 'POST':
-
+        value = []
         # Getting logged in user
         instagram_user_verify = request.POST['instagram_user']
         print(instagram_user_verify)
 
         # Using a for loop to get information related to that user
-        for val in A:
+        for val in INSTAGRAM:
             verify_instagram_user = val.user
             verify_instagram_username = val.instagram_username
             verify_instagram_password = val.instagram_password
@@ -108,15 +101,14 @@ def InstagramCheck(request):
                 print(verify_instagram_user)
                 value = [verify_instagram_user, verify_instagram_username]
                 break
-                print(value)
+        print(value)
         return HttpResponse(value)
 
 # Function to disconnect instagram
-@login_required
 def InstagramDisconnect(request):
     print("disconnecting user")
     instagram_user_verify = request.POST.get('instagramPostUser')
-    for val in A:
+    for val in INSTAGRAM:
         verify_instagram_user = val.user
         verify_instagram_user_final = str(verify_instagram_user)
         verify_instagram_user_final2 = str(instagram_user_verify)
@@ -135,7 +127,6 @@ def InstagramDisconnect(request):
 ## TWITTER ##
 
 # twitter post function
-@login_required
 def TwitterPost(request):
     print("Starting Post Twitter")
     if request.method == 'POST':
@@ -161,10 +152,10 @@ def TwitterPost(request):
         return HttpResponse('')
 
 # Function to check if signed in user has a twitter account
-@login_required
 def TwitterCheck(request):
     print("Checking if user has twitter accounts")
     if request.method == 'POST':
+        value = []
 
         # Getting logged in user
         twitter_user_verify = request.POST['twitter_user']
@@ -185,7 +176,6 @@ def TwitterCheck(request):
         return HttpResponse(value)
 
 # Function to disconnect Twitter from database
-@login_required
 def TwitterDisconnect(request):
     print("disconnecting user")
     twitter_user_verify = request.POST.get('twitterPostUser')

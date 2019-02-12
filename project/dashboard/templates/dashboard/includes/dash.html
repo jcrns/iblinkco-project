@@ -121,12 +121,19 @@
 
       },
       success: function (content) {
-        //Showing and hidding certain information
-        $("#content-instagram").show();
-        $("#disconnect-instagram").show();
-        $("#connect-header-instagram").hide();
+        if(content == ''){
+          $("#content-instagram").hide();
+          $("#disconnect-instagram").hide();
+          $("#connect-header-instagram").show();
+          $('#data-Instagram').html(content);
+        } else {
+          //Showing and hidding certain information
+          $("#content-instagram").show();
+          $("#disconnect-instagram").show();
+          $("#connect-header-instagram").hide();
 
-        $('#data-Instagram').html(content);
+          $('#data-Instagram').html(content);
+        }
       }
     });
   }
@@ -247,16 +254,21 @@
                         'instagramUsername':$('#instagram-username').val(),
                         'instagramPassword':$('#instagram-password').val()
                       },
-                      success: function (content) {
-                        //dismissing modal
-                        $('#hidden-cancel-instagram').click();
-                        $('#data-Instagram').html(content);
+                      success: function (value) {
+                        console.log(value);
+                        if(content == 'True'){
+                          //dismissing modal
+                          $('#hidden-cancel-instagram').click();
+                          $('#data-Instagram').html(content);
 
-                        //Displaying information
-                        $("#content-instagram").show();
-                        $("#disconnect-instagram").show();
-                        $("#connect-header-instagram").hide();
+                          //Displaying information
+                          $("#content-instagram").show();
+                          $("#disconnect-instagram").show();
+                          $("#connect-header-instagram").hide();
 
+                        } else {
+
+                        }
                       }
                     });
                   });
@@ -290,9 +302,6 @@
                   event.preventDefault();
                   var url = '{% url 'disconnect-instagram/' %}'
                   var usernameVerify = "{{ user.username }}";
-                  var disconnectAccount = true;
-                  alert(disconnectAccount);
-
                   //using ajax to call function
                   $.ajax({
                     type: 'POST',
@@ -304,7 +313,7 @@
                       //Returning Information as objects
                       'instagramPostUser':usernameVerify,
                     },
-                    success: function (content) {
+                    success: function (value) {
                       //dismissing modal
                       $('#hidden-cancel-instagram-disconnect').click();
                       $('#data-Instagram').html(content);
