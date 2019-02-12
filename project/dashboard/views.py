@@ -35,16 +35,12 @@ class InstagramList(APIView):
 
 #Post Method
 
-content_instagram = Instagram.objects.all()
-content_twitter = Twitter.objects.all()
-INSTAGRAM = content_instagram
-B = content_twitter
 USERNAME = None
 
 # Requiring a login in order to accessing page
 @login_required
 def index(request):
-    content = {'content_instagram':content_instagram,'content_twitter':content_twitter,}
+    content = {}
     return render(request, 'dashboard/home.html', content)
 
 ## INSTAGRAM ##
@@ -67,19 +63,24 @@ def InstagramPost(request):
 
             # Success Variable
             value = True
+            print("worrrks")
+
 
             # Adding Instagram Script to verify user is on instagram
             userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password)
-            userIG.login()
+            messageView = userIG.login()
+
 
             #Getting objects and comparing them
             instagramObjects = Instagram.objects.all()
             print(instagramObjects)
 
-            # Saving Form
-            instagram_post.save()
+            if messageView == 'success':
+                # Saving Form
+                instagram_post.save()
 
-        return HttpResponse(value)
+            print(messageView)
+        return HttpResponse(messageView)
 
 # Function to check if signed in user has a instagram account
 def InstagramCheck(request):
@@ -90,8 +91,12 @@ def InstagramCheck(request):
         instagram_user_verify = request.POST['instagram_user']
         print(instagram_user_verify)
 
+        content_instagram = Instagram.objects.all()
+        INSTAGRAM = content_instagram
+        print(INSTAGRAM)
         # Using a for loop to get information related to that user
         for val in INSTAGRAM:
+            print(val)
             verify_instagram_user = val.user
             verify_instagram_username = val.instagram_username
             verify_instagram_password = val.instagram_password
@@ -108,6 +113,8 @@ def InstagramCheck(request):
 def InstagramDisconnect(request):
     print("disconnecting user")
     instagram_user_verify = request.POST.get('instagramPostUser')
+    content_instagram = Instagram.objects.all()
+    INSTAGRAM = content_instagram
     for val in INSTAGRAM:
         verify_instagram_user = val.user
         verify_instagram_user_final = str(verify_instagram_user)
@@ -161,8 +168,11 @@ def TwitterCheck(request):
         twitter_user_verify = request.POST['twitter_user']
         print(twitter_user_verify)
 
+        content_twitter = Twitter.objects.all()
+        TWITTER = content_twitter
+
         # Using a for loop to get information related to that user
-        for val in B:
+        for val in TWITTER:
             verify_twitter_user = val.user
             verify_twitter_username = val.twitter_username
             verify_twitter_password = val.twitter_password
@@ -179,7 +189,9 @@ def TwitterCheck(request):
 def TwitterDisconnect(request):
     print("disconnecting user")
     twitter_user_verify = request.POST.get('twitterPostUser')
-    for val in B:
+    content_twitter = Twitter.objects.all()
+    TWITTER = content_twitter
+    for val in TWITTER:
         verify_twitter_user = val.user
         verify_twitter_user_final = str(verify_twitter_user)
         verify_twitter_user_final2 = str(twitter_user_verify)

@@ -239,6 +239,7 @@
                 $(document).ready(function(){
                   $('#instagram-form').submit(function(event){
                     event.preventDefault();
+                    alert($('#instagram-username').val())
                     var instagramPostUser = "{{ user.username }}"
                     var instagramDataArr = [$('#instagram-user').val(), $('#instagram-username').val(), $('#instagram-password').val()]
                     var url = '{% url 'instagram-post/' %}'
@@ -255,8 +256,9 @@
                         'instagramPassword':$('#instagram-password').val()
                       },
                       success: function (value) {
+                        checkInstagramAccount();
                         console.log(value);
-                        if(content == 'True'){
+                        if(value == 'success'){
                           //dismissing modal
                           $('#hidden-cancel-instagram').click();
                           $('#data-Instagram').html(content);
@@ -267,7 +269,7 @@
                           $("#connect-header-instagram").hide();
 
                         } else {
-
+                          alert(value)
                         }
                       }
                     });
@@ -438,6 +440,7 @@
                       'twitterPassword':$('#twitter-password').val()
                     },
                     success: function (content) {
+                      checkTwitterAccount();
                       //dismissing modal
                       $('#hidden-cancel-twitter').click();
                       $('#content-twitter').html(content);

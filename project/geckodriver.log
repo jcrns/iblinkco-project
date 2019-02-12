@@ -11,3 +11,4 @@ console.error: BroadcastService:
   Stack:
     remoteSettingsFunction/remoteSettings.pollChanges@resource://services-settings/remote-settings.js:188:13
 
+Can't find symbol 'GetGraphicsResetStatus'.
