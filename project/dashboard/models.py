@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 User = get_user_model()
 
-# Creating models for social media password for lgoin
+# Creating models for social media password for login
 class Instagram(models.Model):
     user = models.CharField(max_length=30)
     instagram_username = models.CharField(max_length=30)

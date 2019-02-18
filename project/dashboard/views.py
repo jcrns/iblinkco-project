@@ -33,9 +33,6 @@ class InstagramList(APIView):
     def post(self):
         pass
 
-#Post Method
-
-USERNAME = None
 
 # Requiring a login in order to accessing page
 @login_required

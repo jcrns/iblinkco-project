@@ -121,17 +121,16 @@
 
       },
       success: function (content) {
+        //Showing and hidding certain information depending on returned information
         if(content == ''){
           $("#content-instagram").hide();
           $("#disconnect-instagram").hide();
           $("#connect-header-instagram").show();
           $('#data-Instagram').html(content);
         } else {
-          //Showing and hidding certain information
           $("#content-instagram").show();
           $("#disconnect-instagram").show();
           $("#connect-header-instagram").hide();
-
           $('#data-Instagram').html(content);
         }
       }
@@ -153,12 +152,18 @@
 
       },
       success: function (content) {
-        //Showing and hidding certain information
-        $("#content-twitter").show();
-        $("#disconnect-twitter").show();
-        $("#connect-header-twitter").hide();
-
-        $('#content-twitter').html(content);
+        //Showing and hidding certain information depending on returned information
+        if(content == ''){
+          $("#content-twitter").hide();
+          $("#disconnect-twitter").hide();
+          $("#connect-header-twitter").show();
+          $('#content-twitter').html(content);
+        } else {
+          $("#content-twitter").show();
+          $("#disconnect-twitter").show();
+          $("#connect-header-twitter").hide();
+          $('#content-twitter').html(content);
+        }
       }
     });
   }
@@ -234,6 +239,7 @@
               <p><input type="password" id="instagram-password" name="instagram-password" placeholder="Instagram Password"></p>
               <!-- Button to connect account -->
               <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit">
+              <p id="instagram-post-error" class="text-danger"></p>
               <script>
                 //Using ajax onsubmit and running function
                 $(document).ready(function(){
@@ -269,7 +275,7 @@
                           $("#connect-header-instagram").hide();
 
                         } else {
-                          alert(value)
+                          $('#instagram-post-error').html('Error logging in. Please try again.');
                         }
                       }
                     });
