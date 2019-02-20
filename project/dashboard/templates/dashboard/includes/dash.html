@@ -122,16 +122,19 @@
       },
       success: function (content) {
         //Showing and hidding certain information depending on returned information
+        var econtent = JSON.parse(content);
         if(content == ''){
           $("#content-instagram").hide();
           $("#disconnect-instagram").hide();
           $("#connect-header-instagram").show();
-          $('#data-Instagram').html(content);
+          $('#content-instagram').html(content);
         } else {
-          $("#content-instagram").show();
-          $("#disconnect-instagram").show();
-          $("#connect-header-instagram").hide();
-          $('#data-Instagram').html(content);
+          if(econtent.user == usernameVerify){
+            $("#content-instagram").show();
+            $("#disconnect-instagram").show();
+            $("#connect-header-instagram").hide();
+            $('#content-instagram').html("<b>" + econtent.username + "</b>");
+          }
         }
       }
     });
@@ -153,16 +156,19 @@
       },
       success: function (content) {
         //Showing and hidding certain information depending on returned information
+        var econtent = JSON.parse(content);
         if(content == ''){
-          $("#content-twitter").hide();
-          $("#disconnect-twitter").hide();
-          $("#connect-header-twitter").show();
-          $('#content-twitter').html(content);
+            $("#content-twitter").hide();
+            $("#disconnect-twitter").hide();
+            $("#connect-header-twitter").show();
+            $('#content-twitter').html(content);
         } else {
-          $("#content-twitter").show();
-          $("#disconnect-twitter").show();
-          $("#connect-header-twitter").hide();
-          $('#content-twitter').html(content);
+          if(econtent.user == usernameVerify){
+            $("#content-twitter").show();
+            $("#disconnect-twitter").show();
+            $("#connect-header-twitter").hide();
+            $('#content-twitter').html("<b>" + econtent.username + "</b>");
+          }
         }
       }
     });
@@ -199,13 +205,6 @@
         <h2 id="connect-header-instagram">Connect Instagram Account</h2>
       </a>
       <div id="content-instagram">
-        <div id="data-Instagram">
-          <!-- {{ instagram.display.getUserFollowers }}
-          {% for instagram_user in content_instagram %}
-            {{ instagram_user.instagram_username }}
-          {% endfor %}
-          {{ instagram_data }} -->
-        </div>
       </div>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
@@ -267,7 +266,7 @@
                         if(value == 'success'){
                           //dismissing modal
                           $('#hidden-cancel-instagram').click();
-                          $('#data-Instagram').html(content);
+                          $('#content-instagram').html(content);
 
                           //Displaying information
                           $("#content-instagram").show();
@@ -324,7 +323,7 @@
                     success: function (value) {
                       //dismissing modal
                       $('#hidden-cancel-instagram-disconnect').click();
-                      $('#data-Instagram').html(content);
+                      $('#content-instagram').html(content);
 
                       //Displaying information
                       $("#content-instagram").hide();
@@ -385,7 +384,7 @@
       </div>
     </div>
 
-    <!-- Twiiter Div -->
+    <!-- Twiter Div -->
     <div id="dash-twitter" class="card mb-3 mt-1 dashboard-row-item" style="background: #28aae1;">
       <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-twitter-1">
         <h2 id="connect-header-twitter">Connect Twitter Account</h2>
@@ -399,7 +398,7 @@
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-twitter">Shrink</p>
       </a>
-      <a href="#">
+      <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-twitter-menu">
         <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-twitter">Disconnect</p>
       </a>
     </div>
@@ -426,6 +425,7 @@
             <p><input type="password" id="twitter-password" name="twitter-password" placeholder="Twitter Password"></p>
             <!-- Button to connect account -->
             <input type="submit" name="twitter submit" class="btn btn-success btn-primary text-right" id="show-content-twitter" value="Submit">
+            <p id="twitter-post-error" class="text-danger"></p>
             <script>
               //Using ajax onsubmit and running function
               $(document).ready(function(){
@@ -445,17 +445,21 @@
                       'twitterUsername':$('#twitter-username').val(),
                       'twitterPassword':$('#twitter-password').val()
                     },
-                    success: function (content) {
-                      checkTwitterAccount();
-                      //dismissing modal
-                      $('#hidden-cancel-twitter').click();
-                      $('#content-twitter').html(content);
+                    success: function (value) {
+                      if(value == 'success'){
+                        checkTwitterAccount();
+                        //dismissing modal
+                        $('#hidden-cancel-twitter').click();
+                        $('#content-twitter').html(content);
 
-                      //Displaying information
-                      $("#content-twitter").show();
-                      $("#disconnect-twitter").show();
-                      $("#connect-header-twitter").hide();
+                        //Displaying information
+                        $("#content-twitter").show();
+                        $("#disconnect-twitter").show();
+                        $("#connect-header-twitter").hide();
 
+                      } else {
+                        $('#twitter-post-error').html('Error logging in. Please try again.');
+                      }
                     }
                   });
                 });
@@ -770,23 +774,17 @@
     $("#content-facebook").show();
     $("#disconnect-facebook").show();
     $("#connect-header-facebook").hide();
-  })
-
-  $("#show-content-twitter").click(function() {
-    $("#content-twitter").show();
-    $("#disconnect-twitter").show();
-    $("#connect-header-twitter").hide();
-  })
+  });
 
   $("#show-content-youtube").click(function() {
     $("#content-youtube").show();
     $("#disconnect-youtube").show();
     $("#connect-header-youtube").hide();
-  })
+  });
 
   $("#show-content-settings").click(function() {
     $("#content-settings").show();
-  })
+  });
 
   // Hiding Disconnect buttons
   $("#disconnect-instagram").hide();
@@ -813,7 +811,7 @@
         $("#disconnect-instagram").show();
         $("#connect-header-instagram").hide();
 
-        $('#data-Instagram').html(content);
+        $('#content-instagram').html(content);
       }
     });
   })
@@ -821,11 +819,6 @@
     $("#content-facebook").hide();
     $("#disconnect-facebook").hide();
     $("#connect-header-facebook").show();
-  })
-  $("#disconnect-twitter").click(function() {
-    $("#content-twitter").hide();
-    $("#disconnect-twitter").hide();
-    $("#connect-header-twitter").show();
   })
   $("#disconnect-youtube").click(function() {
     $("#content-youtube").hide();

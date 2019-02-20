@@ -15,7 +15,7 @@ class InstagramSerializer(serializers.ModelSerializer):
 
     # Validating for simular username to avoid duplicates
     def validate_title(self, value):
-        qs = BlogPost.objects.filter(instagram_username__iexact=value) # including instance
+        qs = Instagram.objects.filter(instagram_username__iexact=value) # including instance
         if self.instance:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():

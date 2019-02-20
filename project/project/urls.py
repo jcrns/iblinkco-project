@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^tools/', include('tools.urls')),
 
     # Rest API URL
-    url(r'^api/posting/', include('dashboard.rest-api.urls')),
+    url(r'^api/dashboard/', include('dashboard.rest-api.urls')),
 
     # Login and Registration system urls
     url(r'^register/', user_views.register, name='register'),

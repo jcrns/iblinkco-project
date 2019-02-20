@@ -11,7 +11,7 @@ class Instagram(models.Model):
     instagram_password = models.CharField(max_length=30)
 
     def __str__(self):
-        return '{} {}'.format(self.instagram_username, self.instagram_password)
+        return '{} {}'.format(self.user, self.instagram_username)
 
 class Twitter(models.Model):
     user = models.CharField(max_length=30)
@@ -19,7 +19,7 @@ class Twitter(models.Model):
     twitter_password = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.twitter_username
+        return '{} {}'.format(self.user, self.twitter_username)
 
 class Youtube(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

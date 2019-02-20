@@ -1,4 +1,5 @@
 import sys
+import json
 
 # Importing login_required function from django
 from django.contrib.auth.decorators import login_required
@@ -11,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from dashboard.serializer import *
+from dashboard.serializers import *
 from dashboard.models import *
 
 # Importing forms for custom forms
@@ -22,6 +23,8 @@ from django.shortcuts import render
 
 # Importing Scripts to verify users
 from dashboard.instagram_script import *
+from dashboard.twitter_script import *
+
 # API in View
 class InstagramList(APIView):
 
@@ -101,10 +104,10 @@ def InstagramCheck(request):
             if instagram_user_verify in verify_instagram_user:
                 print("true")
                 print(verify_instagram_user)
-                value = [verify_instagram_user, verify_instagram_username]
+                value = {'user': verify_instagram_user, 'username': verify_instagram_username}
                 break
         print(value)
-        return HttpResponse(value)
+        return HttpResponse( json.dumps( value ))
 
 # Function to disconnect instagram
 def InstagramDisconnect(request):
@@ -147,13 +150,19 @@ def TwitterPost(request):
             twitter_post.twitter_username = request.POST.get('twitterUsername')
             twitter_post.twitter_password = request.POST.get('twitterPassword')
 
+            # Adding Instagram Script to verify user is on instagram
+            userTwit = twitterBot(twitter_post.twitter_username, twitter_post.twitter_password)
+            messageView = userTwit.login()
+
             #Getting objects and comparing them
             twitterObjects = Twitter.objects.all()
             print(twitterObjects)
 
-            # Saving Form
-            twitter_post.save()
-        return HttpResponse('')
+            if messageView == 'success':
+                # Saving Form
+                twitter_post.save()
+            print(messageView)
+        return HttpResponse(messageView)
 
 # Function to check if signed in user has a twitter account
 def TwitterCheck(request):
@@ -177,10 +186,10 @@ def TwitterCheck(request):
             if twitter_user_verify in verify_twitter_user:
                 print("true")
                 print(verify_twitter_user)
-                value = [verify_twitter_user, verify_twitter_username]
+                value = {'user': verify_twitter_user, 'username': verify_twitter_username}
                 break
         print(value)
-        return HttpResponse(value)
+        return HttpResponse( json.dumps( value ))
 
 # Function to disconnect Twitter from database
 def TwitterDisconnect(request):
@@ -198,7 +207,7 @@ def TwitterDisconnect(request):
         print(verify_twitter_user_final2 == verify_twitter_user_final)
         if twitter_user_verify == verify_twitter_user:
             val.delete()
-            print("Deleted" + instagram_user_verify + "user")
+            print("Deleted" + twitter_user_verify + "user")
             break
 
     value3 = 'disconnect'

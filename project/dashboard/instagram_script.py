@@ -17,6 +17,29 @@ class InstagramBot:
     def closeBrowser(self):
         self.driver.close()
 
+    def gotoProfile(self):
+        # Finding Profile button and clicking it
+        profileButton = self.driver.find_element_by_xpath("//*[@id='react-root']/section/nav/div[2]/div/div/div[3]/div/div[3]/a/span")
+        profileButton.click()
+        print("clicking button")
+        time.sleep(2)
+
+    def getFollowerInfo(self):
+        print("Attempting to get info")
+
+        # Getting User info
+        getUserPost = self.driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[1]/span/span[1]").text
+        print(getUserPost)
+
+        getUserFollowers = self.driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[2]/a/span").text
+        print(getUserFollowers)
+
+        getUserFollowing = self.driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[3]/a/span").text
+        print(getUserFollowing)
+
+        return getUserPost, getUserFollowers, getUserFollowing
+
+
     def login(self):
         # declaring variable for function
         message = ''
@@ -39,28 +62,38 @@ class InstagramBot:
         passworword_elem.send_keys(Keys.RETURN)
         time.sleep(2)
 
-        # Getting to current url
+        # Getting current url
         currentUrl = driver.current_url
-
-        # Finding Profile button and clicking it
-
-        # # Getting user information
-        # userNumberOfPost = self.driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[1]/span/span")
-        # userFollowers = len(driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[2]/a"))
-        # userFollowing = len(driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[3]/a"))
-
-        # print(userNumberOfPost)
 
         print(redirectURL)
         print(currentUrl)
-
         # Verify user had success logging in by comparing urls
         if redirectURL == currentUrl:
-            profileButton = self.driver.find_element_by_xpath("//*[@id='react-root']/section/nav/div[2]/div/div/div[3]/div/div[3]/a/span")
-            profileButton.click()
+
+            try:
+                print("Executing First Try")
+                InstagramBot.gotoProfile(self)
+                InstagramBot.getFollowerInfo(self)
+            except Exception as e:
+                print(e)
+                # Clicking notification button
+                notificationButton = self.driver.find_element_by_xpath("/html/body/div[2]/div/div/div[3]/button[2]")
+                notificationButton.click()
+                try:
+                    print("First Try Failed")
+                    InstagramBot.gotoProfile(self)
+                    InstagramBot.getFollowerInfo(self)
+                except Exception as e:
+                    print(e)
+
             time.sleep(2)
+
+            InstagramBot.closeBrowser(self)
+            # Sending message success to views file
             message = 'success'
         else:
-            self.driver.close()
+            InstagramBot.closeBrowser(self)
+
+            # Sending message failed to views file
             message = 'failed'
         return message
