@@ -9,6 +9,10 @@ class Instagram(models.Model):
     user = models.CharField(max_length=30)
     instagram_username = models.CharField(max_length=30)
     instagram_password = models.CharField(max_length=30)
+    number_of_post = models.CharField(max_length=20, default=1)
+    number_of_followers = models.CharField(max_length=20, default=1)
+    number_of_following = models.CharField(max_length=20, default=1)
+
 
     def __str__(self):
         return '{} {}'.format(self.user, self.instagram_username)
@@ -17,6 +21,9 @@ class Twitter(models.Model):
     user = models.CharField(max_length=30)
     twitter_username = models.CharField(max_length=30)
     twitter_password = models.CharField(max_length=30)
+    number_of_post = models.CharField(max_length=20, default=1)
+    number_of_followers = models.CharField(max_length=20, default=1)
+    number_of_following = models.CharField(max_length=20, default=1)
 
     def __str__(self):
         return '{} {}'.format(self.user, self.twitter_username)

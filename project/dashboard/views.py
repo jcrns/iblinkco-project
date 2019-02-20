@@ -69,18 +69,33 @@ def InstagramPost(request):
             # Adding Instagram Script to verify user is on instagram
             userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password)
             messageView = userIG.login()
+            message = messageView['message']
 
+            try:
+                # User Data
+                getUserPost = messageView['userData'][0]
+                getUserFollowers = messageView['userData'][1]
+                getUserFollowing = messageView['userData'][2]
 
-            #Getting objects and comparing them
-            instagramObjects = Instagram.objects.all()
-            print(instagramObjects)
+                # Saving User Data
+                instagram_post.number_of_post = getUserPost
+                instagram_post.number_of_followers = getUserFollowers
+                instagram_post.number_of_following = getUserFollowing
 
-            if messageView == 'success':
+                # Getting Ready to return data
+                value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing, 'message': message}
+            except Exception as e:
+                print("error")
+                message = 'failed'
+                value = {'message': message}
+
+            # Checking if function is successful
+            if message == 'success':
                 # Saving Form
                 instagram_post.save()
 
-            print(messageView)
-        return HttpResponse(messageView)
+            print(value)
+        return HttpResponse( json.dumps( value ))
 
 # Function to check if signed in user has a instagram account
 def InstagramCheck(request):
@@ -97,14 +112,18 @@ def InstagramCheck(request):
         # Using a for loop to get information related to that user
         for val in INSTAGRAM:
             print(val)
+
+            # Getting User Info
             verify_instagram_user = val.user
             verify_instagram_username = val.instagram_username
-            verify_instagram_password = val.instagram_password
+            verify_instagram_post = val.number_of_post
+            verify_instagram_followers = val.number_of_followers
+            verify_instagram_following = val.number_of_following
 
             if instagram_user_verify in verify_instagram_user:
                 print("true")
                 print(verify_instagram_user)
-                value = {'user': verify_instagram_user, 'username': verify_instagram_username}
+                value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following}
                 break
         print(value)
         return HttpResponse( json.dumps( value ))
@@ -153,16 +172,33 @@ def TwitterPost(request):
             # Adding Instagram Script to verify user is on instagram
             userTwit = twitterBot(twitter_post.twitter_username, twitter_post.twitter_password)
             messageView = userTwit.login()
+            message = messageView['message']
 
-            #Getting objects and comparing them
-            twitterObjects = Twitter.objects.all()
-            print(twitterObjects)
+            try:
+                # User Data
+                getUserPost = messageView['userData'][0]
+                getUserFollowers = messageView['userData'][1]
+                getUserFollowing = messageView['userData'][2]
 
-            if messageView == 'success':
+                # Saving User Data
+                twitter_post.number_of_post = getUserPost
+                twitter_post.number_of_followers = getUserFollowers
+                twitter_post.number_of_following = getUserFollowing
+
+                # Getting Ready to return data
+                value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing, 'message': message}
+            except Exception as e:
+                print("error")
+                message = 'failed'
+                value = {'message': message}
+
+            # Checking if function is successful
+            if message == 'success':
                 # Saving Form
                 twitter_post.save()
-            print(messageView)
-        return HttpResponse(messageView)
+
+        return HttpResponse( json.dumps( value ))
+
 
 # Function to check if signed in user has a twitter account
 def TwitterCheck(request):
@@ -179,14 +215,18 @@ def TwitterCheck(request):
 
         # Using a for loop to get information related to that user
         for val in TWITTER:
+
+            # Getting User Info
             verify_twitter_user = val.user
             verify_twitter_username = val.twitter_username
-            verify_twitter_password = val.twitter_password
+            verify_twitter_post = val.number_of_post
+            verify_twitter_followers = val.number_of_followers
+            verify_twitter_following = val.number_of_following
 
             if twitter_user_verify in verify_twitter_user:
                 print("true")
                 print(verify_twitter_user)
-                value = {'user': verify_twitter_user, 'username': verify_twitter_username}
+                value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following}
                 break
         print(value)
         return HttpResponse( json.dumps( value ))

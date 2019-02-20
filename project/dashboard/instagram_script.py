@@ -5,7 +5,7 @@ import random
 import sys
 
 
-REALUSER = False
+VALUE = dict()
 class InstagramBot:
     # declaring variable parameters
     def __init__(self, username, password):
@@ -37,8 +37,8 @@ class InstagramBot:
         getUserFollowing = self.driver.find_element_by_xpath("//*[@id='react-root']/section/main/div/header/section/ul/li[3]/a/span").text
         print(getUserFollowing)
 
-        return getUserPost, getUserFollowers, getUserFollowing
-
+        userInfo = [getUserPost, getUserFollowers, getUserFollowing]
+        VALUE['userData'] = userInfo
 
     def login(self):
         # declaring variable for function
@@ -75,7 +75,7 @@ class InstagramBot:
                 InstagramBot.gotoProfile(self)
                 InstagramBot.getFollowerInfo(self)
             except Exception as e:
-                print(e)
+                print("error")
                 # Clicking notification button
                 notificationButton = self.driver.find_element_by_xpath("/html/body/div[2]/div/div/div[3]/button[2]")
                 notificationButton.click()
@@ -84,16 +84,16 @@ class InstagramBot:
                     InstagramBot.gotoProfile(self)
                     InstagramBot.getFollowerInfo(self)
                 except Exception as e:
-                    print(e)
+                    print("error")
 
             time.sleep(2)
 
             InstagramBot.closeBrowser(self)
             # Sending message success to views file
-            message = 'success'
+            VALUE['message'] = 'success'
         else:
             InstagramBot.closeBrowser(self)
 
             # Sending message failed to views file
-            message = 'failed'
-        return message
+            VALUE['message'] = 'failed'
+        return VALUE

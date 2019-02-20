@@ -107,6 +107,7 @@
   //      }
 
   //Checking State of logged in accounts
+  var econtent = '';
   function checkInstagramAccount(e){
     var usernameVerify = "{{ user.username }}";
     var url = '{% url 'check-out-instagram/' %}';
@@ -133,7 +134,11 @@
             $("#content-instagram").show();
             $("#disconnect-instagram").show();
             $("#connect-header-instagram").hide();
-            $('#content-instagram').html("<b>" + econtent.username + "</b>");
+            $('#content-instagram').html("<b>"
+              + econtent.username + "</b>" + "<br /><p>User Post: "
+              + econtent.userPost + "</p>" + "<br /><p>Followers: "
+              + econtent.userFollowers + "</p>" + "<br /><p>Following: "
+              + econtent.userFollowing + "</p>");
           }
         }
       }
@@ -167,7 +172,11 @@
             $("#content-twitter").show();
             $("#disconnect-twitter").show();
             $("#connect-header-twitter").hide();
-            $('#content-twitter').html("<b>" + econtent.username + "</b>");
+            $('#content-twitter').html("<b>"
+              + econtent.username + "</b>" + "<br /><p>User Post: "
+              + econtent.userPost + "</p>" + "<br /><p>Followers: "
+              + econtent.userFollowers + "</p>" + "<br /><p>Following: "
+              + econtent.userFollowing + "</p>");
           }
         }
       }
@@ -205,6 +214,9 @@
         <h2 id="connect-header-instagram">Connect Instagram Account</h2>
       </a>
       <div id="content-instagram">
+        <div id="dash-instagram">
+
+        </div>
       </div>
       <a href="#">
         <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
@@ -238,16 +250,15 @@
               <p><input type="password" id="instagram-password" name="instagram-password" placeholder="Instagram Password"></p>
               <!-- Button to connect account -->
               <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit">
-              <p id="instagram-post-error" class="text-danger"></p>
+              <p id="instagram-post-error" class="text-danger"><span id="instagram-post-login" class="text-success"></span></p>
               <script>
                 //Using ajax onsubmit and running function
                 $(document).ready(function(){
                   $('#instagram-form').submit(function(event){
                     event.preventDefault();
-                    alert($('#instagram-username').val())
-                    var instagramPostUser = "{{ user.username }}"
-                    var instagramDataArr = [$('#instagram-user').val(), $('#instagram-username').val(), $('#instagram-password').val()]
-                    var url = '{% url 'instagram-post/' %}'
+                    var instagramPostUser = "{{ user.username }}";
+                    var url = '{% url 'instagram-post/' %}';
+                    $('#instagram-post-login').html('Logging In.');
                     //using ajax to call function
                     $.ajax({
                       type: 'POST',
@@ -261,18 +272,13 @@
                         'instagramPassword':$('#instagram-password').val()
                       },
                       success: function (value) {
-                        checkInstagramAccount();
-                        console.log(value);
-                        if(value == 'success'){
+                        var evalue = JSON.parse(value);
+                        console.log(evalue);
+                        var message = evalue.message;
+                        if(message == 'success'){
                           //dismissing modal
-                          $('#hidden-cancel-instagram').click();
-                          $('#content-instagram').html(content);
-
-                          //Displaying information
-                          $("#content-instagram").show();
-                          $("#disconnect-instagram").show();
-                          $("#connect-header-instagram").hide();
-
+                          checkInstagramAccount();
+                          $("#hidden-cancel-instagram").click();
                         } else {
                           $('#instagram-post-error').html('Error logging in. Please try again.');
                         }
@@ -425,7 +431,7 @@
             <p><input type="password" id="twitter-password" name="twitter-password" placeholder="Twitter Password"></p>
             <!-- Button to connect account -->
             <input type="submit" name="twitter submit" class="btn btn-success btn-primary text-right" id="show-content-twitter" value="Submit">
-            <p id="twitter-post-error" class="text-danger"></p>
+            <p id="twitter-post-error" class="text-danger"><span id="twitter-post-login" class="text-success"></span></p>
             <script>
               //Using ajax onsubmit and running function
               $(document).ready(function(){
@@ -433,6 +439,7 @@
                   event.preventDefault();
                   var twitterPostUser = "{{ user.username }}"
                   var url = '{% url 'submit-twitter/' %}'
+                  $('#twitter-post-login').html('Logging In.');
                   //using ajax to call function
                   $.ajax({
                     type: 'POST',
@@ -446,19 +453,14 @@
                       'twitterPassword':$('#twitter-password').val()
                     },
                     success: function (value) {
-                      if(value == 'success'){
-                        checkTwitterAccount();
+                      var evalue = JSON.parse(value);
+                      var message = evalue.message;
+                      if (message == 'success') {
                         //dismissing modal
+                        checkTwitterAccount();
                         $('#hidden-cancel-twitter').click();
-                        $('#content-twitter').html(content);
-
-                        //Displaying information
-                        $("#content-twitter").show();
-                        $("#disconnect-twitter").show();
-                        $("#connect-header-twitter").hide();
-
                       } else {
-                        $('#twitter-post-error').html('Error logging in. Please try again.');
+                      $('#twitter-post-error').html('Error logging in. Please try again.');
                       }
                     }
                   });
