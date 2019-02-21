@@ -109,6 +109,8 @@ def InstagramCheck(request):
         content_instagram = Instagram.objects.all()
         INSTAGRAM = content_instagram
         print(INSTAGRAM)
+        instagram_post = Instagram()
+
         # Using a for loop to get information related to that user
         for val in INSTAGRAM:
             print(val)
@@ -116,15 +118,22 @@ def InstagramCheck(request):
             # Getting User Info
             verify_instagram_user = val.user
             verify_instagram_username = val.instagram_username
+            verify_instagram_password = val.instagram_password
             verify_instagram_post = val.number_of_post
             verify_instagram_followers = val.number_of_followers
             verify_instagram_following = val.number_of_following
 
             if instagram_user_verify in verify_instagram_user:
+                # Saving User Data
+                instagram_post.number_of_post = verify_instagram_post
+                instagram_post.number_of_followers = verify_instagram_followers
+                instagram_post.number_of_following = verify_instagram_following
+
                 print("true")
                 print(verify_instagram_user)
                 value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following}
                 break
+                instagram_post.save()
         print(value)
         return HttpResponse( json.dumps( value ))
 

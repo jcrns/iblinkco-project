@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^instagram-account-disconnect$', views.InstagramDisconnect, name='disconnect-instagram/'),
 
     # twitter functions
-    url(r'^twitter-connection$', views.TwitterPost, name='submit-twitter/'),
+    url(r'^twitter-posting$', views.TwitterPost, name='twitter-post/'),
     url(r'^twitter-account-check$', views.TwitterCheck, name='check-out-twitter/'),
     url(r'^twitter-account-disconnect$', views.TwitterDisconnect, name='disconnect-twitter/'),
 

@@ -32,7 +32,7 @@
   </script>
 </head>
 
-<body>
+<body id="body">
   <script type="application/ld+json">
     {
       "@context": "http://schema.org",
@@ -125,6 +125,8 @@
       }, 1000);
     });
   </script>
+  <script src="{% static 'dashboard/js/ui.js' %}"></script>
+  <!-- <script src="{% static 'dashboard/js/ajaxfunctions.js' %}"></script> -->
 </body>
 <footer>
   <p class="mt-5 mb-3 text-center" style="color:#000;">iBlinkco, Copyright © 2018</p>

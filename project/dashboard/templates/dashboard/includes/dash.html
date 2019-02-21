@@ -1,189 +1,5 @@
 <!-- Jinja file including all homepage content -->
 {% block content %}
-<script>
-  // window.fbAsyncInit = function() {
-  //       FB.init({
-  //         appId      : '346813469464085',
-  //         cookie     : true,
-  //         xfbml      : true,
-  //         version    : 'v3.2'
-  //       });
-  //
-  //
-  //       FB.getLoginStatus(function(response) {
-  //           statusChangeCallback(response);
-  //       });
-  //
-  //     };
-  //
-  //     (function(d, s, id){
-  //        var js, fjs = d.getElementsByTagName(s)[0];
-  //        if (d.getElementById(id)) {return;}
-  //        js = d.createElement(s); js.id = id;
-  //        js.src = "https://connect.facebook.net/en_US/sdk.js";
-  //        fjs.parentNode.insertBefore(js, fjs);
-  //      }(document, 'script', 'facebook-jssdk'));
-  //
-  //      function statusChangeCallback(response){
-  //       if(response.status == 'connected'){
-  //         //Showing Content if User is Logged In
-  //         $("#content-facebook").show();
-  //         $("#disconnect-facebook").show();
-  //         $("#connect-header-facebook").hide();
-  //
-  //         //Printing in console that the user is authenticated
-  //         console.log('logged in and authenticated');
-  //         setElements(true);
-  //         testAPI();
-  //
-  //       } else {
-  //         // Displaying in console that user is not authenticated
-  //         console.log('Not Authenticated');
-  //         setElements(false);
-  //       }
-  //      }
-  //
-  //     //  Get Data from facebook API
-  //     function testAPI(){
-  //         FB.api('/me?fields=name,email,birthday,location', function(response){
-  //           if(response && !response.error){
-  //             console.log(response);
-  //             buildProfile(response);
-  //             document.getElementById('profile').innerHTML = buildProfile(response);
-  //
-  //           }
-  //           FB.api('/me/feed', function(response){
-  //             if(response && !response.error){
-  //               buildFeed(response);
-  //             }
-  //           });
-  //         })
-  //       }
-  //
-  //     //  Displaying Data with facebookData function
-  //     function buildProfile(user){
-  //         var profile = `
-  //           <h3>${user.name}</h3>
-  //           <ul class="list-group">
-  //             <li class="list-group-item">User ID: ${user.id}</li>
-  //             <li class="list-group-item">Email: ${user.email}</li>
-  //             <li class="list-group-item">Birthday: ${user.birthday}</li>
-  //             <li class="list-group-item">User ID: ${user.location.name}</li>
-  //           </ul>
-  //         `;
-  //         document.getElementById('profile').innerHTML = profile;
-  //       }
-  //       function buildFeed(feed){
-  //         let output = '<h3>Latest Posts</h3>';
-  //         for(let i in feed.data){
-  //           if(feed.data[i].message){
-  //             output += `
-  //               <div class="well">
-  //                 ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
-  //               </div>
-  //             `;
-  //           }
-  //         }
-  //         document.getElementById('feed').innerHTML = output;
-  //       }
-  //      function setElements(isLoggedIn){
-  //         if(isLoggedIn){
-  //           $("#content-facebook").show();
-  //           $("#disconnect-facebook").show();
-  //           $("#connect-header-facebook").hide();
-  //         } else {
-  //           $("#content-facebook").hide();
-  //           $("#disconnect-facebook").hide();
-  //           $("#connect-header-facebook").show();
-  //         }
-  //       }
-  //
-  //      //  Logout function
-  //     function logout(){
-  //       FB.logout(function(response) {
-  //         // user is now logged out
-  //         setElements(false);
-  //       });
-  //      }
-
-  //Checking State of logged in accounts
-  var econtent = '';
-  function checkInstagramAccount(e){
-    var usernameVerify = "{{ user.username }}";
-    var url = '{% url 'check-out-instagram/' %}';
-    console.log("Instagram Username: " + usernameVerify)
-    $.ajax({
-      type: 'POST',
-      url: url,
-      dataType: 'text',
-      data: {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        'instagram_user':usernameVerify,
-
-      },
-      success: function (content) {
-        //Showing and hidding certain information depending on returned information
-        var econtent = JSON.parse(content);
-        if(content == ''){
-          $("#content-instagram").hide();
-          $("#disconnect-instagram").hide();
-          $("#connect-header-instagram").show();
-          $('#content-instagram').html(content);
-        } else {
-          if(econtent.user == usernameVerify){
-            $("#content-instagram").show();
-            $("#disconnect-instagram").show();
-            $("#connect-header-instagram").hide();
-            $('#content-instagram').html("<b>"
-              + econtent.username + "</b>" + "<br /><p>User Post: "
-              + econtent.userPost + "</p>" + "<br /><p>Followers: "
-              + econtent.userFollowers + "</p>" + "<br /><p>Following: "
-              + econtent.userFollowing + "</p>");
-          }
-        }
-      }
-    });
-  }
-  checkInstagramAccount();
-
-  function checkTwitterAccount(e){
-    var usernameVerify = "{{ user.username }}";
-    var url = '{% url 'check-out-twitter/' %}';
-    console.log("Twitter Username: " + usernameVerify)
-    $.ajax({
-      type: 'POST',
-      url: url,
-      dataType: 'text',
-      data: {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        'twitter_user':usernameVerify,
-
-      },
-      success: function (content) {
-        //Showing and hidding certain information depending on returned information
-        var econtent = JSON.parse(content);
-        if(content == ''){
-            $("#content-twitter").hide();
-            $("#disconnect-twitter").hide();
-            $("#connect-header-twitter").show();
-            $('#content-twitter').html(content);
-        } else {
-          if(econtent.user == usernameVerify){
-            $("#content-twitter").show();
-            $("#disconnect-twitter").show();
-            $("#connect-header-twitter").hide();
-            $('#content-twitter').html("<b>"
-              + econtent.username + "</b>" + "<br /><p>User Post: "
-              + econtent.userPost + "</p>" + "<br /><p>Followers: "
-              + econtent.userFollowers + "</p>" + "<br /><p>Following: "
-              + econtent.userFollowing + "</p>");
-          }
-        }
-      }
-    });
-  }
-  checkTwitterAccount();
-  </script>
 <style>
   #analytics{
     display:none;
@@ -191,20 +7,73 @@
   #stream{
     display:none;
   }
-</style>
-<div class="card" style="background-color:#dbdbdb">
-  <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
-    <span id="settings" class="float-right px-4"><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
-    <span id="show-analytics" class="float-right px-2"><a href="#">Analytics</a></span>
-    <span id="show-stream" class="float-right px-2"><a href="#">Stream</a></span>
-    <span id="show-dashboard-row" class="float-right px-2"><a href="#">Dashboard Row</a></span>
-  </p>
-</div>
-<style media="screen">
+  #connect-header-instagram, #connect-header-twitter{
+    display:none;
+  }
   .dashboard-row-item{
-      min-height: 40vh;
-    }
+    min-height: 40vh;
+  }
+  .wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    /* border: solid red; */
+  }
+  .dashboard-row{
+    /* border: solid red; */
+  }
   </style>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar" style="background-color:#dbdbdb">
+        <div class="sidebar-header" style="min-width: 150px;">
+            <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class="active">
+                <li>
+                    <a href="#">Home</a>
+                </li>
+            <li>
+                <span id="settings" class=""><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
+            </li>
+            <li>
+            </li>
+            <li>
+                <span id="show-analytics" class=""><a href="#">Analytics</a></span>
+            </li>
+            <li>
+                <span id="show-stream" class=""><a href="#">Stream</a></span>
+            </li>
+            <li>
+                <span id="show-dashboard-row" class=""><a href="#">Dashboard Row</a></span>
+            </li>
+        </ul>
+    </nav>
+    <div class="wrapper" style="padding:20px;">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <p id="total-followers" class="display-4"></p>
+              <p id="total-post"></p>
+              <p id="total-following"></p>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row" id="dashboard-row" style="padding-left:20px; width:40vw">
+      </div>
+    </div>
+</div>
 <div id="dashboard-row" class="container-fluid" style="min-height:100%;">
   <div id="sm-container" class="card-group text-center" style="height:50vh;">
 
@@ -251,42 +120,6 @@
               <!-- Button to connect account -->
               <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit">
               <p id="instagram-post-error" class="text-danger"><span id="instagram-post-login" class="text-success"></span></p>
-              <script>
-                //Using ajax onsubmit and running function
-                $(document).ready(function(){
-                  $('#instagram-form').submit(function(event){
-                    event.preventDefault();
-                    var instagramPostUser = "{{ user.username }}";
-                    var url = '{% url 'instagram-post/' %}';
-                    $('#instagram-post-login').html('Logging In.');
-                    //using ajax to call function
-                    $.ajax({
-                      type: 'POST',
-                      url: url,
-                      dataType: 'text',
-                      data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                        //Returning Information as objects
-                        'instagramPostUser':$('#instagram-user').val(),
-                        'instagramUsername':$('#instagram-username').val(),
-                        'instagramPassword':$('#instagram-password').val()
-                      },
-                      success: function (value) {
-                        var evalue = JSON.parse(value);
-                        console.log(evalue);
-                        var message = evalue.message;
-                        if(message == 'success'){
-                          //dismissing modal
-                          checkInstagramAccount();
-                          $("#hidden-cancel-instagram").click();
-                        } else {
-                          $('#instagram-post-error').html('Error logging in. Please try again.');
-                        }
-                      }
-                    });
-                  });
-                });
-              </script>
             </form>
           </div>
         </div>
@@ -309,37 +142,6 @@
             <button id="hidden-cancel-instagram-disconnect" class="" data-dismiss="modal" style="display: none"></button>
             <input type="button" value="Cancel" class="text-success" data-dismiss="modal">
             <input type="button" id="disconnect-button-instagram" name="disconnect-button-instagram" value="Disconnect" class="text-danger">
-            <script type="text/javascript">
-              $(document).ready(function(){
-                $('#disconnect-button-instagram').click(function(event){
-                  event.preventDefault();
-                  var url = '{% url 'disconnect-instagram/' %}'
-                  var usernameVerify = "{{ user.username }}";
-                  //using ajax to call function
-                  $.ajax({
-                    type: 'POST',
-                    url: url,
-                    dataType: 'text',
-                    data: {
-                      // Token needed to return data in Python
-                      csrfmiddlewaretoken: '{{ csrf_token }}',
-                      //Returning Information as objects
-                      'instagramPostUser':usernameVerify,
-                    },
-                    success: function (value) {
-                      //dismissing modal
-                      $('#hidden-cancel-instagram-disconnect').click();
-                      $('#content-instagram').html(content);
-
-                      //Displaying information
-                      $("#content-instagram").hide();
-                      $("#disconnect-instagram").hide();
-                      $("#connect-header-instagram").show();
-                    }
-                  });
-                });
-              });
-            </script>
           </form>
         </div>
       </div>
@@ -432,41 +234,6 @@
             <!-- Button to connect account -->
             <input type="submit" name="twitter submit" class="btn btn-success btn-primary text-right" id="show-content-twitter" value="Submit">
             <p id="twitter-post-error" class="text-danger"><span id="twitter-post-login" class="text-success"></span></p>
-            <script>
-              //Using ajax onsubmit and running function
-              $(document).ready(function(){
-                $('#twitter-form').submit(function(event){
-                  event.preventDefault();
-                  var twitterPostUser = "{{ user.username }}"
-                  var url = '{% url 'submit-twitter/' %}'
-                  $('#twitter-post-login').html('Logging In.');
-                  //using ajax to call function
-                  $.ajax({
-                    type: 'POST',
-                    url: url,
-                    dataType: 'text',
-                    data: {
-                      csrfmiddlewaretoken: '{{ csrf_token }}',
-                      //Returning Information as objects
-                      'twitterPostUser':$('#twitter-user').val(),
-                      'twitterUsername':$('#twitter-username').val(),
-                      'twitterPassword':$('#twitter-password').val()
-                    },
-                    success: function (value) {
-                      var evalue = JSON.parse(value);
-                      var message = evalue.message;
-                      if (message == 'success') {
-                        //dismissing modal
-                        checkTwitterAccount();
-                        $('#hidden-cancel-twitter').click();
-                      } else {
-                      $('#twitter-post-error').html('Error logging in. Please try again.');
-                      }
-                    }
-                  });
-                });
-              });
-            </script>
           </form>
         </div>
       </div>
@@ -489,38 +256,6 @@
           <button id="hidden-cancel-twitter-disconnect" class="" data-dismiss="modal" style="display: none"></button>
           <input type="button" value="Cancel" class="text-success" data-dismiss="modal">
           <input type="button" id="disconnect-button-twitter" name="disconnect-button-twitter" value="Disconnect" class="text-danger">
-          <script type="text/javascript">
-            $(document).ready(function(){
-              $('#disconnect-button-twitter').click(function(event){
-                event.preventDefault();
-                var url = '{% url 'disconnect-twitter/' %}'
-                var usernameVerify = "{{ user.username }}";
-
-                //using ajax to call function
-                $.ajax({
-                  type: 'POST',
-                  url: url,
-                  dataType: 'text',
-                  data: {
-                    // Token needed to return data in Python
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    //Returning Information as objects
-                    'twitterPostUser':usernameVerify,
-                  },
-                  success: function (content) {
-                    //dismissing modal
-                    $('#hidden-cancel-twitter-disconnect').click();
-                    $('#content-twitter').html(content);
-
-                    //Displaying information
-                    $("#content-twitter").hide();
-                    $("#disconnect-twitter").hide();
-                    $("#connect-header-twitter").show();
-                  }
-                });
-              });
-            });
-          </script>
         </form>
       </div>
     </div>
@@ -591,305 +326,284 @@
 
 <!-- Using Jquery to show different things on dashboard page -->
 <script type="text/javascript">
-  // Hidding buttons
-  $("#hidden-button-instagram").hide();
-  $("#hidden-button-facebook").hide();
-  $("#hidden-button-twitter").hide();
-  $("#hidden-button-youtube").hide();
+  //Setting Global Variables
 
-  // showing dashboard row by default
-  $("#dashboard-row").show();
+  // Instagram variables
+  var INSTAGRAM_TOTAL_POST = '';
+  var INSTAGRAM_TOTAL_FOLLOWERS;
+  var INSTAGRAM_TOTAL_FOLLOWING = '';
 
-  // hiding analytics by default
-  $("#analytics").hide();
-  $("#stream").hide();
+  // Twitter variables
+  var TWITTER_TOTAL_TWEETS = '';
+  var TWITTER_TOTAL_FOLLOWERS;
+  var TWITTER_TOTAL_FOLLOWING = '';
 
-  //test
-  // $("#connect-header-instagram").hide();
-  // $("#content-instagram").show();
-  // $("#connect-header-instagram").hide();
+  // Random Id Generator
+  var ID = function () {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 9);
+  };
 
+  // INSTAGRAM AJAX FUNCTIONS
 
-  // hiding the dashboard row toggle by default
-  $("#show-dashboard-row").hide();
+    //Checking State of logged in accounts
+    function checkInstagramAccount(e){
+      var usernameVerify = "{{ user.username }}";
+      var url = '{% url 'check-out-instagram/' %}';
+      console.log("Instagram Username: " + usernameVerify)
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          'instagram_user':usernameVerify,
 
-  $("#show-analytics").click(function() {
-    $("#dashboard-row").hide();
-    $("#analytics").show();
-    $("#show-dashboard-row").show();
-    $("#show-analytics").hide();
-    $("#show-stream").show();
-    $("#stream").hide();
+        },
+        success: function (content) {
+          //Showing and hidding certain information depending on returned information
+          var econtent = JSON.parse(content);
+          if(content == ''){
+            $("#content-instagram").hide();
+            $("#disconnect-instagram").hide();
+            $("#connect-header-instagram").show();
+            $('#content-instagram').html(content);
+          } else {
+            if(econtent.user == usernameVerify){
+              $("#content-instagram").show();
+              $("#disconnect-instagram").show();
+              $("#connect-header-instagram").hide();
+              $('#content-instagram').html("<b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p>");
 
-  })
+              INSTAGRAM_TOTAL_POST = econtent.userPost;
+              INSTAGRAM_TOTAL_FOLLOWERS = econtent.userFollowers;
+              INSTAGRAM_TOTAL_FOLLOWING = econtent.userFollowing;
 
-  $("#show-dashboard-row").click(function() {
-    $("#dashboard-row").show();
-    $("#analytics").hide();
-    $("#show-dashboard-row").hide();
-    $("#show-analytics").show();
-    $("#show-stream").show();
-    $("#stream").hide();
-  })
+              //Creating a Div
+              var dashboardRow = document.getElementById('dashboard-row')
 
-  $("#show-stream").click(function() {
-    $("#dashboard-row").hide();
-    $("#analytics").hide();
-    $("#show-dashboard-row").show();
-    $("#show-analytics").show();
-    $("#show-stream").hide();
-    $("#stream").show();
-  })
+              var instagramDiv = document.createElement('div');
+              instagramDiv.className = "col-sm-16";
+              var uniqueIDGenerate = ID();
+              var uniqueID = 'holder-' + uniqueIDGenerate;
+              instagramDiv.setAttribute('id', uniqueID);
+              dashboardRow.appendChild(instagramDiv);
+              $('#' + uniqueID).html("<div class='card' style='background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);'> <b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='color:#fff; position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+            }
+          }
+        },
+        async:false,
+      });
+    }
+    checkInstagramAccount();
 
-  //Full Screen functions and Animations
-
-  //Full Screen Instagram
-  $('#button-instagram').click(function() {
-    $('#dash-instagram')
-    $('#dash-facebook').hide()
-    $('#dash-twitter').hide()
-    $('#dash-youtube').hide()
-    $('#dash-instagram').animate({
-      height: '75vh',
-      width: '70vh'
-    }, 500);
-    $('#button-instagram').hide()
-    $('#hidden-button-instagram').show()
-  });
-
-  //Shrink Full Screen Instagram
-  $('#hidden-button-instagram').click(function() {
-    $('#dash-instagram')
-    $('#dash-facebook').show()
-    $('#dash-twitter').show()
-    $('#dash-youtube').show()
-    $('#dash-instagram').animate({
-      height: '47.25vh',
-      width: '60vh'
-    }, 500);
-    $('#button-instagram').show()
-    $('#hidden-button-instagram').hide()
-  });
-
-
-  //Full Screen Facebook
-  $('#button-facebook').click(function() {
-    $('#dash-instagram').hide()
-    $('#dash-facebook')
-    $('#dash-twitter').hide()
-    $('#dash-youtube').hide()
-    $('#dash-facebook').animate({
-      height: '75vh',
-      width: '60vh'
-    }, 500);
-    $('#button-facebook').hide()
-    $('#hidden-button-facebook').show()
-  });
-
-  //Shrink Full Screen Facebook
-  $('#hidden-button-facebook').click(function() {
-    $('#dash-instagram').show()
-    $('#dash-facebook')
-    $('#dash-twitter').show()
-    $('#dash-youtube').show()
-    $('#dash-facebook').animate({
-      height: '47.25vh',
-      width: '60vh'
-    }, 500);
-    $('#button-facebook').show()
-    $('#hidden-button-facebook').hide()
-  });
-
-
-  //Full Screen Twitter
-  $('#button-twitter').click(function() {
-    $('#dash-instagram').hide()
-    $('#dash-facebook').hide()
-    $('#dash-twitter')
-    $('#dash-youtube').hide()
-    $('#dash-twitter').animate({
-      height: '75vh',
-      width: '60vh'
-    }, 500);
-    $('#button-twitter').hide()
-    $('#hidden-button-twitter').show()
-  });
-
-  //Shrink Full Screen Twitter
-  $('#hidden-button-twitter').click(function() {
-    $('#dash-instagram').show()
-    $('#dash-facebook').show()
-    $('#dash-twitter')
-    $('#dash-youtube').show()
-    $('#dash-twitter').animate({
-      height: '47.25vh',
-      width: '60vh'
-    }, 500);
-    $('#button-twitter').show()
-    $('#hidden-button-twitter').hide()
-  });
-
-
-  //Full Screen Youtube
-  $('#button-youtube').click(function() {
-    $('#sm-container').hide()
-    $('#dash-facebook').hide()
-    $('#dash-twitter').hide()
-    $('#dash-youtube')
-    $('#dash-youtube').animate({
-      height: '75vh',
-      width: '60vh'
-    }, 500);
-    $('#button-youtube').hide()
-    $('#hidden-button-youtube').show()
-  });
-
-  //Shrink Full Screen Youtube
-  $('#hidden-button-youtube').click(function() {
-    $('#sm-container').show()
-    $('#dash-facebook').show()
-    $('#dash-twitter').show()
-    $('#dash-youtube')
-    $('#dash-youtube').animate({
-      height: '47.25vh',
-      width: '100vh'
-    }, 500);
-    $('#button-youtube').show()
-    $('#hidden-button-youtube').hide()
-  });
-
-  // Hiding certain content
-  $("#content-instagram").hide();
-  $("#content-facebook").hide();
-  $("#content-twitter").hide();
-  $("#content-youtube").hide();
-  $("#content-settings").hide();
-
-  // Functions to show content through dialog popup
-  $('#connect-instagram').submit(function() {
-    $("#content-instagram").show();
-    $("#disconnect-instagram").show();
-    $("#connect-header-instagram").hide();
-  });
-
-  $("#fb-btn").click(function() {
-    $("#content-facebook").show();
-    $("#disconnect-facebook").show();
-    $("#connect-header-facebook").hide();
-  });
-
-  $("#show-content-youtube").click(function() {
-    $("#content-youtube").show();
-    $("#disconnect-youtube").show();
-    $("#connect-header-youtube").hide();
-  });
-
-  $("#show-content-settings").click(function() {
-    $("#content-settings").show();
-  });
-
-  // Hiding Disconnect buttons
-  $("#disconnect-instagram").hide();
-  $("#disconnect-facebook").hide();
-  $("#disconnect-twitter").hide();
-  $("#disconnect-youtube").hide();
-
-  // Disconnect button hide/show
-  $("#disconnect-button-instagram").click(function() {
-    var usernameVerify = "{{ user.username }}";
-    var url = '{% url 'disconnect-instagram/' %}';
-    $.ajax({
-      type: 'POST',
-      url: url,
-      dataType: 'text',
-      data: {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        'instagram_user':usernameVerify,
-
-      },
-      success: function (content) {
-        //Showing and hidding certain information
-        $("#content-instagram").show();
-        $("#disconnect-instagram").show();
-        $("#connect-header-instagram").hide();
-
-        $('#content-instagram').html(content);
-      }
+    // Instagram Post
+    //Using ajax onsubmit and running function
+    $(document).ready(function(){
+      $('#instagram-form').submit(function(event){
+        event.preventDefault();
+        var instagramPostUser = "{{ user.username }}";
+        var url = '{% url 'instagram-post/' %}';
+        $('#instagram-post-login').html('Logging In.');
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'instagramPostUser':$('#instagram-user').val(),
+            'instagramUsername':$('#instagram-username').val(),
+            'instagramPassword':$('#instagram-password').val()
+          },
+          success: function (value) {
+            var evalue = JSON.parse(value);
+            console.log(evalue);
+            var message = evalue.message;
+            if(message == 'success'){
+              //dismissing modal
+              checkInstagramAccount();
+              $("#hidden-cancel-instagram").click();
+            } else {
+              $('#instagram-post-error').html('Error logging in. Please try again.');
+            }
+          }
+        });
+      });
     });
-  })
-  $("#disconnect-facebook").click(function() {
-    $("#content-facebook").hide();
-    $("#disconnect-facebook").hide();
-    $("#connect-header-facebook").show();
-  })
-  $("#disconnect-youtube").click(function() {
-    $("#content-youtube").hide();
-    $("#disconnect-youtube").hide();
-    $("#connect-header-youtube").show();
-  })
 
-  //cookies
-  // if no cookie
-  // if (!$.cookie('content-youtube')) {
-  //     $( "#content-youtube" ).show();
-  //     $( "#connect-header-youtube" ).show();
-  // }
+    // Instagram Disconnect
+    $(document).ready(function(){
+      $('#disconnect-button-instagram').click(function(event){
+        event.preventDefault();
+        var url = '{% url 'disconnect-instagram/' %}'
+        var usernameVerify = "{{ user.username }}";
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            // Token needed to return data in Python
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'instagramPostUser':usernameVerify,
+          },
+          success: function (value) {
+            //dismissing modal
+            $('#hidden-cancel-instagram-disconnect').click();
+            $('#content-instagram').html(content);
 
-  $("#clear-cookies").click(function() {
-    $.removeCookie("dash-cookie");
-  })
+            //Displaying information
+            $("#content-instagram").hide();
+            $("#disconnect-instagram").hide();
+            $("#connect-header-instagram").show();
+          }
+        });
+      });
+    });
 
-  //Putting logged in user in a Variable
-  var usernameVerify = "{{ user.username }}";
+    // TWITTER AJAX FUNCTIONS
 
-  // //Getting Info to verify instagram account is connected in database
-  // var getInstagramUser = "{% for instagram_user_verify in content_instagram %}{{ instagram_user_verify.user }}{% endfor %}";
-  // var instagramUsers = "{% for instagram_user_verify in content_instagram %}{{ instagram_user_verify.instagram_username }}{% endfor %}"
-  // console.log("Instagram User Model: " + getInstagramUser)
-  // console.log("Instagram Database usernames: " + instagramUsers)
-  //
-  // getInstagramUser == usernameVerify
-  // if ((getInstagramUser == usernameVerify)) {
-  //   $("#content-instagram").show();
-  //   $("#disconnect-instagram").show();
-  //   $("#connect-header-instagram").hide();
-  //   console.log("Instagram connected");
-  // } else {
-  //   console.log("Instagram Not connected")
-  // }
-  //
-  // if (getInstagramUser.includes(usernameVerify)) {
-  //   console.log("Hella True");
-  //   $("#content-instagram").show();
-  //   $("#connect-header-instagram").hide();
-  // } else {
-  //   console.log("Not True")
-  // }
+    function checkTwitterAccount(e){
+      var usernameVerify = "{{ user.username }}";
+      var url = '{% url 'check-out-twitter/' %}';
+      console.log("Twitter Username: " + usernameVerify)
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          'twitter_user':usernameVerify,
 
+        },
+        success: function (content) {
+          //Showing and hidding certain information depending on returned information
+          var econtent = JSON.parse(content);
+          if(content == ''){
+              $("#content-twitter").hide();
+              $("#disconnect-twitter").hide();
+              $("#connect-header-twitter").show();
+              $('#content-twitter').html(content);
+          } else {
+            if(econtent.user == usernameVerify){
+              $("#content-twitter").show();
+              $("#disconnect-twitter").show();
+              $("#connect-header-twitter").hide();
+              $('#content-twitter').html("<b>"+ econtent.username + "</b>" + "<br /><p>User Tweets: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p>");
 
-  //Getting Info to verify twitter account is connected in database
-  var getTwitterUser = "{% for twitter_user_verify in content_twitter %}{{ twitter_user_verify.user }}{% endfor %}";
-  var twitterUsers = "{% for twitter_user_verify in content_twitter %}{{ twitter_user_verify.twitter_username }}{% endfor %}"
-  console.log("Twitter User Model: " + getTwitterUser)
-  console.log("Twitter Database usernames: " + twitterUsers)
+              // Checking Global variables
+              TWITTER_TOTAL_TWEETS = econtent.userPost;
+              TWITTER_TOTAL_FOLLOWERS = econtent.userFollowers;
+              TWITTER_TOTAL_FOLLOWING = econtent.userFollowing;
 
-  getTwitterUser == usernameVerify
-  if ((getTwitterUser == usernameVerify)) {
-    $("#content-twitter").show();
-    $("#disconnect-twitter").show();
-    $("#connect-header-twitter").hide();
-    console.log("Twitter connected");
-  } else {
-    console.log("Twitter Not connected")
-  }
+              //Creating a Div
+              var dashboardRow = document.getElementById('dashboard-row')
 
-  if (getTwitterUser.includes(usernameVerify)) {
-    console.log("Hella True");
-    $("#content-twitter").show();
-    $("#connect-header-twitter").hide();
-  } else {
-    console.log("not true")
-  }
+              var twitterDiv = document.createElement('div');
+              twitterDiv.className = "col-sm-16";
+              var uniqueIDGenerate = ID();
+              var uniqueID = 'holder-' + uniqueIDGenerate;
+              twitterDiv.setAttribute('id', uniqueID);
+
+              dashboardRow.appendChild(twitterDiv);
+              $('#' + uniqueID).html("<div class='card' style='background: #28aae1;;'> <b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='color:#fff; position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+            }
+          }
+        },
+        async:false,
+      });
+    }
+    checkTwitterAccount();
+
+    // Twitter Post
+    //Using ajax onsubmit and running function
+    $(document).ready(function(){
+      $('#twitter-form').submit(function(event){
+        event.preventDefault();
+        var twitterPostUser = "{{ user.username }}"
+        var url = '{% url 'twitter-post/' %}'
+        $('#twitter-post-login').html('Logging In.');
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'twitterPostUser':$('#twitter-user').val(),
+            'twitterUsername':$('#twitter-username').val(),
+            'twitterPassword':$('#twitter-password').val()
+          },
+          success: function (value) {
+            var evalue = JSON.parse(value);
+            var message = evalue.message;
+            if (message == 'success') {
+              //dismissing modal
+              checkTwitterAccount();
+              $('#hidden-cancel-twitter').click();
+            } else {
+            $('#twitter-post-error').html('Error logging in. Please try again.');
+            }
+          }
+        });
+      });
+    });
+
+    // Twitter Disconnect
+    $(document).ready(function(){
+      $('#disconnect-button-twitter').click(function(event){
+        event.preventDefault();
+        var url = '{% url 'disconnect-twitter/' %}'
+        var usernameVerify = "{{ user.username }}";
+
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            // Token needed to return data in Python
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'twitterPostUser':usernameVerify,
+          },
+          success: function (content) {
+            //dismissing modal
+            $('#hidden-cancel-twitter-disconnect').click();
+            $('#content-twitter').html(content);
+
+            //Displaying information
+            $("#content-twitter").hide();
+            $("#disconnect-twitter").hide();
+            $("#connect-header-twitter").show();
+          }
+        });
+      });
+    });
+    // Creating New Variables to Display
+    var instagram_total_post = parseInt(INSTAGRAM_TOTAL_POST, 10);
+    var instagram_total_followers = parseInt(INSTAGRAM_TOTAL_FOLLOWERS, 10);
+    var instagram_total_following = parseInt(INSTAGRAM_TOTAL_FOLLOWING, 10);
+
+    var twitter_total_tweets = parseInt(TWITTER_TOTAL_TWEETS, 10);
+    var twitter_total_followers = parseInt(TWITTER_TOTAL_FOLLOWERS, 10);
+    var twitter_total_following = parseInt(TWITTER_TOTAL_FOLLOWING, 10);
+
+    var total_post = instagram_total_post + twitter_total_tweets;
+    var total_followers = instagram_total_followers + twitter_total_followers;
+    var total_following = instagram_total_following + twitter_total_following;
+
+    $('#total-followers').html("Total Audience: " + total_followers);
+    $('#total-post').html("Total Post: " + total_post);
+    $('#total-following').html("You're following " + total_following + "people");
+
+    // alert(instagram_total_followers + twitter_total_followers);
 </script>
 
 {% endblock %}
