@@ -111,8 +111,14 @@ def InstagramCheck(request):
         print(INSTAGRAM)
         instagram_post = Instagram()
 
+        instagramInfo = []
         # Using a for loop to get information related to that user
+
+        verify_instagram_post_total = []
+        verify_instagram_followers_total = []
+        verify_instagram_following_total = []
         for val in INSTAGRAM:
+            print("val: ")
             print(val)
 
             # Getting User Info
@@ -123,24 +129,25 @@ def InstagramCheck(request):
             verify_instagram_followers = val.number_of_followers
             verify_instagram_following = val.number_of_following
 
-            if instagram_user_verify in verify_instagram_user:
-                # Saving User Data
-                instagram_post.number_of_post = verify_instagram_post
-                instagram_post.number_of_followers = verify_instagram_followers
-                instagram_post.number_of_following = verify_instagram_following
 
-                print("true")
-                print(verify_instagram_user)
-                value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following}
-                break
-                instagram_post.save()
+            if instagram_user_verify == val.user:
+
+                verify_instagram_post_total.append(verify_instagram_post)
+                verify_instagram_followers_total.append(verify_instagram_followers)
+                verify_instagram_following_total.append(verify_instagram_following)
+
+                value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following, 'totalUserPost':verify_instagram_post_total, 'totalUserFollowers':verify_instagram_post_total, 'totalUserFollowing': verify_instagram_following_total}
+                # break'
+                instagramInfo.append(value)
         print(value)
-        return HttpResponse( json.dumps( value ))
+        print(instagramInfo)
+        return HttpResponse( json.dumps( instagramInfo ))
 
 # Function to disconnect instagram
 def InstagramDisconnect(request):
     print("disconnecting user")
     instagram_user_verify = request.POST.get('instagramPostUser')
+    selected_option = request.POST.get('selectedOption')
     content_instagram = Instagram.objects.all()
     INSTAGRAM = content_instagram
     for val in INSTAGRAM:
@@ -152,9 +159,10 @@ def InstagramDisconnect(request):
 
         print(verify_instagram_user_final2 == verify_instagram_user_final)
         if instagram_user_verify == verify_instagram_user:
-            val.delete()
-            print("Deleted" + instagram_user_verify + "user")
-            break
+            if selected_option == val.instagram_username:
+                val.delete()
+                print("Deleted" + instagram_user_verify + "user")
+                break
 
     value3 = 'disconnect'
     return HttpResponse(value3)
@@ -221,6 +229,7 @@ def TwitterCheck(request):
 
         content_twitter = Twitter.objects.all()
         TWITTER = content_twitter
+        twitterInfo = []
 
         # Using a for loop to get information related to that user
         for val in TWITTER:
@@ -232,18 +241,21 @@ def TwitterCheck(request):
             verify_twitter_followers = val.number_of_followers
             verify_twitter_following = val.number_of_following
 
+            # verify_twitter_post = verify_twitter_post + verify_twitter_post
             if twitter_user_verify in verify_twitter_user:
                 print("true")
                 print(verify_twitter_user)
                 value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following}
-                break
-        print(value)
-        return HttpResponse( json.dumps( value ))
+
+                twitterInfo.append(value)
+        print(verify_twitter_post)
+        return HttpResponse( json.dumps( twitterInfo ))
 
 # Function to disconnect Twitter from database
 def TwitterDisconnect(request):
     print("disconnecting user")
     twitter_user_verify = request.POST.get('twitterPostUser')
+    selectedOption = request.POST.get('selectedOption')
     content_twitter = Twitter.objects.all()
     TWITTER = content_twitter
     for val in TWITTER:
@@ -255,9 +267,147 @@ def TwitterDisconnect(request):
 
         print(verify_twitter_user_final2 == verify_twitter_user_final)
         if twitter_user_verify == verify_twitter_user:
-            val.delete()
-            print("Deleted" + twitter_user_verify + "user")
-            break
+            if selectedOption == val.twitter_username:
+                val.delete()
+                print("Deleted" + twitter_user_verify + "user")
+                break
 
-    value3 = 'disconnect'
-    return HttpResponse(value3)
+    value = 'disconnect'
+    return HttpResponse(value)
+
+def getTotalSummary(request):
+    print("Getting total")
+    if request.method == 'POST':
+        value = []
+
+        # Getting logged in user
+        user_verify = request.POST['usernameVerify']
+        print(user_verify)
+
+        content_twitter = Twitter.objects.all()
+        TWITTER = content_twitter
+
+        content_instagram = Instagram.objects.all()
+        INSTAGRAM = content_instagram
+
+        twitterInfo = []
+
+        # Making variable arrays
+        verify_twitter_post_array = []
+        verify_twitter_followers_array = []
+        verify_twitter_following_array = []
+
+        # Using a for loop to get information related to that user
+        for val in TWITTER:
+
+            if user_verify == val.user:
+                # Getting User Info
+                verify_twitter_user = val.user
+                verify_twitter_username = val.twitter_username
+                verify_twitter_post = val.number_of_post
+                verify_twitter_followers = val.number_of_followers
+                verify_twitter_following = val.number_of_following
+
+                print("true")
+
+                print(verify_twitter_post)
+                verify_twitter_post_array.append(int(verify_twitter_post))
+                verify_twitter_followers_array.append(int(verify_twitter_followers))
+                verify_twitter_following_array.append(int(verify_twitter_following))
+
+
+        sum_verify_twitter_post = sum(verify_twitter_post_array)
+        sum_verify_twitter_followers = sum(verify_twitter_followers_array)
+        sum_verify_twitter_following = sum(verify_twitter_following_array)
+        print(sum_verify_twitter_post, sum_verify_twitter_followers, sum_verify_twitter_following)
+
+        # Making variable arrays
+        verify_instagram_post_array = []
+        verify_instagram_followers_array = []
+        verify_instagram_following_array = []
+
+        for val in INSTAGRAM:
+
+            # Getting User Info
+            verify_instagram_user = val.user
+            verify_instagram_username = val.instagram_username
+            verify_instagram_post = val.number_of_post
+            verify_instagram_followers = val.number_of_followers
+            verify_instagram_following = val.number_of_following
+
+
+            if user_verify == verify_twitter_user:
+                print("true")
+
+                verify_instagram_post_array.append(int(verify_instagram_post))
+                verify_instagram_followers_array.append(int(verify_instagram_followers))
+                verify_instagram_following_array.append(int(verify_instagram_following))
+
+        sum_verify_instagram_post = sum(verify_instagram_post_array)
+        sum_verify_instagram_followers = sum(verify_instagram_followers_array)
+        sum_verify_instagram_following = sum(verify_instagram_following_array)
+
+        sum_post = sum_verify_instagram_post + sum_verify_twitter_post
+        sum_followers = sum_verify_instagram_followers + sum_verify_twitter_followers
+        sum_following = sum_verify_instagram_following + sum_verify_twitter_following
+
+        value = {'twitterUserPost': sum_verify_twitter_post, 'twitterUserFollowers': sum_verify_twitter_followers, 'twitterUserFollowing': sum_verify_twitter_following, 'instagramUserPost': sum_verify_instagram_post, 'instagramUserFollowers': sum_verify_instagram_followers, 'instagramUserFollowing': sum_verify_instagram_following, 'totalUserPost': sum_post, 'totalUserFollowers': sum_followers, 'totalUserFollowing': sum_following }
+
+        print(value)
+        return HttpResponse( json.dumps( value ))
+
+def instagramOnchange(request):
+    if request.method == 'POST':
+        value = []
+
+        # Getting logged in user
+        user_verify = request.POST['usernameVerify']
+        user_selected = request.POST['selectedValue']
+        print(user_verify)
+        content_instagram = Instagram.objects.all()
+        INSTAGRAM = content_instagram
+
+        # Using a for loop to get information related to that user
+        for val in INSTAGRAM:
+
+            if user_verify == val.user:
+                print("user true")
+                if user_selected == val.instagram_username:
+                    print("user selected")
+                    # Getting User Info
+                    verify_instagram_user = val.user
+                    verify_instagram_username = val.instagram_username
+                    verify_instagram_post = val.number_of_post
+                    verify_instagram_followers = val.number_of_followers
+                    verify_instagram_following = val.number_of_following
+
+                    value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following}
+        return HttpResponse( json.dumps( value ))
+
+def twitterOnchange(request):
+    if request.method == 'POST':
+        value = []
+
+        # Getting logged in user
+        user_verify = request.POST['usernameVerify']
+        user_selected = request.POST['selectedValue']
+        print(user_verify)
+        content_twitter = Twitter.objects.all()
+        TWITTER = content_twitter
+
+        # Using a for loop to get information related to that user
+        for val in TWITTER:
+
+            if user_verify == val.user:
+                print("user true")
+                if user_selected == val.twitter_username:
+                    print("user selected")
+                    # Getting User Info
+                    verify_twitter_user = val.user
+                    verify_twitter_username = val.twitter_username
+                    verify_twitter_post = val.number_of_post
+                    verify_twitter_followers = val.number_of_followers
+                    verify_twitter_following = val.number_of_following
+
+                    value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following}
+        return HttpResponse( json.dumps( value ))

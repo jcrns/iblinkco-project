@@ -6,7 +6,7 @@
   $("#hidden-button-youtube").hide();
 
   // showing dashboard row by default
-  $("#dashboard-row").show();
+  $("#admin").show();
 
   // hiding analytics by default
   $("#analytics").hide();
@@ -19,31 +19,31 @@
 
 
   // hiding the dashboard row toggle by default
-  $("#show-dashboard-row").hide();
+  $("#show-admin").hide();
 
   $("#show-analytics").click(function() {
-    $("#dashboard-row").hide();
+    $("#admin").hide();
     $("#analytics").show();
-    $("#show-dashboard-row").show();
+    $("#show-admin").show();
     $("#show-analytics").hide();
     $("#show-stream").show();
     $("#stream").hide();
 
   });
 
-  $("#show-dashboard-row").click(function() {
-    $("#dashboard-row").show();
+  $("#show-admin").click(function() {
+    $("#admin").show();
     $("#analytics").hide();
-    $("#show-dashboard-row").hide();
+    $("#show-admin").hide();
     $("#show-analytics").show();
     $("#show-stream").show();
     $("#stream").hide();
   })
 
   $("#show-stream").click(function() {
-    $("#dashboard-row").hide();
+    $("#admin").hide();
     $("#analytics").hide();
-    $("#show-dashboard-row").show();
+    $("#show-admin").show();
     $("#show-analytics").show();
     $("#show-stream").hide();
     $("#stream").show();
@@ -229,11 +229,29 @@
 
 
   // Creating Divs
-  var dashboardRow = document.getElementById('dashboard-row')
 
-  var createrDiv = document.createElement('div');
-  createrDiv.className = "col-sm-16";
-  createrDiv.setAttribute('id', "holder-1");
+  // Connect Account Div
+  function accountDiv(){
+    var dashboardRow = document.getElementById('connect-account-div');
 
-  dashboardRow.appendChild(createrDiv);
-  $('#holder-1').html('<div class="card" id="holder-2"><p><a href="#" style="color:#000" data-toggle="modal" data-target="#connect-instagram">Add An Account</a></p></div>');
+    var createrDiv = document.createElement('div');
+    createrDiv.className = "col-sm-16";
+    createrDiv.setAttribute('id', "holder-1");
+
+    dashboardRow.appendChild(createrDiv);
+    $('#holder-1').html('<div class="card" id="holder-2"><p><a href="#" style="color:#000" data-toggle="modal" data-target="#connect">Add An Account</a></p></div>');
+  }
+  accountDiv();
+
+  // Create Opperation Div
+  function opperationDiv(){
+    var dashboardRow = document.getElementById('create-opperation-div');
+
+    var createrDiv = document.createElement('div');
+    createrDiv.className = "col-sm-16";
+    createrDiv.setAttribute('id', "holder-5");
+
+    dashboardRow.appendChild(createrDiv);
+    $('#holder-5').html('<div class="card" id="holder-6"><p><a href="#" id="connect-opperation" data-toggle="modal" data-target="#opperation-post" style="color:#000">Create New Opperation</a></p></div>');
+  }
+  opperationDiv();

@@ -13,17 +13,25 @@
   .dashboard-row-item{
     min-height: 40vh;
   }
-  .wrapper {
+  #wrapper {
     display: flex;
     width: 100%;
+    height:80vh;
     align-items: stretch;
     /* border: solid red; */
   }
   .dashboard-row{
     /* border: solid red; */
   }
+  img{
+    width:32px;
+    height:32px;
+  }
+  #instagram-graph{
+    width:10px;
+  }
   </style>
-  <div class="wrapper">
+  <div class="wrapper" id="wrapper" style="border-bottom: 1px solid #000;">
     <!-- Sidebar -->
     <nav id="sidebar" style="background-color:#dbdbdb">
         <div class="sidebar-header" style="min-width: 150px;">
@@ -51,15 +59,17 @@
             </li>
         </ul>
     </nav>
-    <div class="wrapper" style="padding:20px;">
+    <div class="wrapper" id="wrapper" style="padding:20px;" id="admin">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" style="width:40vw">
           <div class="card">
             <div class="card-body">
               <p id="total-followers" class="display-4"></p>
               <p id="total-post"></p>
               <p id="total-following"></p>
-              <br>
+              <div class="container">
+                <canvas id="full-followers"></canvas>
+              </div>
               <br>
               <br>
               <br>
@@ -70,56 +80,48 @@
           </div>
         </div>
       </div>
-      <div class="dashboard-row" id="dashboard-row" style="padding-left:20px; width:40vw">
+
+      <!-- Place for javascript divs -->
+      <div class="container" id="accounts-tools" style="padding-left:0px; width:40vw">
+        <div class="dashboard-row" id="account-divs"></div>
+        <div class="dashboard-row" id="connect-account-div"></div>
+        <div class="dashboard-row" id="opperations" style="padding-top:10px;"></div>
+        <div class="dashboard-row" id="create-opperation-div"></div>
       </div>
     </div>
 </div>
-<div id="dashboard-row" class="container-fluid" style="min-height:100%;">
-  <div id="sm-container" class="card-group text-center" style="height:50vh;">
-
-    <!-- Instagram Div -->
-    <div id="dash-instagram" class="card mb-3 mt-1 dashboard-row-item" style="background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);">
-      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-instagram">
-        <h2 id="connect-header-instagram">Connect Instagram Account</h2>
-      </a>
-      <div id="content-instagram">
-        <div id="dash-instagram">
-
-        </div>
-      </div>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-instagram">View Full</p>
-      </a>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-instagram">Shrink</p>
-      </a>
-      <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-instagram-menu">
-        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-instagram">Disconnect</p>
-      </a>
-    </div>
-
-    <!-- Instagram Menu -->
-    <div class="modal fade" id="connect-instagram" tabindex="-1" role="dialog">
+    <!-- Connect Account Modal -->
+    <div class="modal fade" id="connect" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Connect Instagram</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="exampleModalLabel">Connect Social Media</h5>
+            <button type="button" id="hidden-cancel" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
 
           <div class="modal-body">
-            <form method="POST" id="instagram-form">
+            <form method="POST" id="posting-form">
               {% csrf_token %}
               <!-- Connect Accounts -->
-              <button id="hidden-cancel-instagram" class="" data-dismiss="modal" style="display: none"></button>
-              <p><input type="text" id="instagram-user" name="instagram-user" placeholder="Instagram Username" value="{{ user.username }}" style="display:none"></p>
-              <p><input type="text" id="instagram-username" name="instagram-username" placeholder="Instagram Username"></p>
-              <p><input type="password" id="instagram-password" name="instagram-password" placeholder="Instagram Password"></p>
+              <!-- Ability to select account -->
+              <p>
+                Platform:
+                <br>
+                <select id="select-account-type" onchange="optionChange(this)">
+                  <option disabled selected value> -- select an option -- </option>
+                  <option value="instagram">Instagram</option>
+                  <option value="twitter">Twitter</option>
+                </select>
+              </p>
+
+              <p><input type="text" id="user" name="user" placeholder="Username" value="{{ user.username }}" style="display:none"></p>
+              <p><input type="text" id="username" name="username" placeholder="Account Username"></p>
+              <p><input type="password" id="password" name="password" placeholder="Account Password"></p>
               <!-- Button to connect account -->
               <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit">
-              <p id="instagram-post-error" class="text-danger"><span id="instagram-post-login" class="text-success"></span></p>
+              <p id="post-error" class="text-danger"><span id="post-login" class="text-success"></span></p>
             </form>
           </div>
         </div>
@@ -147,26 +149,6 @@
       </div>
     </div>
 
-    <!-- Facebook Div-->
-    <div id="dash-facebook" class="card mb-3 mt-1 dashboard-row-item" style="background: #3b579d;">
-      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-facebook-1">
-        <h2 id="connect-header-facebook">Connect Facebook Account</h2>
-      </a>
-      <div id="content-facebook">
-        <div id="profile"></div>
-        <div id="feed"></div>
-      </div>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-facebook">View Full</p>
-      </a>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-facebook">Shrink</p>
-      </a>
-      <a href="#">
-        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-facebook" onclick="logout()">Disconnect</p>
-      </a>
-    </div>
-
     <!-- Facebook Menu -->
     <div class="modal fade" id="connect-facebook-1" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -192,54 +174,6 @@
       </div>
     </div>
 
-    <!-- Twiter Div -->
-    <div id="dash-twitter" class="card mb-3 mt-1 dashboard-row-item" style="background: #28aae1;">
-      <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-twitter-1">
-        <h2 id="connect-header-twitter">Connect Twitter Account</h2>
-      </a>
-      <div id="content-twitter">
-        <!-- {{ twitter.display1.test }} -->
-      </div>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-twitter">View Full</p>
-      </a>
-      <a href="#">
-        <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-twitter">Shrink</p>
-      </a>
-      <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-twitter-menu">
-        <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-twitter">Disconnect</p>
-      </a>
-    </div>
-  </div>
-
-  <!-- Twitter Menu -->
-  <div class="modal fade" id="connect-twitter-1" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Connect Twitter</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <form method="POST" id="twitter-form">
-            {% csrf_token %}
-            <!-- Connect Accounts -->
-            <button id="hidden-cancel-twitter" class="" data-dismiss="modal" style="display: none"></button>
-            <p><input type="text" id="twitter-user" name="twitter-user" placeholder="Instagram Username" value="{{ user.username }}" style="display:none"></p>
-            <p><input type="text" id="twitter-username"name="twitter-username" placeholder="Twitter Username"></p>
-            <p><input type="password" id="twitter-password" name="twitter-password" placeholder="Twitter Password"></p>
-            <!-- Button to connect account -->
-            <input type="submit" name="twitter submit" class="btn btn-success btn-primary text-right" id="show-content-twitter" value="Submit">
-            <p id="twitter-post-error" class="text-danger"><span id="twitter-post-login" class="text-success"></span></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!--Disconnect Menu Twitter -->
   <div class="modal fade" id="disconnect-twitter-menu" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -261,49 +195,6 @@
     </div>
   </div>
 
-  <!-- Youtube Div -->
-  <div id="dash-youtube" class="card my-2 dashboard-row-item" style="background:#ff0000; height: 10px; min-width:100%;">
-    <a href="#" style="color:#000" data-toggle="modal" data-target="#connect-youtube">
-      <h2 id="connect-header-youtube">Connect Youtube Account</h2>
-    </a>
-    <p class="text-center" id="content-youtube">{{ twitter.display4.test }}</p>
-    <a href="#">
-      <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="button-youtube">View Full</p>
-    </a>
-    <a href="#">
-      <p class="text-right" style="color:#fff; position: absolute; bottom:1px; float:right;" id="hidden-button-youtube">Shrink</p>
-    </a>
-    <a href="#">
-      <p style="color:#fff; position: absolute; bottom:1px; right:3%; float:right;" id="disconnect-youtube">Disconnect</p>
-    </a>
-  </div>
-</div>
-
-<!-- Youtube Menu -->
-<div class="modal fade" id="connect-youtube" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Connect Youtube</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <form action="index.html" method="post">
-          <!-- Connect Accounts -->
-          <p><input type="text" name="youtube-username" placeholder="Youtube Username"></p>
-          <p><input type="password" name="youtube-password" placeholder="Youtube Password"></p>
-          <!-- Button to connect account -->
-          <input type="button" name="submit-youtube" data-dismiss="modal" class="btn btn-primary text-right" id="show-content-youtube" value="Submit">
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <!-- Settings Menu -->
 <div class="modal fade" id="connect-settings" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -324,20 +215,41 @@
   </div>
 </div>
 
-<!-- Using Jquery to show different things on dashboard page -->
+<!-- Opperation popup -->
+<div class="modal fade" id="opperation-post" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Opperation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form method="post" id="opperation-post-form">
+          {% csrf_token %}
+
+          <p>Opperation:
+            <select id="select-opperation-type" onchange="opperationOptionChange(this)">
+              <option disabled selected value> -- select an option -- </option>
+              <option value="post-on-social">Post On Social Media</option>
+              <option value="auto-like">Like Post On Social Media</option>
+              <option value="auto-follow">Follow Users On Social Media</option>
+            </select>
+          </p>
+          <div id="opperation-post-javascript">
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Using Jquery and JavaScript to have page function -->
 <script type="text/javascript">
-  //Setting Global Variables
-
-  // Instagram variables
-  var INSTAGRAM_TOTAL_POST = '';
-  var INSTAGRAM_TOTAL_FOLLOWERS;
-  var INSTAGRAM_TOTAL_FOLLOWING = '';
-
-  // Twitter variables
-  var TWITTER_TOTAL_TWEETS = '';
-  var TWITTER_TOTAL_FOLLOWERS;
-  var TWITTER_TOTAL_FOLLOWING = '';
-
   // Random Id Generator
   var ID = function () {
     // Math.random should be unique because of its seeding algorithm.
@@ -347,11 +259,137 @@
   };
 
   // INSTAGRAM AJAX FUNCTIONS
+    function getInstagramData(content){
+      var econtent = JSON.parse(content);
+      var user = [];
+      var length = [];
+      var username = [];
+      var totalPostArray = [];
+      var totalFollowersArray = [];
+      var totalFollowingArray = [];
 
+      for (let i = 0; i < econtent.length; i++) {
+        user.push(econtent[i].user);
+        length.push(econtent.length);
+        username.push(econtent[i].username);
+        totalPostArray.push(econtent[i].userPost);
+        totalFollowersArray.push(econtent[i].userFollowers);
+        totalFollowingArray.push(econtent[i].userFollowing);
+      }
+      var obj={
+          "user":user,
+          "length":length,
+          "username":username,
+          "userPost":totalPostArray,
+          "userFollowers": totalFollowersArray,
+          "userFollowing": totalFollowingArray
+
+      };
+
+      return obj;
+
+    }
+
+    function showInstagramDiv(content, i){
+
+      var econtent = content;
+      var instagramId = 'instagram-div';
+      var chick = 'dfv';
+      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+    }
+    function showInstagramSelect(content, i){
+      var econtent = content;
+      var addInstagramAccount = document.createElement('option');
+      var parentElement = document.getElementById('select-account-instagram');
+      var instagramIdUnique = ID();
+      var uniqueId = 'handler-' + instagramIdUnique;
+      addInstagramAccount.setAttribute('id', uniqueId);
+
+      var text = document.createTextNode(econtent.username[i]);
+      parentElement.appendChild(addInstagramAccount);
+      addInstagramAccount.appendChild(text);
+    }
+    function InstagramDisplay(content){
+      //Showing and hidding certain information depending on returned information
+      var econtent = content;
+      if(econtent != ''){
+        var usernameVerify = "{{ user.username }}";
+        if(econtent.user[0] == usernameVerify){
+          for (var i = 0; i < econtent.length[0]; i++) {
+
+            // Defining account div
+            var dashboardRow = document.getElementById('account-divs');
+
+            // Defining Wrapper div
+            var wrapperAccount = document.createElement('div');
+            wrapperAccount.className = "wrapper";
+            wrapperAccount.setAttribute('id', 'wrapper-instagram');
+            dashboardRow.appendChild(wrapperAccount);
+
+            // Instagram Account Div
+            var instagramDiv = document.createElement('div');
+            instagramDiv.className = "col-sm-16";
+            instagramDiv.setAttribute('id', 'instagram-div');
+            wrapperAccount.appendChild(instagramDiv);
+
+            // Defining Graph Div
+            var instagramGraph = document.createElement('canvas');
+            instagramGraph.className = "container";
+            instagramGraph.setAttribute('id', 'instagram-graph');
+            wrapperAccount.appendChild(instagramGraph);
+
+            var elementExists = document.getElementById("select-account-instagram");
+            if (elementExists != null) {
+              showInstagramSelect(econtent, i);
+            } else {
+              showInstagramDiv(econtent, i);
+              // graphsInstagramControl(econtent, i);
+            }
+          }
+        }
+      }
+    }
+
+    function graphsInstagramControl(content, i){
+      econtent = content;
+      alert(econtent.userFollowers[i]);
+      var elementExists = document.getElementById("instagram-graph");
+      let instagramGraphDiv = elementExists.getContext("2d");
+
+      let instagramGraph = new Chart(instagramGraphDiv, {
+        type:'bar', // Making a pie chart
+        data:{
+          labels:['Followers', 'Following', 'Post'],
+          datasets:[{
+            label:'Works',
+            data:[
+              econtent.userFollowers[i],
+              econtent.userFollowing[i],
+              econtent.userPost[i]
+            ],
+            backgroundColor: [
+              '#000',
+              '#000',
+              '#000'
+            ]
+          }]
+        },
+        options:{
+          title:{
+            display:true,
+            text: 'Followers Vs. Following',
+            responsive: false
+          }
+        }
+      });
+    }
+    function instagramOptionChange(selectObject, content, i){
+      var hope = content;
+    }
     //Checking State of logged in accounts
     function checkInstagramAccount(e){
-      var usernameVerify = "{{ user.username }}";
       var url = '{% url 'check-out-instagram/' %}';
+      var usernameVerify = "{{ user.username }}";
       console.log("Instagram Username: " + usernameVerify)
       $.ajax({
         type: 'POST',
@@ -363,81 +401,19 @@
 
         },
         success: function (content) {
-          //Showing and hidding certain information depending on returned information
-          var econtent = JSON.parse(content);
-          if(content == ''){
-            $("#content-instagram").hide();
-            $("#disconnect-instagram").hide();
-            $("#connect-header-instagram").show();
-            $('#content-instagram').html(content);
-          } else {
-            if(econtent.user == usernameVerify){
-              $("#content-instagram").show();
-              $("#disconnect-instagram").show();
-              $("#connect-header-instagram").hide();
-              $('#content-instagram').html("<b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p>");
 
-              INSTAGRAM_TOTAL_POST = econtent.userPost;
-              INSTAGRAM_TOTAL_FOLLOWERS = econtent.userFollowers;
-              INSTAGRAM_TOTAL_FOLLOWING = econtent.userFollowing;
-
-              //Creating a Div
-              var dashboardRow = document.getElementById('dashboard-row')
-
-              var instagramDiv = document.createElement('div');
-              instagramDiv.className = "col-sm-16";
-              var uniqueIDGenerate = ID();
-              var uniqueID = 'holder-' + uniqueIDGenerate;
-              instagramDiv.setAttribute('id', uniqueID);
-              dashboardRow.appendChild(instagramDiv);
-              $('#' + uniqueID).html("<div class='card' style='background: linear-gradient(#7d30e2,#d81dac,#ef1a6e);'> <b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='color:#fff; position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
-            }
-          }
+          var getData = getInstagramData(content);
+          var getInfo = InstagramDisplay(getData);
+          var ttlAmount = totalAmountInstagram(content);
         },
-        async:false,
       });
     }
     checkInstagramAccount();
-
-    // Instagram Post
-    //Using ajax onsubmit and running function
-    $(document).ready(function(){
-      $('#instagram-form').submit(function(event){
-        event.preventDefault();
-        var instagramPostUser = "{{ user.username }}";
-        var url = '{% url 'instagram-post/' %}';
-        $('#instagram-post-login').html('Logging In.');
-        //using ajax to call function
-        $.ajax({
-          type: 'POST',
-          url: url,
-          dataType: 'text',
-          data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            //Returning Information as objects
-            'instagramPostUser':$('#instagram-user').val(),
-            'instagramUsername':$('#instagram-username').val(),
-            'instagramPassword':$('#instagram-password').val()
-          },
-          success: function (value) {
-            var evalue = JSON.parse(value);
-            console.log(evalue);
-            var message = evalue.message;
-            if(message == 'success'){
-              //dismissing modal
-              checkInstagramAccount();
-              $("#hidden-cancel-instagram").click();
-            } else {
-              $('#instagram-post-error').html('Error logging in. Please try again.');
-            }
-          }
-        });
-      });
-    });
-
     // Instagram Disconnect
     $(document).ready(function(){
       $('#disconnect-button-instagram').click(function(event){
+        var getSelected = document.getElementById("select-account-instagram");
+        var selectedOption = getSelected.options[getSelected.selectedIndex].value;
         event.preventDefault();
         var url = '{% url 'disconnect-instagram/' %}'
         var usernameVerify = "{{ user.username }}";
@@ -451,27 +427,110 @@
             csrfmiddlewaretoken: '{{ csrf_token }}',
             //Returning Information as objects
             'instagramPostUser':usernameVerify,
+            'selectedOption':selectedOption,
           },
           success: function (value) {
-            //dismissing modal
-            $('#hidden-cancel-instagram-disconnect').click();
-            $('#content-instagram').html(content);
-
-            //Displaying information
-            $("#content-instagram").hide();
-            $("#disconnect-instagram").hide();
-            $("#connect-header-instagram").show();
+            location.reload();
           }
         });
       });
     });
+
+
+    function twitterOptionChange(selectObject, content, i){
+      var hope = content;
+    }
+
+    function showTwitterDiv(content, i){
+      var econtent = content;
+      var twitterId = 'twitter-div';
+      var chick = 'dfv';
+      $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+    }
+
+    function showTwitterSelect(content, i){
+      var econtent = content;
+      var addTwitterAccount = document.createElement('option');
+      var parentElement = document.getElementById('select-account-twitter');
+      var twitterIdUnique = ID();
+      var uniqueId = 'handler-' + twitterIdUnique;
+      addTwitterAccount.setAttribute('id', uniqueId);
+
+      var text = document.createTextNode(econtent.username[i]);
+      parentElement.appendChild(addTwitterAccount);
+      addTwitterAccount.appendChild(text);
+    }
+
+    function TwitterDisplay(content){
+      //Showing and hidding certain information depending on returned information
+      var econtent = content;
+
+      if(econtent != ''){
+        var usernameVerify = "{{ user.username }}";
+
+        if(econtent.user[0] == usernameVerify){
+
+          for (let i = 0; i < econtent.length[0]; i++) {
+            //Creating a Div
+            var dashboardRow = document.getElementById('account-divs');
+
+            var twitterDiv = document.createElement('div');
+            twitterDiv.className = "col-sm-16";
+            var twitterId = 'twitter-div';
+            twitterDiv.setAttribute('id', twitterId);
+            dashboardRow.appendChild(twitterDiv);
+            var elementExists = document.getElementById("select-account-twitter");
+
+            if (elementExists == null) {
+              showTwitterDiv(econtent, i);
+
+            } else {
+              showTwitterSelect(econtent, i);
+
+            }
+
+
+          }
+        }
+      }
+    }
+
+    function getTwitterData(content){
+      var econtent = JSON.parse(content);
+      var user = [];
+      var length = [];
+      var username = [];
+      var totalPostArray = [];
+      var totalFollowersArray = [];
+      var totalFollowingArray = [];
+
+      for (let i = 0; i < econtent.length; i++) {
+        user.push(econtent[i].user);
+        length.push(econtent.length);
+        username.push(econtent[i].username);
+        totalPostArray.push(econtent[i].userPost);
+        totalFollowersArray.push(econtent[i].userFollowers);
+        totalFollowingArray.push(econtent[i].userFollowing);
+      }
+      var obj={
+          "user":user,
+          "length":length,
+          "username":username,
+          "userPost":totalPostArray,
+          "userFollowers": totalFollowersArray,
+          "userFollowing": totalFollowingArray
+
+      };
+
+      return obj;
+
+    }
 
     // TWITTER AJAX FUNCTIONS
 
     function checkTwitterAccount(e){
       var usernameVerify = "{{ user.username }}";
       var url = '{% url 'check-out-twitter/' %}';
-      console.log("Twitter Username: " + usernameVerify)
       $.ajax({
         type: 'POST',
         url: url,
@@ -482,82 +541,21 @@
 
         },
         success: function (content) {
-          //Showing and hidding certain information depending on returned information
-          var econtent = JSON.parse(content);
-          if(content == ''){
-              $("#content-twitter").hide();
-              $("#disconnect-twitter").hide();
-              $("#connect-header-twitter").show();
-              $('#content-twitter').html(content);
-          } else {
-            if(econtent.user == usernameVerify){
-              $("#content-twitter").show();
-              $("#disconnect-twitter").show();
-              $("#connect-header-twitter").hide();
-              $('#content-twitter').html("<b>"+ econtent.username + "</b>" + "<br /><p>User Tweets: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p>");
+          var getData = getTwitterData(content)
+          var getInfo = TwitterDisplay(getData);
+          // var ttlAmount = totalAmountTwitter(content);
+          // summary(ttlAmount);
 
-              // Checking Global variables
-              TWITTER_TOTAL_TWEETS = econtent.userPost;
-              TWITTER_TOTAL_FOLLOWERS = econtent.userFollowers;
-              TWITTER_TOTAL_FOLLOWING = econtent.userFollowing;
-
-              //Creating a Div
-              var dashboardRow = document.getElementById('dashboard-row')
-
-              var twitterDiv = document.createElement('div');
-              twitterDiv.className = "col-sm-16";
-              var uniqueIDGenerate = ID();
-              var uniqueID = 'holder-' + uniqueIDGenerate;
-              twitterDiv.setAttribute('id', uniqueID);
-
-              dashboardRow.appendChild(twitterDiv);
-              $('#' + uniqueID).html("<div class='card' style='background: #28aae1;;'> <b>"+ econtent.username + "</b>" + "<br /><p>User Post: "+ econtent.userPost + "</p>" + "<br /><p>Followers: "+ econtent.userFollowers + "</p>" + "<br /><p>Following: "+ econtent.userFollowing + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='color:#fff; position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
-            }
-          }
         },
-        async:false,
       });
     }
     checkTwitterAccount();
 
-    // Twitter Post
-    //Using ajax onsubmit and running function
-    $(document).ready(function(){
-      $('#twitter-form').submit(function(event){
-        event.preventDefault();
-        var twitterPostUser = "{{ user.username }}"
-        var url = '{% url 'twitter-post/' %}'
-        $('#twitter-post-login').html('Logging In.');
-        //using ajax to call function
-        $.ajax({
-          type: 'POST',
-          url: url,
-          dataType: 'text',
-          data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            //Returning Information as objects
-            'twitterPostUser':$('#twitter-user').val(),
-            'twitterUsername':$('#twitter-username').val(),
-            'twitterPassword':$('#twitter-password').val()
-          },
-          success: function (value) {
-            var evalue = JSON.parse(value);
-            var message = evalue.message;
-            if (message == 'success') {
-              //dismissing modal
-              checkTwitterAccount();
-              $('#hidden-cancel-twitter').click();
-            } else {
-            $('#twitter-post-error').html('Error logging in. Please try again.');
-            }
-          }
-        });
-      });
-    });
-
     // Twitter Disconnect
     $(document).ready(function(){
       $('#disconnect-button-twitter').click(function(event){
+        var getSelected = document.getElementById("select-account-twitter");
+        var selectedOption = getSelected.options[getSelected.selectedIndex].value;
         event.preventDefault();
         var url = '{% url 'disconnect-twitter/' %}'
         var usernameVerify = "{{ user.username }}";
@@ -572,38 +570,308 @@
             csrfmiddlewaretoken: '{{ csrf_token }}',
             //Returning Information as objects
             'twitterPostUser':usernameVerify,
+            'selectedOption':selectedOption
           },
           success: function (content) {
-            //dismissing modal
-            $('#hidden-cancel-twitter-disconnect').click();
-            $('#content-twitter').html(content);
-
-            //Displaying information
-            $("#content-twitter").hide();
-            $("#disconnect-twitter").hide();
-            $("#connect-header-twitter").show();
+            location.reload();
           }
         });
       });
     });
-    // Creating New Variables to Display
-    var instagram_total_post = parseInt(INSTAGRAM_TOTAL_POST, 10);
-    var instagram_total_followers = parseInt(INSTAGRAM_TOTAL_FOLLOWERS, 10);
-    var instagram_total_following = parseInt(INSTAGRAM_TOTAL_FOLLOWING, 10);
 
-    var twitter_total_tweets = parseInt(TWITTER_TOTAL_TWEETS, 10);
-    var twitter_total_followers = parseInt(TWITTER_TOTAL_FOLLOWERS, 10);
-    var twitter_total_following = parseInt(TWITTER_TOTAL_FOLLOWING, 10);
+    // Posting
 
-    var total_post = instagram_total_post + twitter_total_tweets;
-    var total_followers = instagram_total_followers + twitter_total_followers;
-    var total_following = instagram_total_following + twitter_total_following;
+  // Allowing Enter key to work
+  $('#username, #password').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+        postSocial();
+    }
+  });
 
-    $('#total-followers').html("Total Audience: " + total_followers);
-    $('#total-post').html("Total Post: " + total_post);
-    $('#total-following').html("You're following " + total_following + "people");
+    // Getting Selected option
+    function optionChange(selectObject) {
+        SELECTEDVALUE = selectObject.value;
+        if(SELECTEDVALUE == 'instagram'){
+        $('#username').attr('placeholder','Instagram Username');
+        $('#password').attr('placeholder','Instagram Password');
+        } else if (SELECTEDVALUE == 'twitter') {
+        $('#username').attr('placeholder','Twitter Username');
+        $('#password').attr('placeholder','Twitter Password');
+      } else {
+        $('#username').attr('placeholder','Account Username');
+        $('#password').attr('placeholder','Account Password');
+      }
+    }
 
-    // alert(instagram_total_followers + twitter_total_followers);
+    function opperationOptionChange(selectObject){
+      opperationSelectedValuePlatform = selectObject.value;
+        if(opperationSelectedValuePlatform == 'post-on-social'){
+          //Option to Post on social Media at Once
+          $('#opperation-post-javascript').html('<p>Post On Social Media: <br /><input type="file" name="post-image" accept="image/*"><br />Add a caption: </p><textarea maxlength="2200" id="post-instagram-caption-opperation" placeholder="Caption/Tweet" name="post-instagram-caption-opperation" cols="30" rows="5"></textarea><br />Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter"><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />');
+        } else if (opperationSelectedValuePlatform == 'auto-like') {
+          $('#opperation-post-javascript').html('<p>Auto Like Post on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Automatic Likes/Favorites" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit"> ');
+        } else if (opperationSelectedValuePlatform == 'auto-follow') {
+          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit"> ');
+        } else {
+
+        $('#username').attr('placeholder','Account Username');
+        $('#password').attr('placeholder','Account Password');
+      }
+    }
+
+    // function instagramOpperationOptionChange(selectObject){
+    //   selectedOpperationValue = selectObject.value;
+    //   if(selectedOpperationValue == 'post-on-instagram'){
+    //     // Post On Instagram
+    //     $('#info-opperation-instagram').html('<p>Instagram Post: <br /><input type="file" name="post-image" accept="image/*">Add a caption: </p><textarea maxlength="2200" id="post-instagram-caption-opperation" name="post-instagram-caption-opperation" cols="30" rows="5"></textarea><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />');
+    //   } else if (selectedOpperationValue == 'auto-like'){
+    //     //  Like Post On Instagram
+    //     $('#info-opperation-instagram').html('<p>Like Post on Instagram Automatically: <br /><p><input type="text" placeholder="Amount of Likes Per Hour"/></p><input type="text" placeholder="Hashtags"/><p></p></p><p><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" /></p>');
+    //   }
+    // }
+
+    function instagramSelectChange(element){
+      var selectedValue = element.options[element.selectedIndex].text;
+      var url = '{% url 'instagram-onchange/' %}';
+      var usernameVerify = "{{ user.username }}";
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          //Returning Information as objects
+          'usernameVerify': usernameVerify,
+          'selectedValue': selectedValue
+        },
+        success: function (content) {
+          var econtent = JSON.parse(content);
+          $('#instagram-user-post').html(econtent.userPost);
+          $('#instagram-user-followers').html(econtent.userFollowers);
+          $('#instagram-user-following').html(econtent.userFollowing);
+        }
+      });
+    }
+    function twitterSelectChange(element){
+      var selectedValue = element.options[element.selectedIndex].text;
+      var url = '{% url 'twitter-onchange/' %}';
+      var usernameVerify = "{{ user.username }}";
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          //Returning Information as objects
+          'usernameVerify': usernameVerify,
+          'selectedValue': selectedValue
+        },
+        success: function (content) {
+          var econtent = JSON.parse(content);
+          $('#twitter-user-post').html(econtent.userPost);
+          $('#twitter-user-followers').html(econtent.userFollowers);
+          $('#twitter-user-following').html(econtent.userFollowing);
+        }
+      });
+    }
+    //Checking State of logged in accounts
+    function getTotalSummary(e){
+      var url = '{% url 'get-total-summary/' %}';
+      var usernameVerify = "{{ user.username }}";
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          'usernameVerify':usernameVerify,
+
+        },
+        success: function (content) {
+          summary(content);
+        },
+      });
+    }
+    getTotalSummary();
+
+    function postSocial(){
+
+      // Getting Selected Value
+      var e = document.getElementById("select-account-type");
+
+      $('#posting-form').submit(function(event){
+
+        if (SELECTEDVALUE == 'instagram') {
+          event.preventDefault();
+          var instagramPostUser = "{{ user.username }}";
+          var url = '{% url 'instagram-post/' %}';
+          $('#post-login').html('Logging In.');
+          //using ajax to call function
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'text',
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              //Returning Information as objects
+              'instagramPostUser':$('#user').val(),
+              'instagramUsername':$('#username').val(),
+              'instagramPassword':$('#password').val()
+            },
+            success: function (value) {
+              var evalue = JSON.parse(value);
+              console.log(evalue);
+              var message = evalue.message;
+              if(message == 'success'){
+                //dismissing modal
+                checkInstagramAccount();
+                $("#hidden-cancel").click();
+                $('#post-login').html('');
+              } else {
+                $('#instagram-post-error').html('Error logging in. Please try again.');
+              }
+            }
+          });
+        } else if (SELECTEDVALUE == 'twitter') {
+          event.preventDefault();
+          var twitterPostUser = "{{ user.username }}"
+          var url = '{% url 'twitter-post/' %}'
+          $('#post-login').html('Logging In.');
+          //using ajax to call function
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'text',
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              //Returning Information as objects
+              'twitterPostUser':$('#user').val(),
+              'twitterUsername':$('#username').val(),
+              'twitterPassword':$('#password').val()
+            },
+            success: function (value) {
+              var evalue = JSON.parse(value);
+              var message = evalue.message;
+              if (message == 'success') {
+                //dismissing modal
+                checkTwitterAccount();
+                $('#hidden-cancel').click();
+                $('#post-login').html('');
+              } else {
+              $('#post-error').html('Error logging in. Please try again.');
+              }
+            }
+          });
+        } else {
+          $('#post-error').html('Account type is not selected!');
+        }
+      });
+    }
+    //Using ajax onsubmit and running function
+    $(document).ready(function(){
+      postSocial();
+    });
+
+    function totalAmountInstagram(content){
+      var econtent = JSON.parse(content);
+      var total_post_instagram = 0;
+      var total_followers_instagram = 0;
+      var total_following_instagram = 0;
+
+      for (let i = 0; i < econtent.length; i++) {
+        total_post_instagram += parseInt(econtent[i].userPost);
+        total_followers_instagram += parseInt(econtent[i].userFollowers);
+        total_following_instagram += parseInt(econtent[i].userFollowing);
+
+      }
+      console.log(total_post_instagram);
+      var obj={
+          "totalPost":total_post_instagram,
+          "totalFollowers": total_followers_instagram,
+          "totalFollowing": total_following_instagram
+
+      };
+
+      return obj;
+    }
+
+    function summary(content){
+      var econtent = JSON.parse(content);
+
+      // Instagram Variables
+      var totalInstagramPost = econtent.instagramUserPost;
+      var totalInstagramFollowers = econtent.instagramUserFollowers;
+      var totalInstagramFollowing = econtent.instagramUserFollowing;
+
+      // Twitter Variables
+      var totalTwitterPost = econtent.twitterUserPost;
+      var totalTwitterFollowers = econtent.twitterUserFollowers;
+      var totalTwitterFollowing = econtent.twitterUserFollowing;
+
+      // Total Variables
+      var totalPost = totalInstagramPost + totalTwitterPost;
+      var totalFollowers = totalInstagramFollowers + totalTwitterFollowers;
+      var totalFollowing = totalInstagramFollowing + totalTwitterFollowing;
+
+      if (totalPost < 5 && totalFollowers < 5 && totalFollowing < 5) {
+        $('#total-followers').html("Total Audience:");
+        $('#total-post').html("Total Post:");
+        $('#total-following').html("You're following _ people<br /> Not enough data for a graph! Try connecting some accounts! ");
+      } else {
+        $('#total-followers').html("Total Audience: " + totalFollowers);
+        $('#total-post').html("Total Post: " + totalPost);
+        $('#total-following').html("You're following " + totalFollowing + " people");
+
+        // Graphs
+        if(totalFollowers > 0){
+          let fullFollowers = document.getElementById("full-followers").getContext("2d");
+
+          let fullFollowersChart = new Chart(fullFollowers, {
+            type:'pie', // Making a pie chart
+            data:{
+              labels:['Twitter', 'Instagram'],
+              datasets:[{
+                label:'Followers By Platform',
+                data:[
+                  totalTwitterFollowers,
+                  totalInstagramFollowers
+                ],
+                backgroundColor: [
+                  '#28aae1',
+                  '#d81dac'
+                ]
+              }]
+            },
+            options:{
+              title:{
+                display:true,
+                text: 'Social Media Followers By Platform'
+              }
+            }
+          });
+        }
+      }
+    }
+
+    // Opperation Div
+    function opperationDiv(){
+      var dashboardRow = document.getElementById('opperations');
+
+      var createrDiv = document.createElement('div');
+      createrDiv.className = "col-sm-16";
+      createrDiv.setAttribute('id', "holder-3");
+
+      dashboardRow.appendChild(createrDiv);
+      $('#holder-3').html('<div class="card" id="holder-4"><h4>Opperations</h4><div class="card" style="height:10vh;"id="activeOpperations">Active:</div><div class="card" style="height:10vh;" id="recentOpperations">Recent: <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-instagram-menu"><p style="position: absolute; bottom:-20px; right:3%; float:right;">View History</p></a></div></div>');
+    }
+    opperationDiv();
+
+    //Time picker
+    $('#schedule-time').timepicker({
+      'scrollDefault': 'now'
+    });
+
 </script>
 
 {% endblock %}
