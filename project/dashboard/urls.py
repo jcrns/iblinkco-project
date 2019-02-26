@@ -24,6 +24,7 @@ urlpatterns = [
 
     # other functions
     url(r'^get-total-summary$', views.getTotalSummary, name='get-total-summary/'),
+    url(r'^post-on-social$', views.postOnSocial, name='post-on-social/'),
 
 
 ]

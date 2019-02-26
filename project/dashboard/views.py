@@ -411,3 +411,34 @@ def twitterOnchange(request):
 
                     value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following}
         return HttpResponse( json.dumps( value ))
+
+# def postOnSocialScript(content):
+
+def postOnSocial(request):
+    if request.method == 'POST':
+
+        # Getting Posted Data
+        user_verify = request.POST('opperationPostUser')
+        user_caption = request.POST('opperationCaption')
+        checkedUsernames = request.POST('usernames')
+
+        # Getting Databases
+        content_twitter = Twitter.objects.all()
+        TWITTER = content_twitter
+
+        content_instagram = Instagram.objects.all()
+        INSTAGRAM = content_instagram
+
+        for val in INSTAGRAM:
+            if user_verify == val.user:
+                print("user verified")
+
+            else:
+                for val2 in TWITTER:
+                    if user_verify == val.user:
+                        print("user verified")
+                        value = {'success':meesage}
+                    else:
+                        value = {'failed':meesage}
+
+    return HttpResponse(value)

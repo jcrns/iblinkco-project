@@ -231,17 +231,35 @@
           {% csrf_token %}
 
           <p>Opperation:
-            <select id="select-opperation-type" onchange="opperationOptionChange(this)">
-              <option disabled selected value> -- select an option -- </option>
-              <option value="post-on-social">Post On Social Media</option>
+            <select id="select-opperation-type" onchange="opperationOptionChange(null, null, this)">
+              <option value="post-on-social" selected>Post On Social Media</option>
               <option value="auto-like">Like Post On Social Media</option>
               <option value="auto-follow">Follow Users On Social Media</option>
             </select>
           </p>
-          <div id="opperation-post-javascript">
-
-          </div>
+          <div id="opperation-post-javascript"></div>
+          <div id="choose-social-media-post-opperation"></div>
+          <input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />
         </form>
+        <p id="opperation-failed" class="text-success"><span id="opperation-success" class="text-danger"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Opperation History popup -->
+<div class="modal fade" id="view-opperation-history" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">View Opperation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+          <div class="dashboard-row" id="opperation-history"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -250,6 +268,7 @@
 
 <!-- Using Jquery and JavaScript to have page function -->
 <script type="text/javascript">
+
   // Random Id Generator
   var ID = function () {
     // Math.random should be unique because of its seeding algorithm.
@@ -258,6 +277,14 @@
     return '_' + Math.random().toString(36).substr(2, 9);
   };
 
+  // Print function
+  function print(e){
+    console.log(e);
+  }
+  // Function to get element by Xpath
+  function getElementByXpath(path) {
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  }
   // INSTAGRAM AJAX FUNCTIONS
     function getInstagramData(content){
       var econtent = JSON.parse(content);
@@ -294,7 +321,6 @@
 
       var econtent = content;
       var instagramId = 'instagram-div';
-      var chick = 'dfv';
       $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
     function showInstagramSelect(content, i){
@@ -308,7 +334,9 @@
       var text = document.createTextNode(econtent.username[i]);
       parentElement.appendChild(addInstagramAccount);
       addInstagramAccount.appendChild(text);
+
     }
+
     function InstagramDisplay(content){
       //Showing and hidding certain information depending on returned information
       var econtent = content;
@@ -338,6 +366,25 @@
             instagramGraph.setAttribute('id', 'instagram-graph');
             wrapperAccount.appendChild(instagramGraph);
 
+            // Adding Checkboxes to Popups
+
+            // Defining Choose Social Media Div
+            var chooseSocialPostDiv = document.getElementById('choose-social-media-post-opperation');
+
+            // Defining New Div for Checkboxes
+            var chooseSocialPostName = document.createElement('p');
+            var chooseSocialPostCheckbox = document.createElement('input');
+            chooseSocialPostCheckbox.className = 'post-opperation-item';
+            chooseSocialPostCheckbox.setAttribute('type', 'checkbox');
+            chooseSocialPostCheckbox.setAttribute('value', econtent.username[i]);
+
+            var chooseSocialPostUsername = document.createTextNode(econtent.username[i] + "(instagram) ");
+            chooseSocialPostName.appendChild(chooseSocialPostUsername);
+            chooseSocialPostName.appendChild(chooseSocialPostCheckbox);
+            chooseSocialPostDiv.appendChild(chooseSocialPostName);
+
+
+
             var elementExists = document.getElementById("select-account-instagram");
             if (elementExists != null) {
               showInstagramSelect(econtent, i);
@@ -345,9 +392,20 @@
               showInstagramDiv(econtent, i);
               // graphsInstagramControl(econtent, i);
             }
+            postOpperation(null, null, content, i)
           }
         }
       }
+    }
+    // alert( getElementByXpath("//html[1]/body[1]/div[1]") );
+    function viewOpperationHistory(content){
+      econtent = content;
+      var dashboardRow = document.getElementById('opperation-history');
+
+      var opperationHistoryItem = document.createElement('div');
+      opperationHistoryItem.setAttribute('id', 'opperation-div-card');
+      opperationHistoryItem.className = "card";
+      $(opperationHistoryItem).html('');
     }
 
     function graphsInstagramControl(content, i){
@@ -390,7 +448,6 @@
     function checkInstagramAccount(e){
       var url = '{% url 'check-out-instagram/' %}';
       var usernameVerify = "{{ user.username }}";
-      console.log("Instagram Username: " + usernameVerify)
       $.ajax({
         type: 'POST',
         url: url,
@@ -479,17 +536,32 @@
             var twitterId = 'twitter-div';
             twitterDiv.setAttribute('id', twitterId);
             dashboardRow.appendChild(twitterDiv);
+
+            // Adding Checkboxes to Popups
+
+            // Defining Choose Social Media Div
+            var chooseSocialPostDiv = document.getElementById('choose-social-media-post-opperation');
+
+            // Defining New Div for Checkboxes
+            var chooseSocialPostName = document.createElement('p');
+            var chooseSocialPostCheckbox = document.createElement('input');
+            chooseSocialPostCheckbox.className = 'post-opperation-item';
+            chooseSocialPostCheckbox.setAttribute('type', 'checkbox');
+            chooseSocialPostCheckbox.setAttribute('value', econtent.username[i]);
+
+            var chooseSocialPostUsername = document.createTextNode(econtent.username[i] + "(twitter) ");
+            chooseSocialPostName.appendChild(chooseSocialPostUsername);
+            chooseSocialPostName.appendChild(chooseSocialPostCheckbox);
+            chooseSocialPostDiv.appendChild(chooseSocialPostName);
+
             var elementExists = document.getElementById("select-account-twitter");
 
             if (elementExists == null) {
               showTwitterDiv(econtent, i);
-
             } else {
               showTwitterSelect(econtent, i);
-
             }
-
-
+            // changeOpp(content, i);
           }
         }
       }
@@ -581,55 +653,137 @@
 
     // Posting
 
-  // Allowing Enter key to work
-  $('#username, #password').keypress(function(event){
-    var keycode = (event.keyCode ? event.keyCode : event.which);
-    if(keycode == '13'){
-        postSocial();
-    }
-  });
-
     // Getting Selected option
     function optionChange(selectObject) {
-        SELECTEDVALUE = selectObject.value;
-        if(SELECTEDVALUE == 'instagram'){
+        selectedValue = selectObject.value;
+        if(selectedValue == 'instagram'){
         $('#username').attr('placeholder','Instagram Username');
         $('#password').attr('placeholder','Instagram Password');
-        } else if (SELECTEDVALUE == 'twitter') {
+        postSocial(selectedValue);
+        } else if (selectedValue == 'twitter') {
         $('#username').attr('placeholder','Twitter Username');
         $('#password').attr('placeholder','Twitter Password');
+        postSocial(selectedValue);
       } else {
         $('#username').attr('placeholder','Account Username');
         $('#password').attr('placeholder','Account Password');
       }
     }
-
-    function opperationOptionChange(selectObject){
-      opperationSelectedValuePlatform = selectObject.value;
+    function opperationOptionChange(){
+      var e = document.getElementById("select-opperation-type");
+      var opperationSelectedValuePlatform = e.options[e.selectedIndex].value;
         if(opperationSelectedValuePlatform == 'post-on-social'){
-          //Option to Post on social Media at Once
-          $('#opperation-post-javascript').html('<p>Post On Social Media: <br /><input type="file" name="post-image" accept="image/*"><br />Add a caption: </p><textarea maxlength="2200" id="post-instagram-caption-opperation" placeholder="Caption/Tweet" name="post-instagram-caption-opperation" cols="30" rows="5"></textarea><br />Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter"><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />');
+          // Option to Post on social Media at Once
+          $('#opperation-post-javascript').html('<p>Post On Social Media: <br /><input type="file" name="post-image" accept="image/*"><br />Add a caption: </p><p><textarea maxlength="2200" id="post-caption-opperation" placeholder="Caption/Tweet" cols="30" rows="5"></textarea></p>Choose Platform(s): <br />');
+          postOpperation(null, null, opperationSelectedValuePlatform);
+          $('#choose-social-media-post-opperation').show();
         } else if (opperationSelectedValuePlatform == 'auto-like') {
-          $('#opperation-post-javascript').html('<p>Auto Like Post on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Automatic Likes/Favorites" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit"> ');
-        } else if (opperationSelectedValuePlatform == 'auto-follow') {
-          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit"> ');
-        } else {
 
-        $('#username').attr('placeholder','Account Username');
-        $('#password').attr('placeholder','Account Password');
+          // Auto Likes
+          $('#opperation-post-javascript').html('<p>Auto Like Post on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Automatic Likes/Favorites" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter">');
+          postOpperation(null, null, opperationSelectedValuePlatform);
+          $('#choose-social-media-post-opperation').hide();
+        } else if (opperationSelectedValuePlatform == 'auto-follow') {
+
+          // Auto Follow
+          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter">');
+          postOpperation(null, null, opperationSelectedValuePlatform);
+          $('#choose-social-media-post-opperation').hide();
       }
     }
+    opperationOptionChange();
 
-    // function instagramOpperationOptionChange(selectObject){
-    //   selectedOpperationValue = selectObject.value;
-    //   if(selectedOpperationValue == 'post-on-instagram'){
-    //     // Post On Instagram
-    //     $('#info-opperation-instagram').html('<p>Instagram Post: <br /><input type="file" name="post-image" accept="image/*">Add a caption: </p><textarea maxlength="2200" id="post-instagram-caption-opperation" name="post-instagram-caption-opperation" cols="30" rows="5"></textarea><br /><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />');
-    //   } else if (selectedOpperationValue == 'auto-like'){
-    //     //  Like Post On Instagram
-    //     $('#info-opperation-instagram').html('<p>Like Post on Instagram Automatically: <br /><p><input type="text" placeholder="Amount of Likes Per Hour"/></p><input type="text" placeholder="Hashtags"/><p></p></p><p><input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" /></p>');
-    //   }
-    // }
+    function selectedPostOpperation(selectedObject){
+      postOpperation(selectedObject);
+    }
+    function getInfoBothPostOpperation(content, contentTwo){
+      if($('#choose-social-media-post-opperation').show()){
+        postOpperation(content, contentTwo);
+        alert("dferfvefb");
+      } else {
+        getInfoBothPostOpperation();
+      }
+    }
+    function postOpperation(content, contentTwo, selectedObject){
+      selectedValue = selectedObject;
+      try {
+      } catch (e) {
+        print("trying again");
+      }
+      $('#opperation-post-form').submit(function(event){
+
+        if (selectedValue == 'post-on-social') {
+          var usernames = [];
+          postOpperationItem = document.getElementsByClassName("post-opperation-item");
+          for(var i = 0; i <= postOpperationItem.length; i++) {
+
+              // Looking for value which is the username
+              var pushedPostOpperationItem = postOpperationItem[i].value;
+              if(postOpperationItem[i].checked){
+
+                // Checking if box is checked
+                usernames.push(pushedPostOpperationItem);
+            }
+          }
+          event.preventDefault();
+          var instagramPostUser = "{{ user.username }}";
+          var url = '{% url 'post-on-social/' %}';
+          $('#opperation-success').html('Attempting Opperation.');
+          //using ajax to call function
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'text',
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              // Posting information
+              'opperationPostUser':instagramPostUser,
+
+              // Returning Inputed Values
+              'opperationCaption':('#post-caption-opperation$').val(),
+
+              // Returning Values of Checked off Boxes
+              'usernames':usernames,
+
+            },
+            success: function (value) {
+              if (value.message == 'success'){
+                $('#opperation-success').html('Opperation Successful!');
+              } else if (value.message == 'failed') {
+                $('#opperation-failed').html('Something went wrong. Try again');
+              } else{
+                $('#opperation-failed').html('Something went wrong. Try again');
+              }
+            }
+          });
+        } else if (selectedValue == 'auto-like'){
+          event.preventDefault();
+          var instagramPostUser = "{{ user.username }}";
+          var url = '{% url 'instagram-post/' %}';
+          $('#opperation-success').html('Attempting Opperation.');
+          //using ajax to call function
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'text',
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              // Posting information
+              'opperationPostUser':instagramPostUser,
+            },
+            success: function (value) {
+              if (value.message == 'success'){
+                $('#opperation-success').html('Opperation Successful!');
+              } else if (value.message == 'failed') {
+                $('#opperation-failed').html('Something went wrong. Try again');
+              } else{
+                $('#opperation-failed').html('Something went wrong. Try again');
+              }
+            }
+          });
+        }
+      });
+    }
 
     function instagramSelectChange(element){
       var selectedValue = element.options[element.selectedIndex].text;
@@ -695,14 +849,14 @@
     }
     getTotalSummary();
 
-    function postSocial(){
-
+    function postSocial(selectedObject){
+      var selectedValue = selectedObject;
       // Getting Selected Value
       var e = document.getElementById("select-account-type");
 
       $('#posting-form').submit(function(event){
 
-        if (SELECTEDVALUE == 'instagram') {
+        if (selectedValue == 'instagram') {
           event.preventDefault();
           var instagramPostUser = "{{ user.username }}";
           var url = '{% url 'instagram-post/' %}';
@@ -721,7 +875,6 @@
             },
             success: function (value) {
               var evalue = JSON.parse(value);
-              console.log(evalue);
               var message = evalue.message;
               if(message == 'success'){
                 //dismissing modal
@@ -733,7 +886,7 @@
               }
             }
           });
-        } else if (SELECTEDVALUE == 'twitter') {
+        } else if (selectedValue == 'twitter') {
           event.preventDefault();
           var twitterPostUser = "{{ user.username }}"
           var url = '{% url 'twitter-post/' %}'
@@ -768,10 +921,6 @@
         }
       });
     }
-    //Using ajax onsubmit and running function
-    $(document).ready(function(){
-      postSocial();
-    });
 
     function totalAmountInstagram(content){
       var econtent = JSON.parse(content);
@@ -785,7 +934,6 @@
         total_following_instagram += parseInt(econtent[i].userFollowing);
 
       }
-      console.log(total_post_instagram);
       var obj={
           "totalPost":total_post_instagram,
           "totalFollowers": total_followers_instagram,
@@ -863,7 +1011,7 @@
       createrDiv.setAttribute('id', "holder-3");
 
       dashboardRow.appendChild(createrDiv);
-      $('#holder-3').html('<div class="card" id="holder-4"><h4>Opperations</h4><div class="card" style="height:10vh;"id="activeOpperations">Active:</div><div class="card" style="height:10vh;" id="recentOpperations">Recent: <a href="#" style="color:#000" data-toggle="modal" data-target="#disconnect-instagram-menu"><p style="position: absolute; bottom:-20px; right:3%; float:right;">View History</p></a></div></div>');
+      $('#holder-3').html('<div class="card" id="holder-4"><h4>Opperations</h4><div class="card" style="height:10vh;"id="activeOpperations">Active:</div><div class="card" style="height:10vh;" id="recentOpperations">Recent: <a href="#" style="color:#000" data-toggle="modal" data-target="#view-opperation-history"><p style="position: absolute; bottom:-20px; right:3%; float:right;">View History</p></a></div></div>');
     }
     opperationDiv();
 
