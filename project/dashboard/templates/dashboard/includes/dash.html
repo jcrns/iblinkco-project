@@ -239,9 +239,9 @@
           </p>
           <div id="opperation-post-javascript"></div>
           <div id="choose-social-media-post-opperation"></div>
-          <input class="btn btn-success btn-primary text-right" type="submit" name="submit" value="Submit" />
+          <input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="show-content-instagram" value="Submit" />
         </form>
-        <p id="opperation-failed" class="text-success"><span id="opperation-success" class="text-danger"></span></p>
+        <p id="opperation-failed" class="text-danger"><span id="opperation-success" class="text-success"></span></p>
       </div>
     </div>
   </div>
@@ -392,7 +392,6 @@
               showInstagramDiv(econtent, i);
               // graphsInstagramControl(econtent, i);
             }
-            postOpperation(null, null, content, i)
           }
         }
       }
@@ -693,30 +692,14 @@
     }
     opperationOptionChange();
 
-    function selectedPostOpperation(selectedObject){
-      postOpperation(selectedObject);
-    }
-    function getInfoBothPostOpperation(content, contentTwo){
-      if($('#choose-social-media-post-opperation').show()){
-        postOpperation(content, contentTwo);
-        alert("dferfvefb");
-      } else {
-        getInfoBothPostOpperation();
-      }
-    }
     function postOpperation(content, contentTwo, selectedObject){
       selectedValue = selectedObject;
-      try {
-      } catch (e) {
-        print("trying again");
-      }
       $('#opperation-post-form').submit(function(event){
-
+        event.preventDefault();
         if (selectedValue == 'post-on-social') {
           var usernames = [];
           postOpperationItem = document.getElementsByClassName("post-opperation-item");
-          for(var i = 0; i <= postOpperationItem.length; i++) {
-
+          for(var i = 0; i < postOpperationItem.length; i++) {
               // Looking for value which is the username
               var pushedPostOpperationItem = postOpperationItem[i].value;
               if(postOpperationItem[i].checked){
@@ -725,7 +708,7 @@
                 usernames.push(pushedPostOpperationItem);
             }
           }
-          event.preventDefault();
+          var opperationCaption = document.getElementById('post-caption-opperation');
           var instagramPostUser = "{{ user.username }}";
           var url = '{% url 'post-on-social/' %}';
           $('#opperation-success').html('Attempting Opperation.');
@@ -740,16 +723,18 @@
               'opperationPostUser':instagramPostUser,
 
               // Returning Inputed Values
-              'opperationCaption':('#post-caption-opperation$').val(),
+              'opperationCaption':opperationCaption.value,
 
               // Returning Values of Checked off Boxes
-              'usernames':usernames,
+              'usernames[]':usernames,
 
             },
             success: function (value) {
-              if (value.message == 'success'){
+              var evalue = JSON.parse(value);
+              alert(evalue.message);
+              if (evalue.message == 'success'){
                 $('#opperation-success').html('Opperation Successful!');
-              } else if (value.message == 'failed') {
+              } else if (evalue.message == 'failed') {
                 $('#opperation-failed').html('Something went wrong. Try again');
               } else{
                 $('#opperation-failed').html('Something went wrong. Try again');

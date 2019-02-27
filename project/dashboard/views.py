@@ -188,7 +188,7 @@ def TwitterPost(request):
 
             # Adding Instagram Script to verify user is on instagram
             userTwit = twitterBot(twitter_post.twitter_username, twitter_post.twitter_password)
-            messageView = userTwit.login()
+            messageView = userTwit.returnLogin()
             message = messageView['message']
 
             try:
@@ -248,7 +248,6 @@ def TwitterCheck(request):
                 value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following}
 
                 twitterInfo.append(value)
-        print(verify_twitter_post)
         return HttpResponse( json.dumps( twitterInfo ))
 
 # Function to disconnect Twitter from database
@@ -336,7 +335,7 @@ def getTotalSummary(request):
             verify_instagram_following = val.number_of_following
 
 
-            if user_verify == verify_twitter_user:
+            if user_verify == verify_instagram_user:
                 print("true")
 
                 verify_instagram_post_array.append(int(verify_instagram_post))
@@ -415,12 +414,12 @@ def twitterOnchange(request):
 # def postOnSocialScript(content):
 
 def postOnSocial(request):
+    print("working")
     if request.method == 'POST':
-
         # Getting Posted Data
-        user_verify = request.POST('opperationPostUser')
-        user_caption = request.POST('opperationCaption')
-        checkedUsernames = request.POST('usernames')
+        user_verify = request.POST['opperationPostUser']
+        user_caption = request.POST['opperationCaption']
+        checkedUsernames = request.POST.getlist('usernames[]')
 
         # Getting Databases
         content_twitter = Twitter.objects.all()
@@ -429,16 +428,36 @@ def postOnSocial(request):
         content_instagram = Instagram.objects.all()
         INSTAGRAM = content_instagram
 
+        # Creating array object for verified information
+        verified = []
+
+        # For loop
         for val in INSTAGRAM:
             if user_verify == val.user:
-                print("user verified")
+                for user in checkedUsernames:
+                    if user == val.instagram_username:
+                        # When user is verified
+                        print("true instagram")
+                        print(user_caption)
+                        meesage = 'success'
+                        value = {'message':meesage}
 
-            else:
-                for val2 in TWITTER:
-                    if user_verify == val.user:
-                        print("user verified")
-                        value = {'success':meesage}
-                    else:
-                        value = {'failed':meesage}
+                else:
+                    for val2 in TWITTER:
+                        if user_verify == val.user:
+                            for user in checkedUsernames:
+                                if user == val2.twitter_username:
+                                    # When user is verified
+                                    print("true twitter")
+                                    print(user_caption)
+                                    userTwit = twitterBot(val2.twitter_username, val2.twitter_password, user_caption)
+                                    messageView = userTwit.postTweet()
+                                    message = messageView['message']
+                                    value = {'message':message}
+                                else:
+                                    print("going through else")
+                                    message = 'failed'
+                                    value = {'message':message}
+                                    
 
-    return HttpResponse(value)
+    return HttpResponse( json.dumps( value ))

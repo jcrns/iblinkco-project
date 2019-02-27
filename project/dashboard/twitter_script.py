@@ -1,14 +1,14 @@
 from selenium import webdriver
 from getpass import getpass
 import time
-
 VALUE = dict()
 class twitterBot:
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, tweet):
         self.username = username
         self.password = password
         self.driver = webdriver.Chrome()
+        self.tweet = tweet
 
     def getFollowerInfo(self):
         print("Attempting to get info")
@@ -30,8 +30,6 @@ class twitterBot:
         print('working')
         driver = self.driver
 
-        redirectURL = 'https://twitter.com/'
-
         # Attempting to login
         driver.get("https://twitter.com/login")
         time.sleep(2)
@@ -44,9 +42,12 @@ class twitterBot:
         driver.find_element_by_class_name("EdgeButtom--medium").click()
         time.sleep(2)
 
+    def returnLogin(self):
+        twitterBot.login(self)
         # Getting current url
+        driver = self.driver
         currentUrl = driver.current_url
-
+        redirectURL = 'https://twitter.com/'
 
         print(redirectURL)
         print(currentUrl)
@@ -63,4 +64,27 @@ class twitterBot:
 
             # Sending message failed to views file
             VALUE['message'] = 'failed'
+    def postTweet(self):
+        # Logging in to post tweet
+        twitterBot.login(self)
+        try:
+            if self.tweet != '':
+                # Putting information in to tweet
+                tweetInput = self.driver.find_element_by_xpath("//*[@id='tweet-box-home-timeline']")
+                tweetInput.click()
+                tweetInput.send_keys(self.tweet)
+                tweetButton = self.driver.find_element_by_xpath("//*[@id='timeline']/div[2]/div/form/div[3]/div[2]/button/span[1]")
+                tweetButton.click()
+                VALUE['message'] = 'success'
+                self.driver.close()
+            else:
+                VALUE['message'] = 'failed'
+                self.driver.close()
+
+        except Exception as e:
+            print(e)
+            self.driver.close()
+
+            VALUE['message'] = 'failed'
+
         return VALUE
