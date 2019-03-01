@@ -14,13 +14,14 @@ urlpatterns = [
     url(r'^instagram-account-check$', views.InstagramCheck, name='check-out-instagram/'),
     url(r'^instagram-account-disconnect$', views.InstagramDisconnect, name='disconnect-instagram/'),
     url(r'^instagram-onchange$', views.instagramOnchange, name='instagram-onchange/'),
-
+    url(r'^instagram-bio-change$', views.changeBioInstagramOpperation, name='change-bio-instagram/'),
 
     # twitter functions
     url(r'^twitter-posting$', views.TwitterPost, name='twitter-post/'),
     url(r'^twitter-account-check$', views.TwitterCheck, name='check-out-twitter/'),
     url(r'^twitter-account-disconnect$', views.TwitterDisconnect, name='disconnect-twitter/'),
     url(r'^twitter-onchange$', views.twitterOnchange, name='twitter-onchange/'),
+    url(r'^twitter-bio-change$', views.changeBioTwitterOpperation, name='change-bio-twitter/'),
 
     # other functions
     url(r'^get-total-summary$', views.getTotalSummary, name='get-total-summary/'),

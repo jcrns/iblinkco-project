@@ -30,6 +30,18 @@
   #instagram-graph{
     width:10px;
   }
+  #instagram-user-bio{
+    color:#000;
+  }
+  #instagram-user-bio:hover{
+    color:blue;
+  }
+  #twitter-user-bio{
+    color:#000;
+  }
+  #twitter-user-bio:hover{
+    color:blue;
+  }
   </style>
   <div class="wrapper" id="wrapper" style="border-bottom: 1px solid #000;">
     <!-- Sidebar -->
@@ -215,6 +227,48 @@
   </div>
 </div>
 
+<!-- Edit Instagram Bio Menu -->
+<div class="modal fade" id="edit-bio-instagram-menu" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Bio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="edit-bio-form">
+          New Bio:
+          <p><textarea id="new-bio-instagram" name="new-bio" rows="4" cols="40"></textarea></p>
+          <p><input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="bio-change-submit-instagram" value="Submit"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Twitter Bio Menu -->
+<div class="modal fade" id="edit-bio-twitter-menu" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Bio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="edit-bio-form">
+          New Bio:
+          <p><textarea id="new-bio-twitter" name="new-bio" rows="4" cols="40"></textarea></p>
+          <p><input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="bio-change-submit" value="Submit"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Opperation popup -->
 <div class="modal fade" id="opperation-post" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -294,6 +348,8 @@
       var totalPostArray = [];
       var totalFollowersArray = [];
       var totalFollowingArray = [];
+      var bio = [];
+      var location = [];
 
       for (let i = 0; i < econtent.length; i++) {
         user.push(econtent[i].user);
@@ -302,6 +358,7 @@
         totalPostArray.push(econtent[i].userPost);
         totalFollowersArray.push(econtent[i].userFollowers);
         totalFollowingArray.push(econtent[i].userFollowing);
+        bio.push(econtent[i].userBio);
       }
       var obj={
           "user":user,
@@ -309,7 +366,8 @@
           "username":username,
           "userPost":totalPostArray,
           "userFollowers": totalFollowersArray,
-          "userFollowing": totalFollowingArray
+          "userFollowing": totalFollowingArray,
+          "bio": bio,
 
       };
 
@@ -321,7 +379,7 @@
 
       var econtent = content;
       var instagramId = 'instagram-div';
-      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p>Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
     function showInstagramSelect(content, i){
       var econtent = content;
@@ -348,23 +406,17 @@
             // Defining account div
             var dashboardRow = document.getElementById('account-divs');
 
-            // Defining Wrapper div
-            var wrapperAccount = document.createElement('div');
-            wrapperAccount.className = "wrapper";
-            wrapperAccount.setAttribute('id', 'wrapper-instagram');
-            dashboardRow.appendChild(wrapperAccount);
-
             // Instagram Account Div
             var instagramDiv = document.createElement('div');
             instagramDiv.className = "col-sm-16";
             instagramDiv.setAttribute('id', 'instagram-div');
-            wrapperAccount.appendChild(instagramDiv);
+            dashboardRow.appendChild(instagramDiv);
 
             // Defining Graph Div
             var instagramGraph = document.createElement('canvas');
             instagramGraph.className = "container";
             instagramGraph.setAttribute('id', 'instagram-graph');
-            wrapperAccount.appendChild(instagramGraph);
+            dashboardRow.appendChild(instagramGraph);
 
             // Adding Checkboxes to Popups
 
@@ -396,7 +448,6 @@
         }
       }
     }
-    // alert( getElementByXpath("//html[1]/body[1]/div[1]") );
     function viewOpperationHistory(content){
       econtent = content;
       var dashboardRow = document.getElementById('opperation-history');
@@ -457,10 +508,10 @@
 
         },
         success: function (content) {
-
           var getData = getInstagramData(content);
           var getInfo = InstagramDisplay(getData);
           var ttlAmount = totalAmountInstagram(content);
+          changeBioPlaceHolder();
         },
       });
     }
@@ -492,6 +543,81 @@
       });
     });
 
+    function changeBioPlaceHolder(){
+      // Getting Current Text and Putting it in text boxes
+      var textUserInstagram = $('#instagram-user-bio').text();
+      var textUserTwitter = $('#twitter-user-bio').text();
+
+      $('#new-bio-instagram').val(textUserInstagram);
+      $('#new-bio-twitter').val(textUserTwitter);
+
+    }
+
+
+    // Change Bio
+    $(document).ready(function(){
+      $('#bio-change-submit-instagram').click(function(event){
+        var getSelected = document.getElementById("select-account-instagram");
+        var newBio = document.getElementById("new-bio-instagram").value;
+        var selectedOption = getSelected.options[getSelected.selectedIndex].value;
+        event.preventDefault();
+        var url = '{% url 'change-bio-instagram/' %}'
+        var usernameVerify = "{{ user.username }}";
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            // Token needed to return data in Python
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'instagramPostUser':usernameVerify,
+            'selectedOption':selectedOption,
+            'newBio': newBio,
+          },
+          success: function (value) {
+            checkInstagramAccount();
+            if(value == 'succes'){
+
+            }
+          }
+        });
+      });
+    });
+
+    // Change Bio
+    $(document).ready(function(){
+      $('#bio-change-submit-twitter').click(function(event){
+        var getSelected = document.getElementById("select-account-twitter");
+        var newBio = document.getElementById("new-bio-twitter").value;
+        var selectedOption = getSelected.options[getSelected.selectedIndex].value;
+        event.preventDefault();
+        var url = '{% url 'change-bio-twitter/' %}'
+        var usernameVerify = "{{ user.username }}";
+        //using ajax to call function
+        $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: 'text',
+          data: {
+            // Token needed to return data in Python
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            //Returning Information as objects
+            'twitterPostUser':usernameVerify,
+            'selectedOption':selectedOption,
+            'newBio': newBio,
+          },
+          success: function (value) {
+            checkTwitterAccount();
+            if(value == 'success'){
+
+            }
+          }
+        });
+      });
+    });
+
 
     function twitterOptionChange(selectObject, content, i){
       var hope = content;
@@ -501,7 +627,7 @@
       var econtent = content;
       var twitterId = 'twitter-div';
       var chick = 'dfv';
-      $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+      $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><p>Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-twitter-menu'><span id='twitter-user-bio'>" + econtent.bio[i] + "</span></a></p><p id='twitter-user-location'>Location: <span>" + econtent.location[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
 
     function showTwitterSelect(content, i){
@@ -574,6 +700,9 @@
       var totalPostArray = [];
       var totalFollowersArray = [];
       var totalFollowingArray = [];
+      var bio = [];
+      var location = [];
+
 
       for (let i = 0; i < econtent.length; i++) {
         user.push(econtent[i].user);
@@ -582,6 +711,8 @@
         totalPostArray.push(econtent[i].userPost);
         totalFollowersArray.push(econtent[i].userFollowers);
         totalFollowingArray.push(econtent[i].userFollowing);
+        bio.push(econtent[i].userBio);
+        location.push(econtent[i].userLocation);
       }
       var obj={
           "user":user,
@@ -589,7 +720,9 @@
           "username":username,
           "userPost":totalPostArray,
           "userFollowers": totalFollowersArray,
-          "userFollowing": totalFollowingArray
+          "userFollowing": totalFollowingArray,
+          "bio": bio,
+          "location": location
 
       };
 
@@ -614,6 +747,7 @@
         success: function (content) {
           var getData = getTwitterData(content)
           var getInfo = TwitterDisplay(getData);
+          changeBioPlaceHolder();
           // var ttlAmount = totalAmountTwitter(content);
           // summary(ttlAmount);
 
@@ -691,6 +825,13 @@
       }
     }
     opperationOptionChange();
+
+
+
+
+
+
+
 
     function postOpperation(content, contentTwo, selectedObject){
       selectedValue = selectedObject;
@@ -770,6 +911,11 @@
       });
     }
 
+
+
+
+
+
     function instagramSelectChange(element){
       var selectedValue = element.options[element.selectedIndex].text;
       var url = '{% url 'instagram-onchange/' %}';
@@ -789,9 +935,17 @@
           $('#instagram-user-post').html(econtent.userPost);
           $('#instagram-user-followers').html(econtent.userFollowers);
           $('#instagram-user-following').html(econtent.userFollowing);
+          $('#instagram-user-following').html(econtent.bio);
         }
       });
     }
+
+
+
+
+
+
+
     function twitterSelectChange(element){
       var selectedValue = element.options[element.selectedIndex].text;
       var url = '{% url 'twitter-onchange/' %}';
@@ -833,6 +987,12 @@
       });
     }
     getTotalSummary();
+
+
+
+
+
+
 
     function postSocial(selectedObject){
       var selectedValue = selectedObject;
@@ -892,6 +1052,7 @@
               var evalue = JSON.parse(value);
               var message = evalue.message;
               if (message == 'success') {
+
                 //dismissing modal
                 checkTwitterAccount();
                 $('#hidden-cancel').click();
