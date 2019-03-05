@@ -26,6 +26,8 @@ urlpatterns = [
     # other functions
     url(r'^get-total-summary$', views.getTotalSummary, name='get-total-summary/'),
     url(r'^post-on-social$', views.postOnSocial, name='post-on-social/'),
+    url(r'^auto-like-favorite$', views.autoLikes, name='auto-like-social/'),
+    url(r'^get-opperation-history$', views.getOpperationHistory, name='get-opperation-history/'),
 
 
 ]

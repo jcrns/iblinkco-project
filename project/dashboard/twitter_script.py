@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from getpass import getpass
 import time
 VALUE = dict()
@@ -109,27 +110,29 @@ class twitterBot:
         return VALUE
 
     def changeBio(self):
-        # Logging in to change Bio
-        twitterBot.login(self)
 
         # Going to home page
         clickUserAccount = self.driver.find_element_by_xpath("//*[@id='page-container']/div[1]/div[1]/div/div[1]/span/a/span/b")
         clickUserAccount.click()
 
+        time.sleep(1)
+
         # Going to Edit Profile
-        clickEditProfile = self.driver.find_element_by_xpath("//*[@id='page-container']/div[3]/div/div[2]/div[2]/div/div[2]/div/div/ul/li[8]/div/button")
+        clickEditProfile = self.driver.find_element_by_xpath("//*[@id='page-container']/div[3]/div/div[2]/div[2]/div/div[2]/div/div/ul/li[8]/div/button/span")
         clickEditProfile.click()
 
         # Click Bio
-        editBio = self.driver.find_element_by_xpath("//*[@id='user_description']/div")
+        editBio = self.driver.find_element_by_xpath("//*[@id='user_description']")
         editBio.click()
 
         # Deleting Bio
-        editBio.send_keys(Keys.COMMAND, 'A')
-        editBio.send_keys(Keys.DELETE)
+        editBio.clear()
+
+        time.sleep(1)
 
         # Entering New Bio
         editBio.send_keys(self.text)
+
 
         # Saving Changes
         clickSave = self.driver.find_element_by_xpath("//*[@id='page-container']/div[3]/div/div[2]/div[2]/div/div[2]/div/div/ul/li[8]/div/div/button[2]")

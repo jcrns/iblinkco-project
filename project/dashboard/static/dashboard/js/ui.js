@@ -3,7 +3,7 @@
 
   // hiding analytics by default
   $("#analytics").hide();
-  $("#stream").hide();
+  $("#accounts").hide();
 
   // Creating Divs
 

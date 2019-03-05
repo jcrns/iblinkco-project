@@ -67,7 +67,7 @@ def InstagramPost(request):
 
 
             # Adding Instagram Script to verify user is on instagram
-            userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password, '')
+            userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password, '', '')
             messageView = userIG.returnLogin()
 
             try:
@@ -461,6 +461,9 @@ def postOnSocial(request):
                             if message != 'success':
                                 print("nooo")
                                 social_post.instagram = False
+                        else:
+                            social_post.instagram = False
+
                     else:
                         for val2 in TWITTER:
                             if user_verify == val.user:
@@ -487,8 +490,14 @@ def postOnSocial(request):
 
             if message == 'success':
                 social_post.save()
-            print(message)
+                print(message)
+            else:
+                message = 'failed'
+                value = {'message':message}
 
+        else:
+            message = 'failed'
+            value = {'message':message}
 
     return HttpResponse( json.dumps( value ))
 
@@ -511,7 +520,7 @@ def changeBioInstagramOpperation(request):
                         print("verified")
 
                         # Adding Instagram Script to verify user is on instagram
-                        userIG = InstagramBot(val.instagram_username, val.instagram_password, newBio)
+                        userIG = InstagramBot(val.instagram_username, val.instagram_password, newBio, '')
                         messageView = userIG.changeBioReturn()
                         message = messageView['message']
 
@@ -540,16 +549,184 @@ def changeBioTwitterOpperation(request):
                     if selected_option == val.twitter_username:
                         print(selected_option)
                         print("verified")
-
                         # Adding Instagram Script to verify user is on instagram
                         userTwit = twitterBot(val.twitter_username, val.twitter_password, newBio)
                         messageView = userTwit.changeBioReturn()
                         message = messageView['message']
+                        value = message
+                        print(value)
 
                         if message == 'success':
+                            print("worked")
                             val.bio = newBio
                             val.save()
                             print(val.pk)
                             print(val.bio)
                             value = 'success'
     return HttpResponse(value)
+
+def autoLikes(request):
+    if request.method == 'POST':
+        user_verify = request.POST.get('opperationPostUser')
+        amountOfLikes = request.POST.get('amountOfLikes')
+        hashtags = request.POST.getlist('hashtags')
+        hashtagsArray = request.POST.getlist('hashtagsArray[]')
+        checkedUsernames = request.POST.getlist('usernames[]')
+        value = []
+        if request.POST.get('opperationPostUser') and request.POST.getlist('hashtags') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]') and request.POST.get('amountOfLikes'):
+            print("hashtags")
+            print(hashtagsArray)
+
+            # Getting Databases
+            content_twitter = Twitter.objects.all()
+            TWITTER = content_twitter
+
+            content_instagram = Instagram.objects.all()
+            INSTAGRAM = content_instagram
+
+            # Creating array object for verified information
+            verified = []
+            like_opperation = LikeOpperation()
+
+            # For loop
+            for val in INSTAGRAM:
+                if user_verify == val.user:
+                    val.number_of_likes = amountOfLikes
+                    like_opperation.user = user_verify
+                    for user in checkedUsernames:
+                        if user == val.instagram_username:
+                            # When user is verified
+                            print("true instagram")
+                            print("insta True!")
+
+                            # Adding Instagram Script to like photos on instagram
+                            userIG = InstagramBot(val.instagram_username, val.instagram_password, hashtagsArray, amountOfLikes)
+                            messageView = userIG.likePhotoReturn()
+                            message = messageView['message']
+
+                            like_opperation.instagram = True
+                            value = {'message':message}
+                            if message != 'success':
+                                print("nooo")
+                                like_opperation.instagram = False
+                            elif message == 'success':
+                                like_opperation.instagram = True
+                                like_opperation.hashtags = hashtags
+                                value = {'message':message}
+
+                            else:
+                                like_opperation.instagram = False
+                        else:
+                            like_opperation.instagram = False
+
+
+                    else:
+                        for val2 in TWITTER:
+                            if user_verify == val.user:
+                                for user in checkedUsernames:
+                                    if user == val2.twitter_username:
+                                        # When user is verified
+                                        print("true twitter")
+
+                                        # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
+                                        # messageView = userTwit.postTweet()
+
+                                        like_opperation.hashtags = hashtags
+                                        like_opperation.twitter = True
+                                        message = 'success'
+                                        value = {'message':message}
+
+                                        if message == 'success':
+                                            value = {'message':message}
+                                            like_opperation.save()
+                                        else:
+                                            print("going through if")
+                                            message = 'failed'
+
+
+
+                                    else:
+                                        like_opperation.twitter = False
+
+
+        else:
+            print("failed")
+            message = 'failed'
+            value = {'message':message}
+
+        return HttpResponse( json.dumps( value ))
+
+def getOpperationHistory(request):
+    if request.method == 'POST':
+        requestedTypeArray = []
+        requestedAmountLikesArray = []
+        requestedHashtagsArray = []
+        requestedLocationArray = []
+        user_verify = request.POST.get('usernameVerify')
+        if request.POST.get('usernameVerify'):
+            GETLIKES = LikeOpperation.objects.all()
+
+            POSTSOCIAL = PostSocial.objects.all()
+
+            message = ''
+            for val in GETLIKES:
+                print("loopngvjkvgujgvhjcfh")
+                print(user_verify)
+                print(val.user)
+                # Checking Likes Opperation First
+                if user_verify == val.user:
+                    message = 'success'
+
+                    print("found user")
+                    requestedType = 'Likes'
+                    requestedAmountLikes = val.number_of_likes
+                    requestedHashtags = val.hashtags
+
+                    if val.instagram == True and val.twitter == False:
+                        requestLocation = 'Instagram'
+                    elif val.instagram == False and val.twitter == True:
+                        requestLocation = 'Twitter'
+                    elif val.instagram == True and val.twitter == True:
+                        requestLocation = 'Instagram + Twitter'
+                    else:
+                        message = 'failed'
+
+                    # Appending all Info
+                    requestedTypeArray.append(requestedType)
+                    requestedAmountLikesArray.append(requestedAmountLikes)
+                    requestedHashtagsArray.append(requestedHashtags)
+                    requestedLocationArray.append(requestLocation)
+
+
+                else:
+                    message = 'failed'
+            for val2 in POSTSOCIAL:
+                # Now checking Social Post
+                if user_verify == val2.user:
+                    message = 'success'
+                    print("found user wsefwrgergergrgegv")
+
+                    requestedType = 'Post'
+                    requestedAmountLikes = 'None'
+                    requestedText = val2.text
+
+                    # Checking for selected info
+                    if val2.instagram == True and val2.twitter == False:
+                        requestLocation = 'Instagram'
+                    elif val2.instagram == False and val2.twitter == True:
+                        requestLocation = 'Twitter'
+                    elif val2.instagram == True and val2.twitter == True:
+                        requestLocation = 'Instagram + Twitter'
+                    else:
+                        message = 'failed'
+
+                    # Appending all Info
+                    requestedTypeArray.append(requestedType)
+                    requestedAmountLikesArray.append(requestedAmountLikes)
+                    requestedHashtagsArray.append(requestedText)
+                    requestedLocationArray.append(requestLocation)
+
+            print(len(requestedTypeArray))
+            value = {'message':message, 'objectLength':len(requestedTypeArray), 'type':requestedTypeArray, 'likes':requestedAmountLikesArray, 'hashtags':requestedHashtagsArray, 'location':requestedLocationArray }
+            print(value)
+    return HttpResponse( json.dumps( value ))

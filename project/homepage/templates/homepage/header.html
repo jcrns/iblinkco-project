@@ -72,9 +72,6 @@
         <li class="nav-item">
           <a id="contactus-button" class="nav-link font-weight-bold" href="{% url 'index' %}#contactus">Contact Us</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link font-weight-bold" href="{% url 'tools.index' %}">Tools</a>
-        </li>
       </ul>
       <ul class="navbar-nav ml-auto">
         {% if user.is_authenticated%}
@@ -128,7 +125,7 @@
   <script src="{% static 'dashboard/js/ui.js' %}"></script>
   <!-- <script src="{% static 'dashboard/js/ajaxfunctions.js' %}"></script> -->
 </body>
-<footer>
+<footer id="footer">
   <p class="mt-5 mb-3 text-center" style="color:#000;">iBlinkco, Copyright © 2018</p>
 </footer>
 

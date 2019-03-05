@@ -28,7 +28,6 @@ urlpatterns = [
     url(r'^', include('homepage.urls')),
     url(r'^dashboard/', include('dashboard.urls')),
     url(r'^dashboard-get/', views.InstagramList.as_view()),
-    url(r'^tools/', include('tools.urls')),
 
     # Rest API URL
     url(r'^api/dashboard/', include('dashboard.rest-api.urls')),

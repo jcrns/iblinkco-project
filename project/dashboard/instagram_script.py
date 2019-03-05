@@ -9,11 +9,12 @@ import sys
 VALUE = dict()
 class InstagramBot:
     # declaring variable parameters
-    def __init__(self, username, password, text):
+    def __init__(self, username, password, text, likes):
         self.username = username
         self.password = password
         self.driver = webdriver.Chrome()
         self.text = text
+        self.likes = likes
 
     def closeBrowser(self):
         self.driver.close()
@@ -153,7 +154,7 @@ class InstagramBot:
 
         return VALUE
 
-    def likePhoto(self, hashtag):
+    def likePhoto(self, hashtag, maxNumberOfLikes):
 
         # Logging In
         InstagramBot.login(self)
@@ -164,7 +165,9 @@ class InstagramBot:
         time.sleep(1)
 
         # Getting Photos
-        picUrl = []
+        pic_hrefs = []
+        likes = 0
+        print(maxNumberOfLikes)
         for i in range(1, 7):
             try:
                 # Scrolling Down the Page
@@ -182,9 +185,11 @@ class InstagramBot:
 
             except Exception as e:
                 print(e)
+            print(likes)
 
-            # For loop to like photo
-            for pic_href in pic_hrefs:
+        # For loop to like photo
+        for pic_href in pic_hrefs:
+            if likes <= maxNumberOfLikes:
                 driver.get(pic_href)
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 time.sleep(random.randint(2, 4))
@@ -193,6 +198,25 @@ class InstagramBot:
                 try:
                     like_button = driver.find_element_by_xpath('//span[@aria-label="Like"]')
                     like_button.click()
+
                     time.sleep(range(0, random.randint(18, 28)))
                 except Exception as e:
                     print(e)
+                likes = likes + 1
+                print(likes)
+            else:
+                print("Opperation Completed")
+                VALUE['message'] = 'success'
+                try:
+                    self.driver.close()
+                except Exception as e:
+                    print(e)
+                break
+
+    def likePhotoReturn(self):
+        tags = self.text
+        numberOfLikes = int(self.likes)
+        tag = random.choice(tags)
+        InstagramBot.likePhoto(self, tag, numberOfLikes)
+        VALUE['message'] = 'success'
+        return VALUE

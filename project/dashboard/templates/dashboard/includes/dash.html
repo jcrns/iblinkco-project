@@ -43,18 +43,14 @@
     color:blue;
   }
   </style>
-  <div class="wrapper" id="wrapper" style="border-bottom: 1px solid #000;">
+  <div class="wrapper" id="wrapper">
     <!-- Sidebar -->
-    <nav id="sidebar" style="background-color:#dbdbdb">
-        <div class="sidebar-header" style="min-width: 150px;">
+    <nav id="sidebar" style="background-color:#dbdbdb; min-height:100%" >
+        <div class="sidebar-header" style="min-width: 150px;" >
             <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
         </div>
 
         <ul class="list-unstyled components">
-            <li class="active">
-                <li>
-                    <a href="#">Home</a>
-                </li>
             <li>
                 <span id="settings" class=""><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
             </li>
@@ -64,19 +60,16 @@
                 <span id="show-analytics" class=""><a href="#">Analytics</a></span>
             </li>
             <li>
-                <span id="show-stream" class=""><a href="#">Stream</a></span>
-            </li>
-            <li>
-                <span id="show-dashboard-row" class=""><a href="#">Dashboard Row</a></span>
+                <span id="show-accounts" class=""><a href="#">Account</a></span>
             </li>
         </ul>
     </nav>
-    <div class="wrapper" id="wrapper" style="padding:20px;" id="admin">
+    <div class="wrapper" id="wrapper" style="padding:20px;" id="admin" >
       <div class="row">
-        <div class="col-md-12" style="width:40vw">
+        <div class="col-md-12" style="width:40vw;">
           <div class="card">
             <div class="card-body">
-              <p id="total-followers" class="display-4"></p>
+              <h1 id="total-followers"></h1>
               <p id="total-post"></p>
               <p id="total-following"></p>
               <div class="container">
@@ -262,7 +255,7 @@
         <form method="POST" id="edit-bio-form">
           New Bio:
           <p><textarea id="new-bio-twitter" name="new-bio" rows="4" cols="40"></textarea></p>
-          <p><input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="bio-change-submit" value="Submit"></p>
+          <p><input type="submit" name="submit-instagram" class="btn btn-success btn-primary text-right" id="bio-change-submit-twitter" value="Submit"></p>
         </form>
       </div>
     </div>
@@ -312,7 +305,8 @@
       </div>
 
       <div class="modal-body">
-          <div class="dashboard-row" id="opperation-history"></div>
+          <div id="view-all-opperations"></div>
+          <br>
         </div>
       </div>
     </div>
@@ -335,6 +329,10 @@
   function print(e){
     console.log(e);
   }
+
+  // Removing the Footer
+  $("#footer").remove();
+
   // Function to get element by Xpath
   function getElementByXpath(path) {
     return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -379,7 +377,7 @@
 
       var econtent = content;
       var instagramId = 'instagram-div';
-      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p>Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
     function showInstagramSelect(content, i){
       var econtent = content;
@@ -554,7 +552,7 @@
     }
 
 
-    // Change Bio
+    // Change Bio Twitter
     $(document).ready(function(){
       $('#bio-change-submit-instagram').click(function(event){
         var getSelected = document.getElementById("select-account-instagram");
@@ -574,7 +572,7 @@
             //Returning Information as objects
             'instagramPostUser':usernameVerify,
             'selectedOption':selectedOption,
-            'newBio': newBio,
+            'newBio': newBio
           },
           success: function (value) {
             checkInstagramAccount();
@@ -586,7 +584,7 @@
       });
     });
 
-    // Change Bio
+    // Change Bio Twitter
     $(document).ready(function(){
       $('#bio-change-submit-twitter').click(function(event){
         var getSelected = document.getElementById("select-account-twitter");
@@ -606,7 +604,7 @@
             //Returning Information as objects
             'twitterPostUser':usernameVerify,
             'selectedOption':selectedOption,
-            'newBio': newBio,
+            'newBio': newBio
           },
           success: function (value) {
             checkTwitterAccount();
@@ -627,7 +625,7 @@
       var econtent = content;
       var twitterId = 'twitter-div';
       var chick = 'dfv';
-      $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span></p>" + "<br /><p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><p>Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-twitter-menu'><span id='twitter-user-bio'>" + econtent.bio[i] + "</span></a></p><p id='twitter-user-location'>Location: <span>" + econtent.location[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
+      $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-twitter-menu'><span id='twitter-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><p id='twitter-user-location'>Location: <span>" + econtent.location[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
 
     function showTwitterSelect(content, i){
@@ -807,21 +805,21 @@
       var opperationSelectedValuePlatform = e.options[e.selectedIndex].value;
         if(opperationSelectedValuePlatform == 'post-on-social'){
           // Option to Post on social Media at Once
-          $('#opperation-post-javascript').html('<p>Post On Social Media: <br /><input type="file" name="post-image" accept="image/*"><br />Add a caption: </p><p><textarea maxlength="2200" id="post-caption-opperation" placeholder="Caption/Tweet" cols="30" rows="5"></textarea></p>Choose Platform(s): <br />');
+          $('#opperation-post-javascript').html('<p>Post On Social Media <br /><input type="file" name="post-image" accept="image/*"><br /</p>Add a caption:<p><textarea maxlength="2200" id="post-caption-opperation" placeholder="Caption/Tweet" cols="30" rows="5"></textarea></p>Choose Platform(s): <br />');
           postOpperation(null, null, opperationSelectedValuePlatform);
           $('#choose-social-media-post-opperation').show();
         } else if (opperationSelectedValuePlatform == 'auto-like') {
 
           // Auto Likes
-          $('#opperation-post-javascript').html('<p>Auto Like Post on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Automatic Likes/Favorites" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter">');
+          $('#opperation-post-javascript').html('<p>Auto Like Post on Social Media: </p><p>Automatic Likes/Favorites <select id="number-likes-favorites"><option value="25">25 Likes</option><option value="50">50 Likes</option><option value="100">100 Likes</option></select></p>Hashtags<p><textarea maxlength="140" id="likes-favorites-hashtags" cols="30" rows="5" placeholder="Ex: money,entrepreneur,lifestyle"></textarea></p>Choose Platform(s): <br />');
           postOpperation(null, null, opperationSelectedValuePlatform);
-          $('#choose-social-media-post-opperation').hide();
+          $('#choose-social-media-post-opperation').show();
         } else if (opperationSelectedValuePlatform == 'auto-follow') {
 
           // Auto Follow
-          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media: </p><p><input type="text" id="number-likes-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />Instagram<input type="checkbox" value="instagram"><br />Twitter<input type="checkbox" value="twitter">');
+          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media </p><p><input type="text" id="number-follows-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />');
           postOpperation(null, null, opperationSelectedValuePlatform);
-          $('#choose-social-media-post-opperation').hide();
+          $('#choose-social-media-post-opperation').show();
       }
     }
     opperationOptionChange();
@@ -837,20 +835,20 @@
       selectedValue = selectedObject;
       $('#opperation-post-form').submit(function(event){
         event.preventDefault();
-        if (selectedValue == 'post-on-social') {
-          var usernames = [];
-          postOpperationItem = document.getElementsByClassName("post-opperation-item");
-          for(var i = 0; i < postOpperationItem.length; i++) {
-              // Looking for value which is the username
-              var pushedPostOpperationItem = postOpperationItem[i].value;
-              if(postOpperationItem[i].checked){
+        var usernames = [];
+        postOpperationItem = document.getElementsByClassName("post-opperation-item");
+        for(var i = 0; i < postOpperationItem.length; i++) {
+            // Looking for value which is the username
+            var pushedPostOpperationItem = postOpperationItem[i].value;
+            if(postOpperationItem[i].checked){
 
-                // Checking if box is checked
-                usernames.push(pushedPostOpperationItem);
-            }
+              // Checking if box is checked
+              usernames.push(pushedPostOpperationItem);
           }
+        }
+        var postUser = "{{ user.username }}";
+        if (selectedValue == 'post-on-social') {
           var opperationCaption = document.getElementById('post-caption-opperation');
-          var instagramPostUser = "{{ user.username }}";
           var url = '{% url 'post-on-social/' %}';
           $('#opperation-success').html('Attempting Opperation.');
           //using ajax to call function
@@ -861,7 +859,7 @@
             data: {
               csrfmiddlewaretoken: '{{ csrf_token }}',
               // Posting information
-              'opperationPostUser':instagramPostUser,
+              'opperationPostUser':postUser,
 
               // Returning Inputed Values
               'opperationCaption':opperationCaption.value,
@@ -883,9 +881,13 @@
             }
           });
         } else if (selectedValue == 'auto-like'){
-          event.preventDefault();
-          var instagramPostUser = "{{ user.username }}";
-          var url = '{% url 'instagram-post/' %}';
+          var e = document.getElementById('number-likes-favorites');
+          var selectedAmount = e.options[e.selectedIndex].value;
+          var hashtags = document.getElementById('likes-favorites-hashtags').value;
+          // alert(hashtags);
+          // var hashtagArray = JSON.parse("[" + hashtags + "]");
+          var hashtagArray = hashtags.split(",")
+          var url = '{% url 'auto-like-social/' %}';
           $('#opperation-success').html('Attempting Opperation.');
           //using ajax to call function
           $.ajax({
@@ -895,7 +897,21 @@
             data: {
               csrfmiddlewaretoken: '{{ csrf_token }}',
               // Posting information
-              'opperationPostUser':instagramPostUser,
+              'opperationPostUser':postUser,
+
+              // Returning Inputed Values
+              'hashtagsArray[]':hashtagArray,
+
+              // Returning Pure Hashtag Text
+              'hashtags':hashtags,
+
+              // Returning Values of Checked off Boxes
+              'usernames[]':usernames,
+
+              // Getting Selected Request of likes
+              'amountOfLikes':selectedAmount,
+
+
             },
             success: function (value) {
               if (value.message == 'success'){
@@ -1148,6 +1164,33 @@
       }
     }
 
+
+
+
+
+    //Checking State of logged in accounts
+    function getOpperationHistory(e){
+      var url = '{% url 'get-opperation-history/' %}';
+      var usernameVerify = "{{ user.username }}";
+      $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: 'text',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          'usernameVerify':usernameVerify,
+
+        },
+        success: function (content) {
+          var econtent = JSON.parse(content);
+          for (let i = 0; i < econtent.objectLength; i++) {
+            opperationAddHistory(econtent, i);
+          }
+        },
+      });
+    }
+    getOpperationHistory();
+
     // Opperation Div
     function opperationDiv(){
       var dashboardRow = document.getElementById('opperations');
@@ -1157,7 +1200,14 @@
       createrDiv.setAttribute('id', "holder-3");
 
       dashboardRow.appendChild(createrDiv);
-      $('#holder-3').html('<div class="card" id="holder-4"><h4>Opperations</h4><div class="card" style="height:10vh;"id="activeOpperations">Active:</div><div class="card" style="height:10vh;" id="recentOpperations">Recent: <a href="#" style="color:#000" data-toggle="modal" data-target="#view-opperation-history"><p style="position: absolute; bottom:-20px; right:3%; float:right;">View History</p></a></div></div>');
+      $('#holder-3').html('<div class="card" id="holder-4"><h4>Opperations</h4><div class="card" style=" height:17vh; display:inline-block;"id="opperationHistory">History: <table id="opperation-history-table" class="table"><tr><th style="width:33%;" scope="col">Type</th><th style="width:33%" scope="col">Likes/Follows</th><th style="width:33%" scope="col">Text/Hashtags</th><th style="width:33%;" scope="col">Location</th></tr></table></div><a href="#" style="color:#000" data-toggle="modal" data-target="#view-opperation-history"><p style="position: absolute; bottom:-20px; right:3%; float:right;">View All</p></a></div>');
+
+      var getTableDiv = document.getElementById('view-all-opperations');
+      var createrTable = document.createElement('table');
+      createrTable.setAttribute('id', "view-all-opperations-table");
+      getTableDiv.appendChild(createrTable);
+      $('#view-all-opperations-table').html('<tr><th style="width:33%;" scope="col">Type</th><th style="width:33%" scope="col">Likes/Follows</th><th style="width:33%" scope="col">Text/Hashtags</th><th style="width:33%;" scope="col">Location</th></tr>');
+
     }
     opperationDiv();
 
@@ -1166,6 +1216,79 @@
       'scrollDefault': 'now'
     });
 
+    // Add History for Opperations
+    function opperationAddHistory(content, i){
+      econtent = content
+
+      // Checking If Element Exist
+      if ( $( "#fixed-row-opperation-table" ).length ) {
+        $( "#fixed-row-opperation-table" ).show();
+      } else {
+
+        $( "#fixed-row-opperation-table" ).show();
+
+        // Getting and Creating Elements
+        var opperationTable = document.getElementById('opperation-history-table');
+
+        var creatorRow = document.createElement('tr');
+
+        // Creating Type Element
+        var creatorRowType = document.createElement('td');
+        creatorRowType.innerHTML = econtent.type[i];
+        creatorRowType.setAttribute('id', "fixed-row-opperation-table");
+
+        // Creating Likes Element
+        var creatorRowLikes = document.createElement('td');
+        creatorRowLikes.innerHTML = econtent.likes[i];
+
+        // Creating Hashtags Element
+        var creatorRowText = document.createElement('td');
+        creatorRowText.innerHTML = econtent.hashtags[i];
+
+        // Creating Location Element
+        var creatorRowLocation = document.createElement('td');
+        creatorRowLocation.innerHTML = econtent.location[i];
+
+        // Appending Elements
+        creatorRow.appendChild(creatorRowType);
+        creatorRow.appendChild(creatorRowLikes);
+        creatorRow.appendChild(creatorRowText);
+        creatorRow.appendChild(creatorRowLocation);
+
+        // Appending Elements to Parent Elements
+        opperationTable.appendChild(creatorRow);
+      }
+
+      // View All Opperations
+      var opperationTableViewAll = document.getElementById('view-all-opperations-table');
+
+      var creatorRowFull = document.createElement('tr');
+
+      // Creating Type Element
+      var creatorRowTypeFull = document.createElement('td');
+      creatorRowTypeFull.innerHTML = econtent.type[i];
+
+      // Creating Likes Element
+      var creatorRowLikesFull = document.createElement('td');
+      creatorRowLikesFull.innerHTML = econtent.likes[i];
+
+      // Creating Hashtags Element
+      var creatorRowTextFull = document.createElement('td');
+      creatorRowTextFull.innerHTML = econtent.hashtags[i];
+
+      // Creating Location Element
+      var creatorRowLocationFull = document.createElement('td');
+      creatorRowLocationFull.innerHTML = econtent.location[i];
+
+      // Appending Elements
+      creatorRowFull.appendChild(creatorRowTypeFull);
+      creatorRowFull.appendChild(creatorRowLikesFull);
+      creatorRowFull.appendChild(creatorRowTextFull);
+      creatorRowFull.appendChild(creatorRowLocationFull);
+
+      opperationTableViewAll.appendChild(creatorRowFull);
+
+    }
 </script>
 
 {% endblock %}
