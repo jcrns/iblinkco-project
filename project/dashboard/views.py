@@ -605,14 +605,14 @@ def autoLikes(request):
                             message = messageView['message']
 
                             like_opperation.instagram = True
-                            value = {'message':message}
+                            value = message
                             if message != 'success':
                                 print("nooo")
                                 like_opperation.instagram = False
                             elif message == 'success':
                                 like_opperation.instagram = True
                                 like_opperation.hashtags = hashtags
-                                value = {'message':message}
+                                value = message
 
                             else:
                                 like_opperation.instagram = False
@@ -634,10 +634,10 @@ def autoLikes(request):
                                         like_opperation.hashtags = hashtags
                                         like_opperation.twitter = True
                                         message = 'success'
-                                        value = {'message':message}
+                                        value = message
 
                                         if message == 'success':
-                                            value = {'message':message}
+                                            value = message
                                             like_opperation.save()
                                         else:
                                             print("going through if")
@@ -652,9 +652,100 @@ def autoLikes(request):
         else:
             print("failed")
             message = 'failed'
-            value = {'message':message}
+            value = message
 
-        return HttpResponse( json.dumps( value ))
+        return HttpResponse(value)
+
+def autoFollow(request):
+    if request.method == 'POST':
+        user_verify = request.POST.get('opperationPostUser')
+        amountOfFollows = request.POST.get('amountOfLikes')
+        hashtags = request.POST.getlist('hashtags')
+        hashtagsArray = request.POST.getlist('hashtagsArray[]')
+        checkedUsernames = request.POST.getlist('usernames[]')
+        value = []
+        if request.POST.get('opperationPostUser') and request.POST.getlist('hashtags') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]') and request.POST.get('amountOfLikes'):
+            print("hashtags")
+            print(hashtagsArray)
+
+            # Getting Databases
+            content_twitter = Twitter.objects.all()
+            TWITTER = content_twitter
+
+            content_instagram = Instagram.objects.all()
+            INSTAGRAM = content_instagram
+
+            # Creating array object for verified information
+            verified = []
+            follow_opperation = FollowOpperation()
+
+            # For loop
+            for val in INSTAGRAM:
+                if user_verify == val.user:
+                    val.number_of_followers = amountOfFollows
+                    follow_opperation.user = user_verify
+                    for user in checkedUsernames:
+                        if user == val.instagram_username:
+                            # When user is verified
+                            print("true instagram")
+                            print("insta True!")
+
+                            # Adding Instagram Script to like photos on instagram
+                            userIG = InstagramBot(val.instagram_username, val.instagram_password, hashtagsArray, amountOfFollows)
+                            messageView = userIG.followUserReturn()
+                            message = messageView['message']
+
+                            follow_opperation.instagram = True
+                            value = message
+                            if message != 'success':
+                                print("nooo")
+                                follow_opperation.instagram = False
+                            elif message == 'success':
+                                follow_opperation.instagram = True
+                                follow_opperation.hashtags = hashtags
+                                value = message
+
+                            else:
+                                follow_opperation.instagram = False
+                        else:
+                            follow_opperation.instagram = False
+
+
+                    else:
+                        for val2 in TWITTER:
+                            if user_verify == val.user:
+                                for user in checkedUsernames:
+                                    if user == val2.twitter_username:
+                                        # When user is verified
+                                        print("true twitter")
+
+                                        # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
+                                        # messageView = userTwit.postTweet()
+
+                                        follow_opperation.hashtags = hashtags
+                                        follow_opperation.twitter = True
+                                        message = 'success'
+                                        value = message
+
+                                        if message == 'success':
+                                            value = message
+                                            follow_opperation.save()
+                                        else:
+                                            print("going through if")
+                                            message = 'failed'
+
+
+
+                                    else:
+                                        follow_opperation.twitter = False
+
+
+        else:
+            print("failed")
+            message = 'failed'
+            value = message
+        print(value)
+        return HttpResponse(value)
 
 def getOpperationHistory(request):
     if request.method == 'POST':
@@ -665,6 +756,8 @@ def getOpperationHistory(request):
         user_verify = request.POST.get('usernameVerify')
         if request.POST.get('usernameVerify'):
             GETLIKES = LikeOpperation.objects.all()
+
+            GETFOLLOW = FollowOpperation.objects.all()
 
             POSTSOCIAL = PostSocial.objects.all()
 
@@ -725,6 +818,34 @@ def getOpperationHistory(request):
                     requestedAmountLikesArray.append(requestedAmountLikes)
                     requestedHashtagsArray.append(requestedText)
                     requestedLocationArray.append(requestLocation)
+            for val3 in GETFOLLOW:
+                # Checking Likes Opperation First
+                if user_verify == val3.user:
+                    message = 'success'
+
+                    print("found user")
+                    requestedType = 'Follows'
+                    requestedAmountFollow = val3.number_of_followers
+                    requestedHashtags = val3.hashtags
+
+                    if val3.instagram == True and val3.twitter == False:
+                        requestLocation = 'Instagram'
+                    elif val3.instagram == False and val3.twitter == True:
+                        requestLocation = 'Twitter'
+                    elif val3.instagram == True and val3.twitter == True:
+                        requestLocation = 'Instagram + Twitter'
+                    else:
+                        message = 'failed'
+
+                    # Appending all Info
+                    requestedTypeArray.append(requestedType)
+                    requestedAmountLikesArray.append(requestedAmountFollow)
+                    requestedHashtagsArray.append(requestedHashtags)
+                    requestedLocationArray.append(requestLocation)
+
+
+                else:
+                    message = 'failed'
 
             print(len(requestedTypeArray))
             value = {'message':message, 'objectLength':len(requestedTypeArray), 'type':requestedTypeArray, 'likes':requestedAmountLikesArray, 'hashtags':requestedHashtagsArray, 'location':requestedLocationArray }

@@ -5,6 +5,22 @@
   $("#analytics").hide();
   $("#accounts").hide();
 
+  // Hidding and Showing Dashboard content onclick
+
+  $("#show-analytics").click(function(){
+   $("#admin").hide();
+   $("#analytics").show();
+   $("#accounts").hide();
+  });
+
+  $("#show-accounts").click(function(){
+   $("#admin").hide();
+   $("#analytics").hide();
+   $("#accounts").show();
+  });
+
+
+
   // Creating Divs
 
   // Connect Account Div

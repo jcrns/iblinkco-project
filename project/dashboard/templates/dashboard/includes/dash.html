@@ -1,28 +1,6 @@
 <!-- Jinja file including all homepage content -->
 {% block content %}
 <style>
-  #analytics{
-    display:none;
-  }
-  #stream{
-    display:none;
-  }
-  #connect-header-instagram, #connect-header-twitter{
-    display:none;
-  }
-  .dashboard-row-item{
-    min-height: 40vh;
-  }
-  #wrapper {
-    display: flex;
-    width: 100%;
-    height:80vh;
-    align-items: stretch;
-    /* border: solid red; */
-  }
-  .dashboard-row{
-    /* border: solid red; */
-  }
   img{
     width:32px;
     height:32px;
@@ -43,28 +21,7 @@
     color:blue;
   }
   </style>
-  <div class="wrapper" id="wrapper">
-    <!-- Sidebar -->
-    <nav id="sidebar" style="background-color:#dbdbdb; min-height:100%" >
-        <div class="sidebar-header" style="min-width: 150px;" >
-            <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
-        </div>
-
-        <ul class="list-unstyled components">
-            <li>
-                <span id="settings" class=""><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
-            </li>
-            <li>
-            </li>
-            <li>
-                <span id="show-analytics" class=""><a href="#">Analytics</a></span>
-            </li>
-            <li>
-                <span id="show-accounts" class=""><a href="#">Account</a></span>
-            </li>
-        </ul>
-    </nav>
-    <div class="wrapper" id="wrapper" style="padding:20px;" id="admin" >
+    <div class="wrapper" style="padding:20px;" id="admin">
       <div class="row">
         <div class="col-md-12" style="width:40vw;">
           <div class="card">
@@ -94,7 +51,6 @@
         <div class="dashboard-row" id="create-opperation-div"></div>
       </div>
     </div>
-</div>
     <!-- Connect Account Modal -->
     <div class="modal fade" id="connect" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -298,7 +254,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">View Opperation</h5>
+        <h5 class="modal-title" id="exampleModalLabel">View Past Opperations</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -817,7 +773,7 @@
         } else if (opperationSelectedValuePlatform == 'auto-follow') {
 
           // Auto Follow
-          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media </p><p><input type="text" id="number-follows-favorites" placeholder="Number of Users Following" /></p><p><textarea maxlength="140" id="hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />');
+          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media </p><p><select id="number-followers"><option value="25">25 Follows</option><option value="50">50 Follows</option><option value="100">100 Follows</option></select></p><p><textarea maxlength="140" id="follow-hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />');
           postOpperation(null, null, opperationSelectedValuePlatform);
           $('#choose-social-media-post-opperation').show();
       }
@@ -914,9 +870,53 @@
 
             },
             success: function (value) {
-              if (value.message == 'success'){
+              if (value == 'success'){
                 $('#opperation-success').html('Opperation Successful!');
-              } else if (value.message == 'failed') {
+              } else if (value == 'failed') {
+                $('#opperation-failed').html('Something went wrong. Try again');
+              } else{
+                $('#opperation-failed').html('Something went wrong. Try again');
+              }
+            }
+          });
+        } else if(selectedValue == 'auto-follow'){
+          var e = document.getElementById('number-followers');
+          var selectedAmount = e.options[e.selectedIndex].value;
+          var hashtags = document.getElementById('follow-hashtags').value;
+          // alert(hashtags);
+          // var hashtagArray = JSON.parse("[" + hashtags + "]");
+          var hashtagArray = hashtags.split(",")
+          var url = '{% url 'auto-follow-social/' %}';
+          $('#opperation-success').html('Attempting Opperation.');
+          //using ajax to call function
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'text',
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              // Posting information
+              'opperationPostUser':postUser,
+
+              // Returning Inputed Values
+              'hashtagsArray[]':hashtagArray,
+
+              // Returning Pure Hashtag Text
+              'hashtags':hashtags,
+
+              // Returning Values of Checked off Boxes
+              'usernames[]':usernames,
+
+              // Getting Selected Request of likes
+              'amountOfLikes':selectedAmount,
+
+
+            },
+            success: function (value) {
+              alert(value);
+              if (value == 'success'){
+                $('#opperation-success').html('Opperation Successful!');
+              } else if (value == 'failed') {
                 $('#opperation-failed').html('Something went wrong. Try again');
               } else{
                 $('#opperation-failed').html('Something went wrong. Try again');
