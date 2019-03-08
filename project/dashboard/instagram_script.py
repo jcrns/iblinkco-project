@@ -202,6 +202,8 @@ class InstagramBot:
                     time.sleep(range(0, random.randint(18, 28)))
                 except Exception as e:
                     print(e)
+                    likes = likes - 1
+                    
                 likes = likes + 1
                 print(likes)
             else:
@@ -268,6 +270,8 @@ class InstagramBot:
                     time.sleep(2)
                 except Exception as e:
                     print(e)
+                    follows = follows - 1
+
                 follows = follows + 1
                 print(follows)
             else:

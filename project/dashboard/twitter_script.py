@@ -3,15 +3,22 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from getpass import getpass
 import time
+import random
+from random import randint
+
 VALUE = dict()
 class twitterBot:
 
-    def __init__(self, username, password, text):
+    def __init__(self, username, password, text, number):
         self.username = username
         self.password = password
         # mobileView.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1')
         self.driver = webdriver.Chrome()
         self.text = text
+        self.number = number
+
+    def closeBrowser(self):
+        self.driver.close()
 
     def getFollowerInfo(self):
         print("Attempting to get info")
@@ -146,5 +153,61 @@ class twitterBot:
         except Exception as e:
             print(e)
             VALUE['message'] = 'failed'
+
+        return VALUE
+
+
+    def likeTweet(self, hashtag, maxNumber):
+        likePaths = []
+
+        print("Attempting to Favorite Tweets")
+        driver = self.driver
+
+        # Going To Url of Hashtag
+        driver.get("https://twitter.com/search?q=" + hashtag + "&src=typd")
+        time.sleep(1)
+
+
+        driver.execute_script("window.scrollTo(0, 300);")
+        time.sleep(1)
+
+        likeButton = driver.find_elements_by_class_name('HeartAnimation')
+
+        print(maxNumber)
+
+        count = 0
+        favorites = 0
+
+        # For loop to get favorite button
+        for likeItem in likeButton:
+            print(favorites)
+            # Limiting Number of favorites
+            if favorites <= maxNumber:
+                try:
+                    likePaths.append(likeItem)
+                    time.sleep(randint(1,2))
+                    likeButton[count].click()
+                    count += 2
+                    favorites += 1
+                except Exception as e:
+                    print(e)
+
+            else:
+                break
+
+    def likeTweetReturn(self):
+        print("stadgretgwryhjeuytje")
+        tags = self.text
+        numberOfLikes = int(self.number)
+        tag = random.choice(tags)
+        try:
+            twitterBot.login(self)
+            twitterBot.likeTweet(self, tag, numberOfLikes)
+            VALUE['message'] = 'success'
+            twitterBot.closeBrowser(self)
+        except Exception as e:
+            print(e)
+            VALUE['message'] = 'failed'
+            twitterBot.closeBrowser(self)
 
         return VALUE

@@ -1,5 +1,7 @@
 import sys
 import json
+from json import dumps
+from datetime import date, datetime
 
 # Importing login_required function from django
 from django.contrib.auth.decorators import login_required
@@ -36,6 +38,12 @@ class InstagramList(APIView):
     def post(self):
         pass
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))
 
 # Requiring a login in order to accessing page
 @login_required
@@ -569,13 +577,13 @@ def autoLikes(request):
     if request.method == 'POST':
         user_verify = request.POST.get('opperationPostUser')
         amountOfLikes = request.POST.get('amountOfLikes')
-        hashtags = request.POST.getlist('hashtags')
         hashtagsArray = request.POST.getlist('hashtagsArray[]')
         checkedUsernames = request.POST.getlist('usernames[]')
         value = []
-        if request.POST.get('opperationPostUser') and request.POST.getlist('hashtags') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]') and request.POST.get('amountOfLikes'):
-            print("hashtags")
+        if request.POST.get('opperationPostUser') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]') and request.POST.get('amountOfLikes'):
             print(hashtagsArray)
+            hashtags = ','.join(str(x) for x in hashtagsArray)
+
 
             # Getting Databases
             content_twitter = Twitter.objects.all()
@@ -620,39 +628,41 @@ def autoLikes(request):
                             like_opperation.instagram = False
 
 
-                    else:
-                        for val2 in TWITTER:
-                            if user_verify == val.user:
-                                for user in checkedUsernames:
-                                    if user == val2.twitter_username:
-                                        # When user is verified
-                                        print("true twitter")
+            for val2 in TWITTER:
+                if user_verify == val.user:
+                    for user in checkedUsernames:
+                        if user == val2.twitter_username:
+                            # When user is verified
+                            print("true twitter")
 
-                                        # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
-                                        # messageView = userTwit.postTweet()
+                            # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
+                            # messageView = userTwit.postTweet()
 
-                                        like_opperation.hashtags = hashtags
-                                        like_opperation.twitter = True
-                                        message = 'success'
-                                        value = message
+                            userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtagsArray, amountOfLikes)
+                            messageView = userTwit.likeTweetReturn()
+                            message = messageView['message']
 
-                                        if message == 'success':
-                                            value = message
-                                            like_opperation.save()
-                                        else:
-                                            print("going through if")
-                                            message = 'failed'
+                            like_opperation.hashtags = hashtags
+                            like_opperation.twitter = True
+
+                            if message == 'success':
+                                value = message
+                            else:
+                                print("going through if")
+                                message = 'failed'
 
 
 
-                                    else:
-                                        like_opperation.twitter = False
+                        else:
+                            like_opperation.twitter = False
 
 
         else:
-            print("failed")
+            print("failed in else")
             message = 'failed'
             value = message
+        if message == 'success':
+            like_opperation.save()
 
         return HttpResponse(value)
 
@@ -660,13 +670,14 @@ def autoFollow(request):
     if request.method == 'POST':
         user_verify = request.POST.get('opperationPostUser')
         amountOfFollows = request.POST.get('amountOfLikes')
-        hashtags = request.POST.getlist('hashtags')
         hashtagsArray = request.POST.getlist('hashtagsArray[]')
         checkedUsernames = request.POST.getlist('usernames[]')
         value = []
-        if request.POST.get('opperationPostUser') and request.POST.getlist('hashtags') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]') and request.POST.get('amountOfLikes'):
-            print("hashtags")
+        if request.POST.get('opperationPostUser') and request.POST.get('amountOfLikes') and request.POST.getlist('hashtagsArray[]') and request.POST.getlist('usernames[]'):
+            print("egwrsgbnetynetyndtn")
             print(hashtagsArray)
+            hashtags = ','.join(str(x) for x in hashtagsArray)
+            print(hashtags)
 
             # Getting Databases
             content_twitter = Twitter.objects.all()
@@ -682,14 +693,15 @@ def autoFollow(request):
             # For loop
             for val in INSTAGRAM:
                 if user_verify == val.user:
-                    val.number_of_followers = amountOfFollows
-                    follow_opperation.user = user_verify
                     for user in checkedUsernames:
                         if user == val.instagram_username:
+                            amountOfFollows = val.number_of_followers
+                            follow_opperation.number_of_followers = amountOfFollows
+                            follow_opperation.user = user_verify
                             # When user is verified
                             print("true instagram")
                             print("insta True!")
-
+                            print(number_of_followers)
                             # Adding Instagram Script to like photos on instagram
                             userIG = InstagramBot(val.instagram_username, val.instagram_password, hashtagsArray, amountOfFollows)
                             messageView = userIG.followUserReturn()
@@ -711,39 +723,41 @@ def autoFollow(request):
                             follow_opperation.instagram = False
 
 
-                    else:
-                        for val2 in TWITTER:
-                            if user_verify == val.user:
-                                for user in checkedUsernames:
-                                    if user == val2.twitter_username:
-                                        # When user is verified
-                                        print("true twitter")
+            for val2 in TWITTER:
+                if user_verify == val.user:
+                    for user in checkedUsernames:
+                        if user == val2.twitter_username:
+                            follow_opperation.number_of_followers = amountOfFollows
+                            follow_opperation.user = user_verify
+                            # When user is verified
+                            print("true twitter")
 
-                                        # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
-                                        # messageView = userTwit.postTweet()
+                            # userTwit = twitterBot(val2.twitter_username, val2.twitter_password, hashtags)
+                            # messageView = userTwit.postTweet()
 
-                                        follow_opperation.hashtags = hashtags
-                                        follow_opperation.twitter = True
-                                        message = 'success'
-                                        value = message
+                            follow_opperation.hashtags = hashtags
+                            follow_opperation.twitter = True
+                            message = 'success'
+                            value = message
 
-                                        if message == 'success':
-                                            value = message
-                                            follow_opperation.save()
-                                        else:
-                                            print("going through if")
-                                            message = 'failed'
-
+                            if message == 'success':
+                                value = message
+                            else:
+                                print("going through if")
+                                message = 'failed'
 
 
-                                    else:
-                                        follow_opperation.twitter = False
+
+                        else:
+                            follow_opperation.twitter = False
 
 
         else:
-            print("failed")
+            print("failed not in else")
             message = 'failed'
             value = message
+        if message == 'success':
+            follow_opperation.save()
         print(value)
         return HttpResponse(value)
 
@@ -753,6 +767,7 @@ def getOpperationHistory(request):
         requestedAmountLikesArray = []
         requestedHashtagsArray = []
         requestedLocationArray = []
+        requestedDateArray = []
         user_verify = request.POST.get('usernameVerify')
         if request.POST.get('usernameVerify'):
             GETLIKES = LikeOpperation.objects.all()
@@ -771,9 +786,12 @@ def getOpperationHistory(request):
                     message = 'success'
 
                     print("found user")
+                    # Getting Values
                     requestedType = 'Likes'
                     requestedAmountLikes = val.number_of_likes
                     requestedHashtags = val.hashtags
+                    requestedDateRaw = val.date
+                    requestedDate = dumps(requestedDateRaw, default=json_serial)
 
                     if val.instagram == True and val.twitter == False:
                         requestLocation = 'Instagram'
@@ -785,10 +803,12 @@ def getOpperationHistory(request):
                         message = 'failed'
 
                     # Appending all Info
-                    requestedTypeArray.append(requestedType)
-                    requestedAmountLikesArray.append(requestedAmountLikes)
-                    requestedHashtagsArray.append(requestedHashtags)
-                    requestedLocationArray.append(requestLocation)
+                    if val.viewPast == True:
+                        requestedTypeArray.append(requestedType)
+                        requestedAmountLikesArray.append(requestedAmountLikes)
+                        requestedHashtagsArray.append(requestedHashtags)
+                        requestedLocationArray.append(requestLocation)
+                        requestedDateArray.append(requestedDate)
 
 
                 else:
@@ -802,6 +822,8 @@ def getOpperationHistory(request):
                     requestedType = 'Post'
                     requestedAmountLikes = 'None'
                     requestedText = val2.text
+                    requestedDateRaw = val2.date
+                    requestedDate = dumps(requestedDateRaw, default=json_serial)
 
                     # Checking for selected info
                     if val2.instagram == True and val2.twitter == False:
@@ -814,10 +836,14 @@ def getOpperationHistory(request):
                         message = 'failed'
 
                     # Appending all Info
-                    requestedTypeArray.append(requestedType)
-                    requestedAmountLikesArray.append(requestedAmountLikes)
-                    requestedHashtagsArray.append(requestedText)
-                    requestedLocationArray.append(requestLocation)
+                    if val.viewPast == True:
+                        requestedTypeArray.append(requestedType)
+                        requestedAmountLikesArray.append(requestedAmountLikes)
+                        requestedHashtagsArray.append(requestedText)
+                        requestedLocationArray.append(requestLocation)
+                        requestedDateArray.append(requestedDate)
+
+
             for val3 in GETFOLLOW:
                 # Checking Likes Opperation First
                 if user_verify == val3.user:
@@ -827,6 +853,8 @@ def getOpperationHistory(request):
                     requestedType = 'Follows'
                     requestedAmountFollow = val3.number_of_followers
                     requestedHashtags = val3.hashtags
+                    requestedDateRaw = val3.date
+                    requestedDate = dumps(requestedDateRaw, default=json_serial)
 
                     if val3.instagram == True and val3.twitter == False:
                         requestLocation = 'Instagram'
@@ -842,12 +870,13 @@ def getOpperationHistory(request):
                     requestedAmountLikesArray.append(requestedAmountFollow)
                     requestedHashtagsArray.append(requestedHashtags)
                     requestedLocationArray.append(requestLocation)
+                    requestedDateArray.append(requestedDate)
 
 
                 else:
                     message = 'failed'
 
             print(len(requestedTypeArray))
-            value = {'message':message, 'objectLength':len(requestedTypeArray), 'type':requestedTypeArray, 'likes':requestedAmountLikesArray, 'hashtags':requestedHashtagsArray, 'location':requestedLocationArray }
+            value = {'message':message, 'objectLength':len(requestedTypeArray), 'type':requestedTypeArray, 'likes':requestedAmountLikesArray, 'hashtags':requestedHashtagsArray, 'location':requestedLocationArray, 'date': requestedDateArray}
             print(value)
     return HttpResponse( json.dumps( value ))

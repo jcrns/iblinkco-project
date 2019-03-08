@@ -49,6 +49,7 @@ class PostSocial(models.Model):
     twitter = models.BooleanField()
     instagram = models.BooleanField()
     date = models.DateTimeField(auto_now_add=True)
+    viewPast = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} {}'.format(self.user, self.date)
@@ -60,6 +61,7 @@ class LikeOpperation(models.Model):
     twitter = models.BooleanField()
     instagram = models.BooleanField()
     date = models.DateTimeField(auto_now_add=True)
+    viewPast = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} {} {}'.format(self.user, self.number_of_likes, self.date)
@@ -71,6 +73,8 @@ class FollowOpperation(models.Model):
     twitter = models.BooleanField()
     instagram = models.BooleanField()
     date = models.DateTimeField(auto_now_add=True)
+    viewPast = models.BooleanField(default=True)
+
 
     def __str__(self):
         return '{} {} {}'.format(self.user, self.number_of_followers, self.date)

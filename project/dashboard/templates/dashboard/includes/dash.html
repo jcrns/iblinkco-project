@@ -267,7 +267,6 @@
       </div>
     </div>
   </div>
-</div>
 
 
 <!-- Using Jquery and JavaScript to have page function -->
@@ -773,7 +772,7 @@
         } else if (opperationSelectedValuePlatform == 'auto-follow') {
 
           // Auto Follow
-          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media </p><p><select id="number-followers"><option value="25">25 Follows</option><option value="50">50 Follows</option><option value="100">100 Follows</option></select></p><p><textarea maxlength="140" id="follow-hashtags" cols="20" rows="5" placeholder="Hashtags"></textarea></p>Choose Platform(s): <br />');
+          $('#opperation-post-javascript').html('<p>Auto Follow Users on Social Media </p><p><select id="number-followers"><option value="25">25 Follows</option><option value="50">50 Follows</option><option value="100">100 Follows</option></select></p><p><textarea maxlength="140" id="follow-hashtags" cols="20" rows="5" placeholder="Ex: money, entrepreneur, lifestyle"></textarea></p>Choose Platform(s): <br />');
           postOpperation(null, null, opperationSelectedValuePlatform);
           $('#choose-social-media-post-opperation').show();
       }
@@ -829,6 +828,7 @@
               alert(evalue.message);
               if (evalue.message == 'success'){
                 $('#opperation-success').html('Opperation Successful!');
+                getOpperationHistory();
               } else if (evalue.message == 'failed') {
                 $('#opperation-failed').html('Something went wrong. Try again');
               } else{
@@ -858,9 +858,6 @@
               // Returning Inputed Values
               'hashtagsArray[]':hashtagArray,
 
-              // Returning Pure Hashtag Text
-              'hashtags':hashtags,
-
               // Returning Values of Checked off Boxes
               'usernames[]':usernames,
 
@@ -872,6 +869,7 @@
             success: function (value) {
               if (value == 'success'){
                 $('#opperation-success').html('Opperation Successful!');
+                getOpperationHistory();
               } else if (value == 'failed') {
                 $('#opperation-failed').html('Something went wrong. Try again');
               } else{
@@ -901,9 +899,6 @@
               // Returning Inputed Values
               'hashtagsArray[]':hashtagArray,
 
-              // Returning Pure Hashtag Text
-              'hashtags':hashtags,
-
               // Returning Values of Checked off Boxes
               'usernames[]':usernames,
 
@@ -916,9 +911,11 @@
               alert(value);
               if (value == 'success'){
                 $('#opperation-success').html('Opperation Successful!');
+                getOpperationHistory();
               } else if (value == 'failed') {
                 $('#opperation-failed').html('Something went wrong. Try again');
               } else{
+                alert(value)
                 $('#opperation-failed').html('Something went wrong. Try again');
               }
             }
@@ -926,6 +923,7 @@
         }
       });
     }
+
 
 
 
@@ -1206,7 +1204,7 @@
       var createrTable = document.createElement('table');
       createrTable.setAttribute('id', "view-all-opperations-table");
       getTableDiv.appendChild(createrTable);
-      $('#view-all-opperations-table').html('<tr><th style="width:33%;" scope="col">Type</th><th style="width:33%" scope="col">Likes/Follows</th><th style="width:33%" scope="col">Text/Hashtags</th><th style="width:33%;" scope="col">Location</th></tr>');
+      $('#view-all-opperations-table').html('<tr><th style="width:50%;" scope="col">Type</th><th style="width:50%" scope="col">Likes/Follows</th><th style="width:50%" scope="col">Text/Hashtags</th><th style="width:50%;" scope="col">Location</th><th style="width:50%;" scope="col">Date</th></tr>');
 
     }
     opperationDiv();
@@ -1280,14 +1278,32 @@
       var creatorRowLocationFull = document.createElement('td');
       creatorRowLocationFull.innerHTML = econtent.location[i];
 
+      // Creating Date Element
+      var creatorRowDateFull = document.createElement('td');
+
+      creatorRowDateFull.innerHTML = econtent.date[i];
+
       // Appending Elements
       creatorRowFull.appendChild(creatorRowTypeFull);
       creatorRowFull.appendChild(creatorRowLikesFull);
       creatorRowFull.appendChild(creatorRowTextFull);
       creatorRowFull.appendChild(creatorRowLocationFull);
+      creatorRowFull.appendChild(creatorRowDateFull);
 
       opperationTableViewAll.appendChild(creatorRowFull);
 
+    }
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
     }
 </script>
 
