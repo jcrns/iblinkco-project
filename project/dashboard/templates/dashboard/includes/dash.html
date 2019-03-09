@@ -5,9 +5,6 @@
     width:32px;
     height:32px;
   }
-  #instagram-graph{
-    width:10px;
-  }
   #instagram-user-bio{
     color:#000;
   }
@@ -218,7 +215,7 @@
   </div>
 </div>
 
-<!-- Opperation popup -->
+<!-- Opperation modal -->
 <div class="modal fade" id="opperation-post" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -358,6 +355,7 @@
 
             // Defining account div
             var dashboardRow = document.getElementById('account-divs');
+            var analyticsContainer = document.getElementById('analytics-container-instagram');
 
             // Instagram Account Div
             var instagramDiv = document.createElement('div');
@@ -365,11 +363,12 @@
             instagramDiv.setAttribute('id', 'instagram-div');
             dashboardRow.appendChild(instagramDiv);
 
-            // Defining Graph Div
+            // Defining Graph Div and putting it in analytics
             var instagramGraph = document.createElement('canvas');
+            var instagramGraphId = ID();
             instagramGraph.className = "container";
-            instagramGraph.setAttribute('id', 'instagram-graph');
-            dashboardRow.appendChild(instagramGraph);
+            instagramGraph.setAttribute('id', instagramGraphId);
+            analyticsContainer.appendChild(instagramGraph);
 
             // Adding Checkboxes to Popups
 
@@ -391,11 +390,12 @@
 
 
             var elementExists = document.getElementById("select-account-instagram");
+            graphsInstagramControl(econtent, i, instagramGraphId);
             if (elementExists != null) {
               showInstagramSelect(econtent, i);
+
             } else {
               showInstagramDiv(econtent, i);
-              // graphsInstagramControl(econtent, i);
             }
           }
         }
@@ -411,36 +411,47 @@
       $(opperationHistoryItem).html('');
     }
 
-    function graphsInstagramControl(content, i){
+    function graphsInstagramControl(content, i, id){
       econtent = content;
-      alert(econtent.userFollowers[i]);
-      var elementExists = document.getElementById("instagram-graph");
-      let instagramGraphDiv = elementExists.getContext("2d");
 
-      let instagramGraph = new Chart(instagramGraphDiv, {
+      // Defing variables that will be used fr
+      var instagramFollowers = econtent.userFollowers[i]
+      var instagramFollowing = econtent.userFollowing[i]
+      var instagramUserPost = econtent.userPost[i]
+
+      var elementExists = document.getElementById(id);
+      let instagramGraphCanvas = elementExists.getContext("2d");
+      instagramGraphCanvas.canvas.style = "height:400px;"
+      instagramGraphCanvas.canvas.style = "width:400px;"
+      instagramGraphCanvas.canvas.style.backgroundColor = 'rgba(216,29,172)';
+
+      let instagramGraph = new Chart(instagramGraphCanvas, {
         type:'bar', // Making a pie chart
         data:{
           labels:['Followers', 'Following', 'Post'],
           datasets:[{
-            label:'Works',
             data:[
-              econtent.userFollowers[i],
-              econtent.userFollowing[i],
-              econtent.userPost[i]
+              instagramFollowers,
+              instagramFollowing,
+              instagramUserPost
             ],
             backgroundColor: [
-              '#000',
-              '#000',
-              '#000'
+              '#9999a1',
+              '#9999a1',
+              '#9999a1'
             ]
           }]
         },
         options:{
+          legend: {
+            display:false
+          },
           title:{
             display:true,
-            text: 'Followers Vs. Following',
-            responsive: false
-          }
+            text: econtent.username[i] + ' Basic Info(Instagram)',
+          },
+          responsive: false,
+          maintainAspectRatio: false,
         }
       });
     }
@@ -608,12 +619,20 @@
           for (let i = 0; i < econtent.length[0]; i++) {
             //Creating a Div
             var dashboardRow = document.getElementById('account-divs');
+            var analyticsContainer = document.getElementById('analytics-container-twitter');
 
             var twitterDiv = document.createElement('div');
             twitterDiv.className = "col-sm-16";
             var twitterId = 'twitter-div';
             twitterDiv.setAttribute('id', twitterId);
             dashboardRow.appendChild(twitterDiv);
+
+            // Defining Graph Div and putting it in analytics
+            var twitterGraph = document.createElement('canvas');
+            var twitterGraphId = ID();
+            twitterGraph.className = "container";
+            twitterGraph.setAttribute('id', twitterGraphId);
+            analyticsContainer.appendChild(twitterGraph);
 
             // Adding Checkboxes to Popups
 
@@ -633,6 +652,7 @@
             chooseSocialPostDiv.appendChild(chooseSocialPostName);
 
             var elementExists = document.getElementById("select-account-twitter");
+            graphsTwiterControl(econtent, i, twitterGraphId);
 
             if (elementExists == null) {
               showTwitterDiv(econtent, i);
@@ -643,6 +663,54 @@
           }
         }
       }
+    }
+
+    function graphsTwiterControl(content, i, id){
+      econtent = content;
+
+      // Defing variables that will be used fr
+      var twitterFollowers = econtent.userFollowers[i]
+      var twitterFollowing = econtent.userFollowing[i]
+      var twitterUserPost = econtent.userPost[i]
+
+      var elementExists = document.getElementById(id);
+      let twitterGraphCanvas = elementExists.getContext("2d");
+      twitterGraphCanvas.canvas.style = "height:400px;";
+      twitterGraphCanvas.canvas.style = "width:400px;";
+
+      twitterGraphCanvas.canvas.style.backgroundColor = 'rgba(40,170,225)';
+
+      Chart.defaults.global.defaultFontColor = "#000";
+      let twitterGraph = new Chart(twitterGraphCanvas, {
+        type:'bar', // Making a pie chart
+        data:{
+          labels:['Followers', 'Following', 'Post'],
+          datasets:[{
+            label: 'works',
+            data:[
+              twitterFollowers,
+              twitterFollowing,
+              twitterUserPost
+            ],
+            backgroundColor: [
+              '#9999a1',
+              '#9999a1',
+              '#9999a1'
+            ]
+          }]
+        },
+        options:{
+          legend: {
+            display:false
+          },
+          title:{
+            display:true,
+            text: econtent.username[i] + ' Basic Info(Twitter)',
+          },
+          responsive: false,
+          maintainAspectRatio: false,
+        }
+      });
     }
 
     function getTwitterData(content){
