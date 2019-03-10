@@ -264,7 +264,34 @@
       </div>
     </div>
   </div>
+  <!--Option Menu Instagram -->
+  <div class="modal fade" id="account-options-menu-instagram" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="float-right">&times;</span>
+          </button>
 
+        <div class="modal-body" id="disconnect-instagram-form">
+          <h6>Options</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Option Menu Twitter -->
+  <div class="modal fade" id="account-options-menu-twitter" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="float-right">&times;</span>
+          </button>
+
+        <div class="modal-body" id="disconnect-instagram-form">
+          <h6>Options</h6>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!-- Using Jquery and JavaScript to have page function -->
 <script type="text/javascript">
@@ -331,6 +358,18 @@
       var instagramId = 'instagram-div';
       $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-instagram' onchange='instagramSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
+    function showInstagramDivAccount(content, i){
+
+      var econtent = content;
+      var parentElement = document.getElementById('accounts-container');
+      var addInstagramAccount = document.createElement('div');
+      var instagramId = ID();
+      addInstagramAccount.setAttribute('id', instagramId);
+
+      parentElement.appendChild(addInstagramAccount);
+
+      $('#' + instagramId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/instagram.jpg' style='position: absolute; right:3%; float:right;'/></a><p><b>"+ econtent.username[i] + "</b></p><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p></p><p style='position: absolute; bottom:1px; right:3%; float:right;'><a href='#' style='color:#000' data-toggle='modal' data-target='#account-options-menu-instagram'>Options</a> <a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'>Disconnect</a></p></div>");
+    }
     function showInstagramSelect(content, i){
       var econtent = content;
       var addInstagramAccount = document.createElement('option');
@@ -391,6 +430,7 @@
 
             var elementExists = document.getElementById("select-account-instagram");
             graphsInstagramControl(econtent, i, instagramGraphId);
+            showInstagramDivAccount(econtent, i);
             if (elementExists != null) {
               showInstagramSelect(econtent, i);
 
@@ -594,6 +634,19 @@
       $('#' + twitterId).html("<div class='card'><a href=''><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><b> <select id='select-account-twitter' onchange='twitterSelectChange(this)'><option selected>"+ econtent.username[i] + "</option></select></b><br /><p>User Tweets: <span id='twitter-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-twitter-menu'><span id='twitter-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<p>Followers: <span id='twitter-user-followers'>" + econtent.userFollowers[i] + "</span></p>" + "<br /><p>Following: <span id='twitter-user-following'>" + econtent.userFollowing[i] + "</p><p id='twitter-user-location'>Location: <span>" + econtent.location[i] + "</span></p><a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-twitter-menu'><p style='position: absolute; bottom:1px; right:3%; float:right;'>Disconnect</p></a></div>");
     }
 
+    function showTwitterDivAccount(content, i){
+
+      var econtent = content;
+      var parentElement = document.getElementById('accounts-container');
+      var addTwitterAccount = document.createElement('div');
+      var twitterId = ID();
+      addTwitterAccount.setAttribute('id', twitterId);
+
+      parentElement.appendChild(addTwitterAccount);
+
+      $('#' + twitterId).html("<div class='card'><a href='#'><img src='../../../static/dashboard/img/twitter.png' style='position: absolute; right:3%; float:right;'/></a><p><b>"+ econtent.username[i] + "</b></p><br /><p>User Post: <span id='instagram-user-post'>" + econtent.userPost[i] +"</span> Bio: <a href='#' data-toggle='modal' data-target='#edit-bio-instagram-menu'><span id='instagram-user-bio'>" + econtent.bio[i] + "</span></a></p>" + "<br /><p>Followers: <span id='instagram-user-followers'>" + econtent.userFollowers[i] + "</span></p><br /><p>Following: <span id='instagram-user-following'>" + econtent.userFollowing[i] + "</span></p><p></p><p style='position: absolute; bottom:1px; right:3%; float:right;'><a href='#' style='color:#000' data-toggle='modal' data-target='#account-options-menu-twitter'>Options</a> <a href='#' style='color:#000' data-toggle='modal' data-target='#disconnect-instagram-menu'>Disconnect</a></p></div>");
+    }
+
     function showTwitterSelect(content, i){
       var econtent = content;
       var addTwitterAccount = document.createElement('option');
@@ -653,7 +706,7 @@
 
             var elementExists = document.getElementById("select-account-twitter");
             graphsTwiterControl(econtent, i, twitterGraphId);
-
+            showTwitterDivAccount(econtent, i);
             if (elementExists == null) {
               showTwitterDiv(econtent, i);
             } else {

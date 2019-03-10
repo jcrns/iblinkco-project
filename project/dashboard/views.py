@@ -27,6 +27,19 @@ from django.shortcuts import render
 from dashboard.instagram_script import *
 from dashboard.twitter_script import *
 
+# importing pyrebase(backend)
+import pyrebase
+
+config = {
+    'apiKey': "AIzaSyB-zW5qNKkTlfLzhbigIZkMWypJ4XMAAvY",
+    'authDomain': "cpanel-8d88a.firebaseapp.com",
+    'databaseURL': "https://cpanel-8d88a.firebaseio.com",
+    'projectId': "cpanel-8d88a",
+    'storageBucket': "cpanel-8d88a.appspot.com",
+    'messagingSenderId': "955905061850"
+  }
+firebase = pyrebase.initialize_app(config)
+
 # API in View
 class InstagramList(APIView):
 
