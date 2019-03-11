@@ -9,7 +9,7 @@ class UserRegisterForm(UserCreationForm):
         model = User
         # Fields user needs to sign up
         fields = ['username', 'email', 'password1', 'password2']
-    
+
         # creating custom form by importing UserRegisterForm and adding custom fields
     def getemail(self):
         email = forms.EmailField()

@@ -13,12 +13,15 @@ from django.shortcuts import render, redirect
 # importing contact us form
 from homepage.forms import ContactForm
 
+# Importing Database Restrictions
+from users.views import pyrebaseVerified
+
 # importing pyrebase(backend)
 import pyrebase
 
 #Taking to home.html which includes all website files
 
-#
+# Used to connect to firebase server
 config = {
     'apiKey': "AIzaSyB-zW5qNKkTlfLzhbigIZkMWypJ4XMAAvY",
     'authDomain': "cpanel-8d88a.firebaseapp.com",

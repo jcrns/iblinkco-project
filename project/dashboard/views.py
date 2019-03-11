@@ -59,7 +59,6 @@ def json_serial(obj):
     raise TypeError ("Type %s not serializable" % type(obj))
 
 # Requiring a login in order to accessing page
-@login_required
 def index(request):
     content = {}
     return render(request, 'dashboard/home.html', content)

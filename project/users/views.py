@@ -13,6 +13,90 @@ from django.shortcuts import render, redirect
 # importing User Registeraton Form
 from .forms import UserRegisterForm
 
+# Importing login_required function from django
+from django.contrib.auth.decorators import login_required
+
+# importing firebase
+import pyrebase
+
+# importing django auth
+from django.contrib import auth
+
+
+# Used to connect to firebase server
+config = {
+    'apiKey': "AIzaSyB-zW5qNKkTlfLzhbigIZkMWypJ4XMAAvY",
+    'authDomain': "cpanel-8d88a.firebaseapp.com",
+    'databaseURL': "https://cpanel-8d88a.firebaseio.com",
+    'projectId': "cpanel-8d88a",
+    'storageBucket': "cpanel-8d88a.appspot.com",
+    'messagingSenderId': "955905061850"
+  }
+firebase = pyrebase.initialize_app(config)
+
+authe = firebase.auth()
+database = firebase.database()
+
+def signIn(request):
+    return render(request, "users/signin.html")
+
+def postSignin(request):
+    email = request.POST.get("email")
+    passw = request.POST.get("pass")
+
+    # Trying to Sign In
+    try:
+        user = authe.sign_in_with_email_and_password(email,passw)
+    except Exception as e:
+        message = "Invalid Email or Password"
+
+        # Returning Render of page that didn't work
+        return render(request, "users/signin.html", {"messg": message})
+    # getting User id Token
+    session_id = user['idToken']
+    request.session['uid'] = str(session_id)
+
+    # Returning Render
+    return render(request, "users/postsignin.html", {"e":email})
+
+def logout(request):
+    auth.logout(request)
+    return render(request, 'users/signin.html')
+
+
+def signUp(request):
+
+    return render(request, 'users/signup.html')
+
+def postSignUp(request):
+
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    passw = request.POST.get('pass')
+
+    try:
+        user = authe.create_user_with_email_and_password(email, passw)
+    except Exception as e:
+        message = "User Already Exist"
+        return render(request, "users/signup.html", {"messg": message})
+
+    uid = user['localId']
+    data = {"name": name, "status": "1 "}
+    database.child("users").child(uid).child("details").set(data)
+
+    messages.success(request, f'Congratulations you created an account for iBlinkco! Now Sign In!')
+
+    return render(request, "users/signin.html")
+
+def pyrebaseVerified(function):
+    def wrapper(request, *args, **kw):
+        session_id = user['idToken']
+        if session_id == '':
+            return HttpResponseRedirect('/splash/')
+        else:
+            return function(request, *args, **kw)
+    return wrapper
+
 # registering new user
 def register(request):
     if request.method == 'POST':
@@ -32,5 +116,3 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
-
-

@@ -49,6 +49,14 @@ urlpatterns = [
     url(r'^password-reset-confirm/<uidb64>/<token>/',
         auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
         name='password_reset_confirm'),
+
+    # Firebase Testing
+    url(r'^signin/', user_views.signIn, name='signin'),
+    url(r'^postsignin/', user_views.postSignin),
+    url(r'^logout-test/', user_views.logout, name='log'),
+    url(r'^signup/', user_views.signUp, name='signup'),
+    url(r'^postsignup/', user_views.postSignUp, name='postsignup'),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
