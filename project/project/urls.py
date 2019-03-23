@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^dashboard-get/', views.InstagramList.as_view()),
 
     # Rest API URL
-    url(r'^api/dashboard/', include('dashboard.rest-api.urls')),
+    url(r'^api/', include('api.urls')),
 
     # Login and Registration system urls
     url(r'^register/', user_views.register, name='register'),

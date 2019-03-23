@@ -1,3 +1,24 @@
+# importing settings file to access email info
+from django.conf import settings
+
+# importing messages from django
+from django.contrib import messages
+
+# Importing email functions
+from django.core.mail import EmailMessage
+
+# Importing login_required function from django
+from django.contrib.auth.decorators import login_required
+
+# Importing pyrebase settings
+from users.pyrebase_settings import *
+
+# Importing pyrebase settings
+from users.firebase_auth import *
+
+# importing django auth
+from django.contrib import auth
+
 import sys
 import json
 from json import dumps
@@ -14,7 +35,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from dashboard.serializers import *
 from dashboard.models import *
 
 # Importing forms for custom forms
@@ -30,6 +50,8 @@ from dashboard.twitter_script import *
 # importing pyrebase(backend)
 import pyrebase
 
+from users.pyrebase_settings import *
+
 config = {
     'apiKey': "AIzaSyB-zW5qNKkTlfLzhbigIZkMWypJ4XMAAvY",
     'authDomain': "cpanel-8d88a.firebaseapp.com",
@@ -39,6 +61,7 @@ config = {
     'messagingSenderId': "955905061850"
   }
 firebase = pyrebase.initialize_app(config)
+authe = firebase.auth()
 
 # API in View
 class InstagramList(APIView):
@@ -58,6 +81,7 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 
+
 # Requiring a login in order to accessing page
 def index(request):
     content = {}
@@ -65,105 +89,184 @@ def index(request):
 
 ## INSTAGRAM ##
 
-def InstagramPost(request):
+def postSocial(request):
     print("Starting Post")
     if request.method == 'POST':
         print("this is finally working")
 
-        print(request.POST.get('instagramPostUser'))
-        print(request.POST.get('instagramUsername'))
-        print(request.POST.get('instagramPassword'))
+        print(request.POST.get('postUser'))
+        print(request.POST.get('username'))
+        print(request.POST.get('password'))
+        print(request.POST.get('accountType'))
 
-        if request.POST.get('instagramPostUser') and request.POST.get('instagramUsername') and request.POST.get('instagramPassword'):
+        if request.POST.get('postUser') and request.POST.get('username') and request.POST.get('password') and request.POST.get('accountType') and request.POST.get('functionType'):
+            if request.POST.get('accountType') == 'instagram':
+                instagram_post = Instagram()
 
-            instagram_post = Instagram()
-            instagram_post.user = request.POST.get('instagramPostUser')
-            instagram_post.instagram_username = request.POST.get('instagramUsername')
-            instagram_post.instagram_password = request.POST.get('instagramPassword')
+                if request.POST.get('functionType') == 'POST':
+                    instagram_post.user = request.POST.get('postUser')
+                    instagram_post.instagram_username = request.POST.get('username')
+                    instagram_post.instagram_password = request.POST.get('password')
 
-            # Success Variable
-            value = True
-            print("worrrks")
+                    # Success Variable
+                    value = True
+                    print("worrrks")
 
 
-            # Adding Instagram Script to verify user is on instagram
-            userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password, '', '')
-            messageView = userIG.returnLogin()
+                    # Adding Instagram Script to verify user is on instagram
+                    userIG = InstagramBot(instagram_post.instagram_username, instagram_post.instagram_password, '', '')
+                    messageView = userIG.returnLogin()
 
-            try:
-                # User Data
-                getUserPost = messageView['userData'][0]
-                getUserFollowers = messageView['userData'][1]
-                getUserFollowing = messageView['userData'][2]
-                getUserBio = messageView['userData'][3]
-                message = messageView['message']
+                    try:
+                        # User Data
+                        getUserPost = messageView['userData'][0]
+                        getUserFollowers = messageView['userData'][1]
+                        getUserFollowing = messageView['userData'][2]
+                        getUserBio = messageView['userData'][3]
+                        message = messageView['message']
 
-                # Saving User Data
-                instagram_post.number_of_post = getUserPost
-                instagram_post.number_of_followers = getUserFollowers
-                instagram_post.number_of_following = getUserFollowing
-                instagram_post.bio = getUserBio
+                        # Saving User Data
+                        instagram_post.number_of_post = getUserPost
+                        instagram_post.number_of_followers = getUserFollowers
+                        instagram_post.number_of_following = getUserFollowing
+                        instagram_post.bio = getUserBio
 
-                # Getting Ready to return data
-                value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing,'userBio':getUserBio, 'message': message}
-            except Exception as e:
-                print("error")
-                message = 'failed'
-                value = {'message': message}
+                        # Getting Ready to return data
+                        value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing,'userBio':getUserBio, 'message': message}
+                    except Exception as e:
+                        print("error")
+                        message = 'failed'
+                        value = {'message': message}
 
-            # Checking if function is successful
-            if message == 'success':
-                # Saving Form
-                instagram_post.save()
+                    # Checking if function is successful
+                    # Saving Form
+                    instagram_post.save()
 
-            print(value)
-        return HttpResponse( json.dumps( value ))
+                elif request.POST.get('functionType') == 'GET':
+                    pass
+                print(value)
+                return HttpResponse( json.dumps( value ))
+            elif request.POST.get('accountType') == 'twitter':
+                twitter_post = Twitter()
+                twitter_post.user = request.POST.get('postUser')
+                twitter_post.twitter_username = request.POST.get('username')
+                twitter_post.twitter_password = request.POST.get('password')
 
-# Function to check if signed in user has a instagram account
-def InstagramCheck(request):
+                # Adding Instagram Script to verify user is on instagram
+                userTwit = twitterBot(twitter_post.twitter_username, twitter_post.twitter_password, '', '')
+                messageView = userTwit.returnLogin()
+
+                try:
+                    print("trying")
+                    # User Data
+                    getUserPost = messageView['userData'][0]
+                    getUserFollowing = messageView['userData'][1]
+                    getUserFollowers = messageView['userData'][2]
+                    getUserBio = messageView['userData'][3]
+                    getUserLocation = messageView['userData'][4]
+                    message = messageView['message']
+
+                    # Saving User Data
+                    twitter_post.number_of_post = getUserPost
+                    twitter_post.number_of_followers = getUserFollowers
+                    twitter_post.number_of_following = getUserFollowing
+                    twitter_post.bio = getUserBio
+                    twitter_post.location = getUserLocation
+
+                    # Getting Ready to return data
+                    value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing,'userBio': getUserBio,'userLocation': getUserLocation, 'message': message}
+                except Exception as e:
+                    print("error")
+                    message = 'failed'
+                    value = {'message': message}
+
+                # Checking if function is successful
+                print(message)
+                if request.POST.get('functionType') == 'POST':
+                    # Saving Form
+                    twitter_post.save()
+                elif request.POST.get('functionType') == 'GET':
+                    pass
+            return HttpResponse( json.dumps( value ))
+
+def check(request):
     print("Checking if user has instagram accounts")
     if request.method == 'POST':
-        value = []
-        # Getting logged in user
-        instagram_user_verify = request.POST['instagram_user']
-        print(instagram_user_verify)
+        if request.POST.get('user') and request.POST.get('checkType'):
+            if request.POST.get('checkType') == 'instagram':
+                value = []
+                # Getting logged in user
+                instagram_user_verify = request.POST.get('user')
+                print(instagram_user_verify)
 
-        content_instagram = Instagram.objects.all()
-        INSTAGRAM = content_instagram
-        print(INSTAGRAM)
-        instagram_post = Instagram()
+                content_instagram = Instagram.objects.all()
+                INSTAGRAM = content_instagram
+                print(INSTAGRAM)
+                instagram_post = Instagram()
 
-        instagramInfo = []
-        # Using a for loop to get information related to that user
+                instagramInfo = []
+                # Using a for loop to get information related to that user
 
-        verify_instagram_post_total = []
-        verify_instagram_followers_total = []
-        verify_instagram_following_total = []
-        for val in INSTAGRAM:
-            print("val: ")
-            print(val)
+                verify_instagram_post_total = []
+                verify_instagram_followers_total = []
+                verify_instagram_following_total = []
+                for val in INSTAGRAM:
+                    print("val: ")
+                    print(val)
 
-            # Getting User Info
-            verify_instagram_user = val.user
-            verify_instagram_username = val.instagram_username
-            verify_instagram_password = val.instagram_password
-            verify_instagram_post = val.number_of_post
-            verify_instagram_followers = val.number_of_followers
-            verify_instagram_following = val.number_of_following
-            verify_instagram_bio = val.bio
+                    # Getting User Info
+                    verify_instagram_user = val.user
+                    verify_instagram_username = val.instagram_username
+                    verify_instagram_password = val.instagram_password
+                    verify_instagram_post = val.number_of_post
+                    verify_instagram_followers = val.number_of_followers
+                    verify_instagram_following = val.number_of_following
+                    verify_instagram_bio = val.bio
 
-            if instagram_user_verify == val.user:
+                    if instagram_user_verify == val.user:
 
-                verify_instagram_post_total.append(verify_instagram_post)
-                verify_instagram_followers_total.append(verify_instagram_followers)
-                verify_instagram_following_total.append(verify_instagram_following)
+                        verify_instagram_post_total.append(verify_instagram_post)
+                        verify_instagram_followers_total.append(verify_instagram_followers)
+                        verify_instagram_following_total.append(verify_instagram_following)
 
-                value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following, 'userBio':verify_instagram_bio, 'totalUserPost':verify_instagram_post_total, 'totalUserFollowers':verify_instagram_post_total, 'totalUserFollowing': verify_instagram_following_total}
-                # break'
-                instagramInfo.append(value)
-        print(value)
-        print(instagramInfo)
-        return HttpResponse( json.dumps( instagramInfo ))
+                        value = {'user': verify_instagram_user, 'username': verify_instagram_username, 'userPost': verify_instagram_post, 'userFollowers': verify_instagram_followers, 'userFollowing': verify_instagram_following, 'userBio':verify_instagram_bio, 'totalUserPost':verify_instagram_post_total, 'totalUserFollowers':verify_instagram_post_total, 'totalUserFollowing': verify_instagram_following_total}
+                        # break'
+                        instagramInfo.append(value)
+                print(value)
+                print(instagramInfo)
+                return HttpResponse( json.dumps( instagramInfo ))
+            elif request.POST.get('checkType') == 'twitter':
+                value = []
+
+                # Getting logged in user
+                twitter_user_verify = request.POST.get('user')
+                print(twitter_user_verify)
+
+                content_twitter = Twitter.objects.all()
+                TWITTER = content_twitter
+                twitterInfo = []
+
+                # Using a for loop to get information related to that user
+                for val in TWITTER:
+
+                    # Getting User Info
+                    verify_twitter_user = val.user
+                    verify_twitter_username = val.twitter_username
+                    verify_twitter_post = val.number_of_post
+                    verify_twitter_followers = val.number_of_followers
+                    verify_twitter_following = val.number_of_following
+                    verify_twitter_bio= val.bio
+                    verify_twitter_location = val.location
+
+
+                    # verify_twitter_post = verify_twitter_post + verify_twitter_post
+                    if twitter_user_verify in verify_twitter_user:
+                        print("true")
+                        print(verify_twitter_user)
+                        value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following, 'userBio':verify_twitter_bio, 'userLocation':verify_twitter_location}
+
+                        twitterInfo.append(value)
+                return HttpResponse( json.dumps( twitterInfo ))
 
 # Function to disconnect instagram
 def InstagramDisconnect(request):
@@ -190,96 +293,6 @@ def InstagramDisconnect(request):
     return HttpResponse(value3)
 
 ## TWITTER ##
-
-# twitter post function
-def TwitterPost(request):
-    print("Starting Post Twitter")
-    if request.method == 'POST':
-        print("this is finally working")
-
-        print(request.POST.get('twitterPostUser'))
-        print(request.POST.get('twitterUsername'))
-        print(request.POST.get('twitterPassword'))
-
-        if request.POST.get('twitterPostUser') and request.POST.get('twitterUsername') and request.POST.get('twitterPassword'):
-
-            twitter_post = Twitter()
-            twitter_post.user = request.POST.get('twitterPostUser')
-            twitter_post.twitter_username = request.POST.get('twitterUsername')
-            twitter_post.twitter_password = request.POST.get('twitterPassword')
-
-            # Adding Instagram Script to verify user is on instagram
-            userTwit = twitterBot(twitter_post.twitter_username, twitter_post.twitter_password, '')
-            messageView = userTwit.returnLogin()
-
-            try:
-                print("trying")
-                # User Data
-                getUserPost = messageView['userData'][0]
-                getUserFollowers = messageView['userData'][1]
-                getUserFollowing = messageView['userData'][2]
-                getUserBio = messageView['userData'][3]
-                getUserLocation = messageView['userData'][4]
-                message = messageView['message']
-
-                # Saving User Data
-                twitter_post.number_of_post = getUserPost
-                twitter_post.number_of_followers = getUserFollowers
-                twitter_post.number_of_following = getUserFollowing
-                twitter_post.bio = getUserBio
-                twitter_post.location = getUserLocation
-
-                # Getting Ready to return data
-                value = {'userPost': getUserPost, 'userFollowers': getUserFollowers, 'userFollowing': getUserFollowing,'userBio': getUserBio,'userLocation': getUserLocation, 'message': message}
-            except Exception as e:
-                print("error")
-                message = 'failed'
-                value = {'message': message}
-
-            # Checking if function is successful
-            print(message)
-            if messageView['message'] == 'success':
-                # Saving Form
-                twitter_post.save()
-
-        return HttpResponse( json.dumps( value ))
-
-
-# Function to check if signed in user has a twitter account
-def TwitterCheck(request):
-    print("Checking if user has twitter accounts")
-    if request.method == 'POST':
-        value = []
-
-        # Getting logged in user
-        twitter_user_verify = request.POST['twitter_user']
-        print(twitter_user_verify)
-
-        content_twitter = Twitter.objects.all()
-        TWITTER = content_twitter
-        twitterInfo = []
-
-        # Using a for loop to get information related to that user
-        for val in TWITTER:
-
-            # Getting User Info
-            verify_twitter_user = val.user
-            verify_twitter_username = val.twitter_username
-            verify_twitter_post = val.number_of_post
-            verify_twitter_followers = val.number_of_followers
-            verify_twitter_following = val.number_of_following
-            verify_twitter_bio= val.bio
-            verify_twitter_location = val.location
-
-
-            # verify_twitter_post = verify_twitter_post + verify_twitter_post
-            if twitter_user_verify in verify_twitter_user:
-                print("true")
-                print(verify_twitter_user)
-                value = {'user': verify_twitter_user, 'username': verify_twitter_username, 'userPost': verify_twitter_post, 'userFollowers': verify_twitter_followers, 'userFollowing': verify_twitter_following, 'userBio':verify_twitter_bio, 'userLocation':verify_twitter_location}
-
-                twitterInfo.append(value)
-        return HttpResponse( json.dumps( twitterInfo ))
 
 # Function to disconnect Twitter from database
 def TwitterDisconnect(request):
@@ -892,3 +905,49 @@ def getOpperationHistory(request):
             value = {'message':message, 'objectLength':len(requestedTypeArray), 'type':requestedTypeArray, 'likes':requestedAmountLikesArray, 'hashtags':requestedHashtagsArray, 'location':requestedLocationArray, 'date': requestedDateArray}
             print(value)
     return HttpResponse( json.dumps( value ))
+
+def clearOpperationHistory(request):
+
+    if request.method == 'POST':
+        print("dfref")
+        if request.POST.get('usernameVerify'):
+            print("dfsdfvdref")
+
+            user_verify = request.POST.get('usernameVerify')
+
+            GETLIKES = LikeOpperation.objects.all()
+
+            GETFOLLOW = FollowOpperation.objects.all()
+
+            POSTSOCIAL = PostSocial.objects.all()
+
+            try:
+                # Creating a for loop for Like Opperations Model
+                for val in GETLIKES:
+                    print("entering for")
+                    if val.user == user_verify:
+                        print("deleting")
+                        val.delete()
+            except Exception as e:
+                    print(e)
+
+            try:
+                # Creating a for loop for Follow Opperations Model
+                for val2 in GETFOLLOW:
+                    if val2.user == user_verify:
+                        print("deleting")
+                        val2.delete()
+            except Exception as e:
+                    print(e)
+
+            try:
+                # Creating a for loop for Post Opperations Model
+                for val3 in GETFOLLOW:
+                    if val3.user == user_verify:
+                        print("deleting")
+                        val3.delete()
+
+            except Exception as e:
+                print(e)
+
+    return HttpResponse("success")

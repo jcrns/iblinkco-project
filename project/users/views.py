@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 
 # importing django shortcuts and render
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 
 # importing User Registeraton Form
 from .forms import UserRegisterForm
@@ -19,10 +20,17 @@ from django.contrib.auth.decorators import login_required
 # importing firebase
 import pyrebase
 
+# Importing pyrebase settings
+from .pyrebase_settings import *
+
+# Importing pyrebase settings
+from .firebase_auth import *
+
 # importing django auth
 from django.contrib import auth
 
 
+sessionData = []
 # Used to connect to firebase server
 config = {
     'apiKey': "AIzaSyB-zW5qNKkTlfLzhbigIZkMWypJ4XMAAvY",
@@ -47,17 +55,19 @@ def postSignin(request):
     # Trying to Sign In
     try:
         user = authe.sign_in_with_email_and_password(email,passw)
+        sessionData = {'email':email }
     except Exception as e:
         message = "Invalid Email or Password"
 
         # Returning Render of page that didn't work
-        return render(request, "users/signin.html", {"messg": message})
+        return HttpResponseRedirect('/signin/')
     # getting User id Token
     session_id = user['idToken']
+    print(user)
     request.session['uid'] = str(session_id)
 
     # Returning Render
-    return render(request, "users/postsignin.html", {"e":email})
+    return render(request, "dashboard/home.html", {"email":email})
 
 def logout(request):
     auth.logout(request)
@@ -77,7 +87,7 @@ def postSignUp(request):
     try:
         user = authe.create_user_with_email_and_password(email, passw)
     except Exception as e:
-        message = "User Already Exist"
+        message = "Something Went Wrong"
         return render(request, "users/signup.html", {"messg": message})
 
     uid = user['localId']

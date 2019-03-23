@@ -1,7 +1,7 @@
 {% extends "homepage/header.html" %}
 {% block content %}
 <div class="container">
-  <h1>Welcome {{ e }}</h1>
+  <h1>Welcome {{ email }}</h1>
   <button type="button" onclick="location.href='{% url 'log' %}'">Logout</button>
 </div>
 {% endblock %}

@@ -9,9 +9,9 @@ class Instagram(models.Model):
     user = models.CharField(max_length=30)
     instagram_username = models.CharField(max_length=30)
     instagram_password = models.CharField(max_length=30)
-    number_of_post = models.IntegerField(default=1)
-    number_of_followers = models.IntegerField(default=1)
-    number_of_following = models.IntegerField(default=1)
+    number_of_post = models.IntegerField(default=0)
+    number_of_followers = models.IntegerField(default=0)
+    number_of_following = models.IntegerField(default=0)
     bio = models.TextField(max_length=160, default='unknown')
     location = models.CharField(max_length=30, default='unknown')
 
@@ -24,9 +24,9 @@ class Twitter(models.Model):
     user = models.CharField(max_length=30)
     twitter_username = models.CharField(max_length=30)
     twitter_password = models.CharField(max_length=30)
-    number_of_post = models.IntegerField(default=1)
-    number_of_followers = models.IntegerField(default=1)
-    number_of_following = models.IntegerField(default=1)
+    number_of_post = models.IntegerField(default=0)
+    number_of_followers = models.IntegerField(default=0)
+    number_of_following = models.IntegerField(default=0)
     bio = models.TextField(max_length=160, default='unknown')
     location = models.CharField(max_length=30, default='unknown')
 
@@ -56,7 +56,7 @@ class PostSocial(models.Model):
 
 class LikeOpperation(models.Model):
     user = models.CharField(max_length=30)
-    number_of_likes = models.IntegerField(default=1)
+    number_of_likes = models.IntegerField(default=0)
     hashtags = models.TextField(max_length=280, default='unknown')
     twitter = models.BooleanField()
     instagram = models.BooleanField()
@@ -68,7 +68,7 @@ class LikeOpperation(models.Model):
 
 class FollowOpperation(models.Model):
     user = models.CharField(max_length=30)
-    number_of_followers = models.IntegerField(default=1)
+    number_of_followers = models.IntegerField(default=0)
     hashtags = models.TextField(max_length=280, default='unknown')
     twitter = models.BooleanField()
     instagram = models.BooleanField()

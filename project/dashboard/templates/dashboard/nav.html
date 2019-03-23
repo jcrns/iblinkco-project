@@ -1,5 +1,4 @@
 {% block content %}
-<script src="{% static 'dashboard/js/ui.js' %}"></script>
 <style>
   #analytics{
     display:none;
@@ -25,7 +24,7 @@
     <!-- Sidebar -->
     <nav id="sidebar" style="background-color:#ddd; min-height:100%" >
         <div class="sidebar-header" style="min-width: 150px;" >
-            <p class="float-center">Welcome <span class="font-weight-bold">{{ user.username }}</span>
+            <p class="float-center">Welcome <span class="font-weight-bold">{{ email }}</span>
         </div>
 
         <ul class="list-unstyled components">
@@ -39,13 +38,16 @@
                 <span id="show-accounts" class=""><a href="#">Accounts</a></span>
             </li>
             <li>
-                <span id="settings" class=""><a href="#" data-toggle="modal" data-target="#connect-settings">Settings</a></span>
+                <span id="show-settings" class=""><a href="#">Settings</a></span>
             </li>
         </ul>
     </nav>
       {% include "dashboard/includes/dash.html" %}
+      {% include "dashboard/includes/settings.html" %}
       {% include "dashboard/includes/analytics.html" %}
       {% include "dashboard/includes/accounts.html" %}
 
   </div>
+  {% load staticfiles %}
+  <script src="{% static 'dashboard/js/ui.js' %}"></script>
   {% endblock %}

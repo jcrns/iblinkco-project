@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'dashboard.apps.DashboardConfig',
     'homepage',
+    'api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'social_django'
 
 ]
 
@@ -141,7 +143,7 @@ EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -149,3 +151,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
+SOCIAL_AUTH_TWITTER_KEY = 'QAlCACLnh0Zac3NgdgvXai4mo'
+SOCIAL_AUTH_TWITTER_SECRET = 'xU1L8fYe71matyfq2TNa6CpwVKbXTTS7Y60Sg1VJOmj4WBnjpY'
